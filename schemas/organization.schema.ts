@@ -15,4 +15,5 @@ export const organizationRegisterSchema = z
 export const organizationLoginSchema = z.object({
   email: z.email(),
   password: z.string().min(1),
+  remember: z.boolean().optional(),
 });

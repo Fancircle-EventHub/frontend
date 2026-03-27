@@ -21,6 +21,7 @@ export default function OrganizationVerifyPage() {
   const [resendOtp] = useResendOrganizationOtpMutation();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
+  const [staySignedIn, setStaySignedIn] = useState(false);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -30,10 +31,10 @@ export default function OrganizationVerifyPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    const parsed = otpSchema.safeParse({ email, otp });
+    const parsed = otpSchema.safeParse({ email, otp, remember: staySignedIn });
     if (!parsed.success) return;
     try {
-      const response = await verify({ email, otp }).unwrap();
+      const response = await verify(parsed.data).unwrap();
       dispatch(setSession({ token: response.data.token, domain: "organization" }));
       clearPendingEmail("organization");
       setErrorMessage(null);
@@ -48,6 +49,15 @@ export default function OrganizationVerifyPage() {
       <h1 className="text-2xl font-semibold">Verify Organization Email</h1>
       <p className="text-sm text-zinc-400">{email || "No pending email found. Return to register/login."}</p>
       <input className="rounded bg-zinc-800 p-2" placeholder="6-digit OTP" value={otp} onChange={(e) => setOtp(e.target.value)} />
+      <label className="flex cursor-pointer items-center gap-2 text-sm text-zinc-400">
+        <input
+          type="checkbox"
+          checked={staySignedIn}
+          onChange={(e) => setStaySignedIn(e.target.checked)}
+          className="size-4 rounded border-zinc-600 bg-zinc-800 accent-amber-300"
+        />
+        Stay signed in
+      </label>
       <button className="rounded bg-blue-600 px-4 py-2" disabled={isLoading}>Verify</button>
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
       <button

@@ -1,26 +1,65 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --eh-bg-image: none;
+  --eh-bg-default: #23272f;
+  --eh-bg-surface: #2e323a;
+  --eh-accent: #fddc53;
+  --eh-text-primary: #ffffff;
+  --eh-text-secondary: #94a3b8;
+  --eh-text-tertiary: #64748b;
+  --eh-border: #334155;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter);
+  --color-eh-default: var(--eh-bg-default);
+  --color-eh-surface: var(--eh-bg-surface);
+  --color-eh-accent: var(--eh-accent);
+  --color-eh-text-primary: var(--eh-text-primary);
+  --color-eh-text-secondary: var(--eh-text-secondary);
+  --color-eh-text-tertiary: var(--eh-text-tertiary);
+  --color-eh-border: var(--eh-border);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  button:not(:disabled),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+  button:disabled,
+  [type="submit"]:disabled,
+  [type="button"]:disabled,
+  [type="reset"]:disabled,
+  [role="button"][aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+  input[type="radio"],
+  input[type="checkbox"] {
+    cursor: pointer;
+  }
+  input[type="radio"]:disabled,
+  input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+  }
+  label:has(input[type="radio"]),
+  label:has(input[type="checkbox"]) {
+    cursor: pointer;
+  }
+}
+
+.eh-page-bg {
+  min-height: 100vh;
+  background-color: var(--eh-bg-default);
+  background-image: var(--eh-bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }

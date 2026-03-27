@@ -5,6 +5,7 @@ export type AuthTokenResponse<TUser, K extends string> = {
 export type VerifyOtpPayload = {
   email: string;
   otp: string;
+  remember?: boolean;
 };
 
 export type ForgotPasswordPayload = {

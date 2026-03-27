@@ -15,4 +15,5 @@ export type OrganizationRegisterPayload = {
 export type OrganizationLoginPayload = {
   email: string;
   password: string;
+  remember?: boolean;
 };

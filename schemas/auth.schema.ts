@@ -3,6 +3,7 @@ import { z } from "zod";
 export const otpSchema = z.object({
   email: z.email(),
   otp: z.string().regex(/^\d{6}$/),
+  remember: z.boolean().optional(),
 });
 
 export const forgotPasswordSchema = z.object({
