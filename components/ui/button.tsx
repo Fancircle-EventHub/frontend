@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ComponentProps } from "react";
+import type { ButtonHTMLAttributes, ComponentProps } from "react";
 import { forwardRef } from "react";
 import { CircularProgress } from "./CircularProgress";
 
@@ -25,7 +25,7 @@ const variantClass: Record<ButtonVariant, string> = {
   secondary: secondaryButtonClasses,
 };
 
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   fullWidth?: boolean;
   loading?: boolean;

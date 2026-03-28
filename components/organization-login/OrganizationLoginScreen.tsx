@@ -95,7 +95,7 @@ export function OrganizationLoginScreen() {
     } catch (error) {
       if (extractApiErrorCode(error) === "EMAIL_NOT_VERIFIED") {
         setPendingEmail("organization", form.email);
-        router.push("/organization/auth/verify");
+        router.push(`/organization/auth/verify?email=${encodeURIComponent(form.email)}`);
         return;
       }
       setErrorMessage(extractApiErrorMessage(error));
@@ -181,7 +181,11 @@ export function OrganizationLoginScreen() {
                     Password
                   </label>
                   <Link
-                    href="/organization/auth/forgot-password"
+                    href={
+                      form.email.trim()
+                        ? `/organization/auth/forgot-password?email=${encodeURIComponent(form.email.trim())}`
+                        : "/organization/auth/forgot-password"
+                    }
                     className="text-[10px] font-semibold uppercase tracking-wide text-eh-accent hover:underline"
                   >
                     Forgot password?
