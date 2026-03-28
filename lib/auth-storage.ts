@@ -1,39 +1,47 @@
 const TOKEN_KEY = "eventhub_token";
 const DOMAIN_KEY = "eventhub_domain";
 
-function migrateLegacyLocalStorage(): void {
-  const legacyToken = localStorage.getItem(TOKEN_KEY);
-  const legacyDomain = localStorage.getItem(DOMAIN_KEY);
-  if (!legacyToken || !legacyDomain) return;
-  if (!sessionStorage.getItem(TOKEN_KEY)) {
-    sessionStorage.setItem(TOKEN_KEY, legacyToken);
-    sessionStorage.setItem(DOMAIN_KEY, legacyDomain);
+/** Keys for cross-tab `storage` listeners (same-origin tabs only). */
+export const AUTH_STORAGE_KEYS = { token: TOKEN_KEY, domain: DOMAIN_KEY } as const;
+
+/**
+ * One-time migration: older builds used sessionStorage (not shared across tabs).
+ * Copy into localStorage so new tabs see the same session.
+ */
+function migrateSessionStorageToLocalStorage(): void {
+  if (typeof window === "undefined") return;
+  const sessionToken = sessionStorage.getItem(TOKEN_KEY);
+  const sessionDomain = sessionStorage.getItem(DOMAIN_KEY);
+  if (!sessionToken || !sessionDomain) return;
+  if (!localStorage.getItem(TOKEN_KEY)) {
+    localStorage.setItem(TOKEN_KEY, sessionToken);
+    localStorage.setItem(DOMAIN_KEY, sessionDomain);
   }
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(DOMAIN_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(DOMAIN_KEY);
 }
 
 export function getAuthFromStorage(): { token: string | null; domain: string | null } {
   if (typeof window === "undefined") return { token: null, domain: null };
-  migrateLegacyLocalStorage();
+  migrateSessionStorageToLocalStorage();
   return {
-    token: sessionStorage.getItem(TOKEN_KEY),
-    domain: sessionStorage.getItem(DOMAIN_KEY),
+    token: localStorage.getItem(TOKEN_KEY),
+    domain: localStorage.getItem(DOMAIN_KEY),
   };
 }
 
 export function setAuthInStorage(token: string, domain: "organization" | "guest"): void {
   if (typeof window === "undefined") return;
-  sessionStorage.setItem(TOKEN_KEY, token);
-  sessionStorage.setItem(DOMAIN_KEY, domain);
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(DOMAIN_KEY);
+  localStorage.setItem(TOKEN_KEY, token);
+  localStorage.setItem(DOMAIN_KEY, domain);
+  sessionStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(DOMAIN_KEY);
 }
 
 export function clearAuthFromStorage(): void {
   if (typeof window === "undefined") return;
-  sessionStorage.removeItem(TOKEN_KEY);
-  sessionStorage.removeItem(DOMAIN_KEY);
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(DOMAIN_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(DOMAIN_KEY);
 }

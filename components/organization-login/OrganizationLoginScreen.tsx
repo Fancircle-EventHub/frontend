@@ -12,6 +12,22 @@ import { extractApiErrorCode, extractApiErrorMessage } from "@/lib/api-error";
 import { setPendingEmail } from "@/lib/pending-email";
 import { useRedirectIfAuthenticated } from "@/lib/auth-guard";
 import { loginPageBackground } from "@/assets/images/login-backgrounds";
+import { Button, ButtonLink } from "@/components/ui/button";
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return <p className="mt-1.5 text-xs text-red-400">{message}</p>;
+}
+
+const loginInputBase =
+  "w-full rounded-lg border bg-[#23272f] py-3 pl-10 pr-3 text-sm text-eh-text-primary placeholder:text-eh-text-tertiary focus:outline-none focus:ring-1";
+
+function loginInputClass(hasError: boolean): string {
+  if (hasError) {
+    return `${loginInputBase} border-red-500/90 focus:border-red-400 focus:ring-red-400/50`;
+  }
+  return `${loginInputBase} border-eh-border focus:border-eh-accent focus:ring-eh-accent`;
+}
 
 function MailIcon({ className }: { className?: string }) {
   return (
@@ -38,7 +54,19 @@ export function OrganizationLoginScreen() {
   const [loginOrganization, { isLoading }] = useLoginOrganizationMutation();
   const [form, setForm] = useState({ email: "", password: "" });
   const [staySignedIn, setStaySignedIn] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  function updateField(key: "email" | "password", value: string) {
+    setForm((f) => ({ ...f, [key]: value }));
+    setFieldErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+    setErrorMessage(null);
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -47,7 +75,18 @@ export function OrganizationLoginScreen() {
       password: form.password,
       remember: staySignedIn,
     });
-    if (!parsed.success) return;
+    if (!parsed.success) {
+      const { fieldErrors: fe, formErrors } = parsed.error.flatten();
+      const next: Record<string, string> = {};
+      for (const [k, arr] of Object.entries(fe)) {
+        if (arr?.[0]) next[k] = arr[0];
+      }
+      setFieldErrors(next);
+      setErrorMessage(formErrors[0] ?? null);
+      return;
+    }
+    setFieldErrors({});
+    setErrorMessage(null);
     try {
       const response = await loginOrganization(parsed.data).unwrap();
       dispatch(setSession({ token: response.data.token, domain: "organization" }));
@@ -65,11 +104,11 @@ export function OrganizationLoginScreen() {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-eh-default text-eh-text-primary">
-      <div className="pointer-events-none absolute inset-0 z-0 min-h-screen w-full overflow-hidden" aria-hidden>
+      <div className="pointer-events-none absolute inset-0 z-0 min-h-screen w-full overflow-hidden grayscale" aria-hidden>
         <div className="relative h-full min-h-screen w-full">
           <Image src={loginPageBackground} alt="" fill sizes="100vw" className="object-cover" priority />
         </div>
-        <div className="absolute inset-0 bg-eh-default/45" />
+        <div className="absolute inset-0 bg-eh-default/55" />
       </div>
       <div className="relative z-10 flex flex-1 flex-col p-5 sm:p-6 md:p-8 lg:p-10 xl:p-12">
         <div className="flex min-h-[calc(100dvh-2.5rem)] flex-1 flex-col border border-black/30 bg-eh-surface/80 shadow-[0_4px_48px_rgba(0,0,0,0.45)] backdrop-blur-md sm:min-h-[calc(100dvh-3rem)] md:min-h-[calc(100dvh-4rem)] lg:min-h-[calc(100dvh-5rem)] xl:min-h-[calc(100dvh-6rem)]">
@@ -114,7 +153,7 @@ export function OrganizationLoginScreen() {
               </p>
             </div>
 
-            <form onSubmit={submit} className="flex flex-col gap-5">
+            <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
               <div>
                 <label className="mb-2 block text-[10px] font-semibold uppercase tracking-wider text-eh-text-tertiary">
                   Email
@@ -128,10 +167,12 @@ export function OrganizationLoginScreen() {
                     autoComplete="email"
                     placeholder="kurator@fancircle.live"
                     value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full rounded-lg border border-eh-border bg-[#23272f] py-3 pl-10 pr-3 text-sm text-eh-text-primary placeholder:text-eh-text-tertiary focus:border-eh-accent focus:outline-none focus:ring-1 focus:ring-eh-accent"
+                    onChange={(e) => updateField("email", e.target.value)}
+                    className={loginInputClass(!!fieldErrors.email)}
+                    aria-invalid={!!fieldErrors.email}
                   />
                 </div>
+                <FieldError message={fieldErrors.email} />
               </div>
 
               <div>
@@ -155,10 +196,12 @@ export function OrganizationLoginScreen() {
                     autoComplete="current-password"
                     placeholder="••••••••"
                     value={form.password}
-                    onChange={(e) => setForm({ ...form, password: e.target.value })}
-                    className="w-full rounded-lg border border-eh-border bg-[#23272f] py-3 pl-10 pr-3 text-sm text-eh-text-primary placeholder:text-eh-text-tertiary focus:border-eh-accent focus:outline-none focus:ring-1 focus:ring-eh-accent"
+                    onChange={(e) => updateField("password", e.target.value)}
+                    className={loginInputClass(!!fieldErrors.password)}
+                    aria-invalid={!!fieldErrors.password}
                   />
                 </div>
+                <FieldError message={fieldErrors.password} />
               </div>
 
               <label className="flex cursor-pointer items-center gap-2 text-sm text-eh-text-secondary">
@@ -171,25 +214,18 @@ export function OrganizationLoginScreen() {
                 Stay signed in
               </label>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="mt-2 w-full rounded-lg bg-eh-accent py-3.5 text-sm font-bold uppercase tracking-widest text-[#0a0a0a] transition hover:brightness-95 disabled:opacity-60"
-              >
-                {isLoading ? "…" : "Login"}
-              </button>
+              <Button type="submit" variant="primary" fullWidth loading={isLoading} className="mt-2">
+                Login
+              </Button>
 
               {errorMessage ? <p className="text-center text-sm text-red-400">{errorMessage}</p> : null}
             </form>
 
             <div className="mt-8 flex flex-col gap-4 border-t border-eh-border pt-8 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-eh-text-secondary">New to Fancircle Eventhub?</p>
-              <Link
-                href="/organization/auth/register"
-                className="inline-flex items-center justify-center rounded-lg border border-eh-border bg-transparent px-5 py-2.5 text-center text-xs font-semibold uppercase tracking-wide text-eh-text-secondary transition hover:border-eh-text-tertiary hover:text-eh-text-primary"
-              >
+              <ButtonLink href="/organization/auth/register" variant="secondary">
                 Request access
-              </Link>
+              </ButtonLink>
             </div>
           </div>
         </div>
