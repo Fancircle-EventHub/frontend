@@ -1,1 +1,17 @@
+#!/usr/bin/env sh
+
+# GUI Git clients (e.g. GitHub Desktop) often lack Homebrew/nvm/fnm in PATH — add common locations.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.volta/bin:${PATH}"
+
+if [ -f "$HOME/.nvm/nvm.sh" ]; then
+  # shellcheck disable=SC1090
+  . "$HOME/.nvm/nvm.sh"
+fi
+
+# fnm is often installed via Homebrew; after PATH above, `fnm env` may work.
+if command -v fnm >/dev/null 2>&1; then
+  eval "$(fnm env)" 2>/dev/null || true
+fi
+
+cd "$(dirname "$0")/.." || exit 1
 npm run lint

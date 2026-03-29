@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Page not found — Fancircle Eventhub",
-  description: "We couldn’t find that page.",
+  title: "Page not found",
+  description: "This page does not exist or the link may be invalid.",
 };
 
 export default function NotFound() {

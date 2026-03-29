@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { rootMetadata } from "@/lib/site-metadata";
 import { StoreProvider } from "@/store/provider";
 
 const inter = Inter({
@@ -9,10 +10,7 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Fancircle EventHub",
-  description: "Organizer login and event management",
-};
+export const metadata: Metadata = rootMetadata;
 
 export default function RootLayout({
   children,
