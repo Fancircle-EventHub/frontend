@@ -7,6 +7,7 @@ import { baseApi } from "@/services/api/baseApi";
 import { getAuthFromStorage } from "@/lib/auth-storage";
 import { getEventContextStorage } from "@/lib/event-context";
 import { clearSession, setEventContext } from "@/slices/session.slice";
+import { GUEST_INVALID_SESSION_PATH, guestEventAuthPaths } from "@/lib/guest-event-auth-paths";
 
 export function useAuthGuard(requiredDomain: "organization" | "guest", redirectTo: string): void {
   const router = useRouter();
@@ -30,7 +31,11 @@ export function useRedirectIfAuthenticated(): void {
       return;
     }
     const code = getEventContextStorage();
-    router.replace(code ? `/guest/event-access/${code}` : "/guest/event-access/no-context");
+    if (code) {
+      router.replace(`/guest/event-access/${code}`);
+      return;
+    }
+    router.replace(GUEST_INVALID_SESSION_PATH);
   }, [router]);
 }
 
@@ -46,7 +51,7 @@ export function useRedirectWhenOrganizationSessionFails(isSessionError: boolean)
   }, [isSessionError, router, dispatch]);
 }
 
-export function useRedirectWhenGuestSessionFails(isSessionError: boolean): void {
+export function useRedirectWhenGuestSessionFails(isSessionError: boolean, eventCode?: string | null): void {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -55,6 +60,11 @@ export function useRedirectWhenGuestSessionFails(isSessionError: boolean): void 
     dispatch(setEventContext(null));
     dispatch(clearSession());
     dispatch(baseApi.util.resetApiState());
-    router.replace("/guest/auth/login");
-  }, [isSessionError, router, dispatch]);
+    const code = eventCode ?? getEventContextStorage();
+    if (code && code !== "no-context") {
+      router.replace(guestEventAuthPaths.login(code));
+    } else {
+      router.replace(GUEST_INVALID_SESSION_PATH);
+    }
+  }, [isSessionError, router, dispatch, eventCode]);
 }

@@ -8,6 +8,7 @@ export type Event = {
   description: string | null;
   artist: string | null;
   venue: string | null;
+  address: string | null;
   city: string | null;
   event_date: string | null;
   start_time: string | null;
@@ -22,6 +23,12 @@ export type Event = {
   modules: Record<string, boolean> | null;
   access_code: string;
   join_link: string;
+  shot_of_the_night?: {
+    id: string;
+    kind: "image" | "video";
+    url: string;
+    username: string | null;
+  } | null;
   created_at?: string;
   updated_at?: string;
 };
@@ -36,6 +43,7 @@ export type CreateEventPayload = {
   description?: string | null;
   artist: string;
   venue: string;
+  address: string;
   city: string;
   event_date: string;
   start_time: string;
@@ -48,6 +56,7 @@ export type UpdateEventPayload = {
   description?: string | null;
   artist?: string | null;
   venue?: string | null;
+  address?: string | null;
   city?: string | null;
   event_date?: string | null;
   start_time?: string | null;
@@ -59,4 +68,5 @@ export type UpdateEventPayload = {
   button_color?: string | null;
   modules?: Record<string, boolean> | null;
   status?: EventStatus;
+  shot_of_the_night_media_id?: string | null;
 };

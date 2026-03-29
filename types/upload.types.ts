@@ -1,4 +1,9 @@
-export type UploadType = "organization_logo" | "event_cover" | "event_logo";
+export type UploadType =
+  | "organization_logo"
+  | "event_cover"
+  | "event_logo"
+  | "guest_profile_avatar"
+  | "guest_event_gallery";
 
 export type PresignUploadPayload = {
   type: UploadType;

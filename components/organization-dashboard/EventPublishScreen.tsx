@@ -18,8 +18,8 @@ function formatEventDate(iso: string | null): string {
   }
 }
 
-function venueLine(venue: string | null, city: string | null): string {
-  const parts = [venue?.trim(), city?.trim()].filter(Boolean);
+function venueLine(venue: string | null, city: string | null, address: string | null): string {
+  const parts = [venue?.trim(), address?.trim(), city?.trim()].filter(Boolean);
   return parts.length ? parts.join(" · ") : "—";
 }
 
@@ -113,7 +113,7 @@ export function EventPublishScreen({ eventId }: EventPublishScreenProps) {
                 <path d="M12 21s7-4.5 7-11a7 7 0 10-14 0c0 6.5 7 11 7 11z" />
                 <circle cx="12" cy="10" r="2.5" />
               </svg>
-              {venueLine(event.venue, event.city)}
+              {venueLine(event.venue, event.city, event.address ?? null)}
             </span>
             <span className="inline-flex items-center gap-2 text-eh-accent">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>

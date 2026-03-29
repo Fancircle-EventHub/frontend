@@ -26,7 +26,9 @@ const sessionSlice = createSlice({
     clearSession(state) {
       state.token = null;
       state.domain = null;
+      state.eventContextCode = null;
       clearAuthFromStorage();
+      setEventContextStorage(null);
     },
     setEventContext(state, action: PayloadAction<string | null>) {
       state.eventContextCode = action.payload;

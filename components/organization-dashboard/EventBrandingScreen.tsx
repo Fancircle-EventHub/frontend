@@ -113,12 +113,11 @@ function BrandingPhonePreview({
   return (
     <div className="mx-auto w-full max-w-[260px] rounded-[2rem] border border-white/20 bg-[#0a0a0a] p-2 shadow-2xl shadow-black/60">
       <div
-        className="overflow-hidden rounded-[1.65rem] shadow-inner"
+        className="min-w-0 overflow-hidden rounded-[1.65rem] shadow-inner"
         style={{ backgroundColor: bg, color: fg }}
       >
         <div className="relative h-32 w-full bg-black/30">
           {heroSrc ? (
-             
             <img src={heroSrc} alt="" className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center bg-gradient-to-br from-zinc-700/80 to-zinc-900 text-[10px] text-white/40">
@@ -126,15 +125,16 @@ function BrandingPhonePreview({
             </div>
           )}
         </div>
-        <div className="space-y-3 px-4 pb-6 pt-4">
+        <div className="min-w-0 space-y-3 px-4 pb-6 pt-4">
           {logoSrc ? (
-             
             <img src={logoSrc} alt="" className="h-8 max-w-[140px] object-contain object-left" />
           ) : (
             <div className="h-8 w-24 rounded bg-white/10" />
           )}
-          <h3 className="text-lg font-bold leading-snug">{form.title || "Event heading"}</h3>
-          <p className="text-xs leading-relaxed opacity-85">
+          <h3 className="min-w-0 wrap-break-word text-lg font-bold leading-snug">
+            {form.title || "Event heading"}
+          </h3>
+          <p className="min-w-0 max-w-full wrap-anywhere text-xs leading-relaxed opacity-85">
             {form.description || "Event description appears here for your guests."}
           </p>
           <button
@@ -394,8 +394,8 @@ export function EventBrandingScreen({ eventId }: EventBrandingScreenProps) {
           <div className="rounded-xl border border-white/10 bg-[#0e1012]/80 p-6 backdrop-blur-sm">
             <BrandingPhonePreview
               form={form}
-              heroSrc={heroPreview.loading ? null : heroPreview.url}
-              logoSrc={logoPreview.loading ? null : logoPreview.url}
+              heroSrc={heroPreview.url}
+              logoSrc={logoPreview.url}
             />
             <p className="mt-4 text-center text-[10px] text-eh-text-tertiary">Guest app appearance (illustrative)</p>
           </div>

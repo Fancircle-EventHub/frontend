@@ -8,7 +8,7 @@ import {
   useGetOrganizationEventQuery,
   useUpdateOrganizationEventMutation,
 } from "@/apis/event.api";
-import { createEventSchema, EVENT_VENUE_VALUES, type EventVenue } from "@/schemas/event.schema";
+import { createEventSchema } from "@/schemas/event.schema";
 import type { Event } from "@/types/event.types";
 import { rawStorageFromEvent } from "@/lib/storage-path";
 import { extractApiErrorMessage } from "@/lib/api-error";
@@ -16,20 +16,11 @@ import { Button } from "@/components/ui/button";
 import { FieldError, inputClassName, labelClass } from "@/components/organization-auth/auth-form-primitives";
 import { ImageUploadField } from "@/components/organization-dashboard/ImageUploadField";
 
-const venueLabel: Record<EventVenue, string> = {
-  arena: "Arena",
-  club: "Club",
-  theater: "Theater",
-  outdoor: "Outdoor",
-  other: "Other",
-};
-
-const venueOptions = [{ value: "" as const, label: "Select venue" }, ...EVENT_VENUE_VALUES.map((v) => ({ value: v, label: venueLabel[v] }))];
-
 type FormState = {
   title: string;
   artist: string;
   venue: string;
+  address: string;
   city: string;
   date: string;
   startTime: string;
@@ -42,6 +33,7 @@ function eventToFormState(ev: Event): FormState {
     title: ev.title,
     artist: ev.artist ?? "",
     venue: ev.venue ?? "",
+    address: ev.address ?? "",
     city: ev.city ?? "",
     date: ev.event_date ?? "",
     startTime: ev.start_time ? ev.start_time.slice(0, 5) : "",
@@ -65,6 +57,7 @@ export function OrganizationCreateEventScreen({ eventId }: OrganizationCreateEve
     title: "",
     artist: "",
     venue: "",
+    address: "",
     city: "",
     date: "",
     startTime: "",
@@ -108,6 +101,7 @@ export function OrganizationCreateEventScreen({ eventId }: OrganizationCreateEve
       title: "",
       artist: "",
       venue: "",
+      address: "",
       city: "",
       date: "",
       startTime: "",
@@ -125,6 +119,7 @@ export function OrganizationCreateEventScreen({ eventId }: OrganizationCreateEve
       title: form.title.trim(),
       artist: form.artist,
       venue: form.venue,
+      address: form.address.trim(),
       city: form.city,
       event_date: form.date,
       start_time: form.startTime,
@@ -209,7 +204,12 @@ export function OrganizationCreateEventScreen({ eventId }: OrganizationCreateEve
         </p>
       </div>
 
-      <form onSubmit={submit} className="grid gap-10 lg:grid-cols-[1fr_320px]" noValidate>
+      <form
+        onSubmit={submit}
+        className="grid gap-10 lg:grid-cols-[1fr_320px]"
+        noValidate
+        translate="no"
+      >
         <div className="space-y-5">
           <div>
             <label className={labelClass} htmlFor="evt-title">
@@ -229,23 +229,15 @@ export function OrganizationCreateEventScreen({ eventId }: OrganizationCreateEve
             <label className={labelClass} htmlFor="evt-venue">
               Venue <span className="text-red-400">*</span>
             </label>
-            <div className="relative">
-              <select
-                id="evt-venue"
-                className={`${inputClassName(!!fieldErrors.venue)} appearance-none bg-[#23272f] pr-10`}
-                value={form.venue}
-                onChange={(e) => patch("venue", e.target.value)}
-                required
-                aria-invalid={!!fieldErrors.venue}
-              >
-                {venueOptions.map((o) => (
-                  <option key={o.value || "empty"} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {input("venue", "evt-venue", { placeholder: "Venue name", required: true })}
             <FieldError message={fieldErrors.venue} />
+          </div>
+          <div>
+            <label className={labelClass} htmlFor="evt-address">
+              Address <span className="text-red-400">*</span>
+            </label>
+            {input("address", "evt-address", { placeholder: "Street, number, postal code", autoComplete: "street-address", required: true })}
+            <FieldError message={fieldErrors.address} />
           </div>
           <div>
             <label className={labelClass} htmlFor="evt-city">
@@ -271,7 +263,7 @@ export function OrganizationCreateEventScreen({ eventId }: OrganizationCreateEve
             </div>
             <div>
               <label className={labelClass} htmlFor="evt-doors">
-                Doors <span className="text-red-400">*</span>
+                Doors open <span className="text-red-400">*</span>
               </label>
               {input("doorsTime", "evt-doors", { type: "time", required: true })}
               <FieldError message={fieldErrors.doors_time} />
@@ -282,8 +274,8 @@ export function OrganizationCreateEventScreen({ eventId }: OrganizationCreateEve
         <aside className="space-y-5">
           <div className="rounded-xl border border-white/10 bg-[#16181c] p-5">
             <ImageUploadField
-              label="Hero image"
-              hint="Optional. Upload a portrait or hero image for this event (stored in your bucket)."
+              label="Cover image"
+              hint="Optional. Upload a cover image for this event (portrait or landscape; stored in your bucket)."
               value={form.hero_image_url}
               onChange={(v) => patch("hero_image_url", v)}
               uploadType="event_cover"
@@ -295,7 +287,7 @@ export function OrganizationCreateEventScreen({ eventId }: OrganizationCreateEve
           <div className="rounded-xl border border-eh-accent/30 bg-eh-accent/5 p-4">
             <p className="text-[10px] font-bold uppercase tracking-wider text-eh-accent">Premium tip</p>
             <p className="mt-2 text-xs leading-relaxed text-eh-text-secondary">
-              High-quality, darker hero images typically convert better—keep the focus on the experience, not clutter.
+              High-quality, darker cover images usually work best—keep the focus on the experience, not clutter.
             </p>
           </div>
         </aside>

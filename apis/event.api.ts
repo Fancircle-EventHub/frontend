@@ -1,6 +1,7 @@
 import { TAG_TYPES } from "@/constants/tagTypes";
 import { baseApi } from "@/services/api/baseApi";
 import type { ApiEnvelope } from "@/types/api.types";
+import type { OrganizationGuestMediaPayload } from "@/types/guest-media.types";
 import type { CreateEventPayload, Event, HubSummaryEmailResult, UpdateEventPayload } from "@/types/event.types";
 
 export type ListOrganizationEventsQueryParams = {
@@ -33,6 +34,7 @@ export const eventApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (_r, _e, { eventId }) => [
         TAG_TYPES.OrganizationEvent,
+        TAG_TYPES.EventEntry,
         { type: TAG_TYPES.OrganizationEvent, id: eventId },
       ],
     }),
@@ -50,6 +52,13 @@ export const eventApi = baseApi.injectEndpoints({
       query: (code) => ({ url: `/events/${code}/entry` }),
       providesTags: [TAG_TYPES.EventEntry],
     }),
+    organizationEventGuestMedia: builder.query<ApiEnvelope<OrganizationGuestMediaPayload>, string>({
+      query: (eventId) => ({ url: `/organization/events/${eventId}/guest-media` }),
+      providesTags: (_r, _e, eventId) => [
+        TAG_TYPES.OrganizationEvent,
+        { type: TAG_TYPES.OrganizationEvent, id: eventId },
+      ],
+    }),
   }),
 });
 
@@ -60,4 +69,5 @@ export const {
   useUpdateOrganizationEventMutation,
   useSendOrganizationEventHubSummaryEmailMutation,
   useEventEntryByCodeQuery,
+  useOrganizationEventGuestMediaQuery,
 } = eventApi;

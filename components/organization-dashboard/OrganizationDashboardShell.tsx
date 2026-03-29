@@ -262,7 +262,6 @@ export function OrganizationDashboardShell({
           <div className="mb-3 flex items-center gap-3 rounded-lg px-1 py-2">
             {organizationLogoUrl ? (
               <span className="flex size-10 shrink-0 overflow-hidden rounded-full border border-white/15">
-                { }
                 <img src={organizationLogoUrl} alt="" className="size-full object-cover" />
               </span>
             ) : (
@@ -332,7 +331,6 @@ export function OrganizationDashboardShell({
                         aria-haspopup="true"
                       >
                         {organizationLogoUrl ? (
-                           
                           <img src={organizationLogoUrl} alt="" className="size-full object-cover" />
                         ) : (
                           initials
@@ -481,7 +479,6 @@ export function OrganizationDashboardShell({
                     aria-haspopup="true"
                   >
                     {organizationLogoUrl ? (
-                       
                       <img src={organizationLogoUrl} alt="" className="size-full object-cover" />
                     ) : (
                       initials
@@ -515,7 +512,9 @@ export function OrganizationDashboardShell({
           )}
         </header>
 
-        <main className="flex-1 overflow-auto px-4 py-8 md:px-8">{children}</main>
+        <main className="flex-1 overflow-auto px-4 py-8 md:px-8" translate="no">
+          {children}
+        </main>
 
         <footer className="shrink-0 border-t border-white/10 px-4 py-4 text-[10px] uppercase tracking-wide text-eh-text-tertiary md:px-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

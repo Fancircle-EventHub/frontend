@@ -194,23 +194,28 @@ export function OrganizationEventsPageContent() {
                   <p className="mt-2 truncate text-[11px] text-eh-text-tertiary">{event.join_link}</p>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {status === "draft" ? (
-                      <Link
-                        href={`/organization/events/${event.id}/edit`}
-                        className="flex w-full items-center justify-center rounded-lg bg-eh-accent py-2.5 text-center text-xs font-bold uppercase tracking-wider text-[#0a0a0a] transition hover:brightness-95"
-                      >
-                        Continue setup
-                      </Link>
+                      <div className="flex w-full flex-col gap-2">
+                        <Link
+                          href={`/organization/events/${event.id}/edit`}
+                          className="flex w-full items-center justify-center rounded-lg bg-eh-accent py-2.5 text-center text-xs font-bold uppercase tracking-wider text-[#0a0a0a] transition hover:brightness-95"
+                        >
+                          Continue setup
+                        </Link>
+                        <Link
+                          href={`/organization/events/${event.id}/gallery`}
+                          className="flex w-full items-center justify-center rounded-lg border border-white/15 py-2.5 text-center text-xs font-semibold text-eh-text-secondary transition hover:bg-white/5"
+                        >
+                          Fan gallery
+                        </Link>
+                      </div>
                     ) : (
                       <>
-                        <button
-                          type="button"
+                        <Link
+                          href={`/organization/events/${event.id}/gallery`}
                           className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-eh-text-primary transition hover:bg-white/10"
                         >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <path d="M4 19V5M4 12h4l3-8 4 14 3-8h4" />
-                          </svg>
-                          Stats
-                        </button>
+                          Gallery
+                        </Link>
                         <Link
                           href={`/organization/events/${event.id}/edit`}
                           className="inline-flex flex-1 items-center justify-center rounded-lg bg-eh-accent px-3 py-2 text-xs font-bold uppercase tracking-wider text-[#0a0a0a] transition hover:brightness-95"

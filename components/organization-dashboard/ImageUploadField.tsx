@@ -107,7 +107,6 @@ export function ImageUploadField({
         }
       >
         {previewSrc ? (
-           
           <img src={previewSrc} alt="" className={variant === "cover" ? "size-full object-cover" : "max-h-full max-w-full object-contain p-2"} />
         ) : (
           <div

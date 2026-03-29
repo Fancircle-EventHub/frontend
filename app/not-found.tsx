@@ -53,12 +53,6 @@ export default function NotFound() {
             >
               Organizer sign in
             </Link>
-            <Link
-              href="/guest/auth/login"
-              className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-8 py-3.5 text-sm font-semibold text-eh-text-primary transition hover:bg-white/10"
-            >
-              Guest sign in
-            </Link>
           </div>
 
           <div className="mt-14 rounded-2xl border border-white/10 bg-[#16181c]/80 p-6 text-left shadow-xl backdrop-blur-sm">
@@ -68,7 +62,8 @@ export default function NotFound() {
             </p>
             <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-eh-text-tertiary">Guests</p>
             <p className="mt-2 text-sm text-eh-text-secondary">
-              Use the link or QR code from your ticket—guest hubs use a unique path, not this address bar guess.
+              Use the link or QR code from your ticket—guest access uses your event’s unique path, not a generic sign-in
+              page.
             </p>
           </div>
         </div>

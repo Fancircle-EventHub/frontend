@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import "@/apis/guestUpload.api";
 import "@/apis/upload.api";
 import { baseApi } from "@/services/api/baseApi";
 import sessionReducer from "@/slices/session.slice";

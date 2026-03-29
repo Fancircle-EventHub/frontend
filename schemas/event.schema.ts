@@ -1,9 +1,6 @@
 import { optionalStoragePathOrLegacyUrl } from "@/lib/storage-path";
 import { z } from "zod";
 
-export const EVENT_VENUE_VALUES = ["arena", "club", "theater", "outdoor", "other"] as const;
-export type EventVenue = (typeof EVENT_VENUE_VALUES)[number];
-
 export const createEventSchema = z.object({
   title: z.string().min(1, "Title is required").max(180),
   description: z
@@ -12,7 +9,8 @@ export const createEventSchema = z.object({
     .optional()
     .transform((s) => (s === undefined || s.trim() === "" ? undefined : s.trim())),
   artist: z.string().trim().min(1, "Artist is required").max(255),
-  venue: z.enum(EVENT_VENUE_VALUES, { message: "Select a venue" }),
+  venue: z.string().trim().min(1, "Venue is required").max(255),
+  address: z.string().trim().min(1, "Address is required").max(500),
   city: z.string().trim().min(1, "City is required").max(120),
   event_date: z
     .string()
@@ -28,9 +26,9 @@ export const createEventSchema = z.object({
   doors_time: z
     .string()
     .trim()
-    .min(1, "Doors time is required")
+    .min(1, "Doors open time is required")
     .transform((s) => (s.length >= 5 ? s.slice(0, 5) : s))
-    .refine((s) => /^\d{2}:\d{2}$/.test(s), "Enter a valid doors time"),
+    .refine((s) => /^\d{2}:\d{2}$/.test(s), "Enter a valid time for doors open"),
   hero_image_url: optionalStoragePathOrLegacyUrl,
 });
 
