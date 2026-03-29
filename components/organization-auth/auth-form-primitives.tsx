@@ -4,7 +4,7 @@ export function FieldError({ message }: { message?: string }) {
 }
 
 const inputBase =
-  "w-full rounded-lg border py-3 px-3 text-sm text-eh-text-primary placeholder:text-eh-text-tertiary focus:outline-none focus:ring-1";
+  "w-full rounded-lg border py-3 px-3 text-base text-eh-text-primary placeholder:text-eh-text-tertiary focus:outline-none focus:ring-1 md:text-sm";
 
 export const labelClass = "mb-2 block text-[10px] font-semibold uppercase tracking-wider text-eh-text-tertiary";
 

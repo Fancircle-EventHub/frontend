@@ -1,5 +1,5 @@
 export const guestInputBase =
-  "w-full rounded-xl border border-eh-border bg-[#1a1d24] py-3.5 px-4 text-sm text-eh-text-primary placeholder:text-eh-text-tertiary focus:outline-none focus:ring-1 focus:border-eh-accent focus:ring-eh-accent/40";
+  "w-full rounded-xl border border-eh-border bg-[#1a1d24] py-3.5 px-4 text-base text-eh-text-primary placeholder:text-eh-text-tertiary focus:outline-none focus:ring-1 focus:border-eh-accent focus:ring-eh-accent/40 md:text-sm";
 
 export function guestInputClass(hasError: boolean): string {
   if (hasError) {

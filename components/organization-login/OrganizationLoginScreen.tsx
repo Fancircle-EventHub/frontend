@@ -20,7 +20,7 @@ function FieldError({ message }: { message?: string }) {
 }
 
 const loginInputBase =
-  "w-full rounded-lg border bg-[#23272f] py-3 pl-10 pr-3 text-sm text-eh-text-primary placeholder:text-eh-text-tertiary focus:outline-none focus:ring-1";
+  "w-full rounded-lg border bg-[#23272f] py-3 pl-10 pr-3 text-base text-eh-text-primary placeholder:text-eh-text-tertiary focus:outline-none focus:ring-1 md:text-sm";
 
 function loginInputClass(hasError: boolean): string {
   if (hasError) {

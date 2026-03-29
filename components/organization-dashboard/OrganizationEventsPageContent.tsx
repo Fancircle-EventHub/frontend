@@ -98,7 +98,7 @@ export function OrganizationEventsPageContent() {
             setPage(1);
           }}
           placeholder="Search title, city, code…"
-          className="w-full max-w-md rounded-lg border border-white/10 bg-[#0e1012] px-3 py-2 text-sm text-eh-text-primary placeholder:text-eh-text-tertiary focus:border-eh-accent/40 focus:outline-none focus:ring-1 focus:ring-eh-accent/30 lg:order-last lg:max-w-xs"
+          className="w-full max-w-md rounded-lg border border-white/10 bg-[#0e1012] px-3 py-2 text-base text-eh-text-primary placeholder:text-eh-text-tertiary focus:border-eh-accent/40 focus:outline-none focus:ring-1 focus:ring-eh-accent/30 md:text-sm lg:order-last lg:max-w-xs"
           aria-label="Search events"
         />
         <div className="flex flex-wrap gap-2" role="tablist" aria-label="Event status">
@@ -136,7 +136,7 @@ export function OrganizationEventsPageContent() {
               setSort(e.target.value as "updated" | "title");
               setPage(1);
             }}
-            className="rounded-lg border border-white/10 bg-[#0e1012] px-3 py-2 text-sm font-medium text-eh-accent focus:border-eh-accent/50 focus:outline-none focus:ring-1 focus:ring-eh-accent/30"
+            className="rounded-lg border border-white/10 bg-[#0e1012] px-3 py-2 text-base font-medium text-eh-accent focus:border-eh-accent/50 focus:outline-none focus:ring-1 focus:ring-eh-accent/30 md:text-sm"
           >
             <option value="updated">Last updated</option>
             <option value="title">Title</option>
