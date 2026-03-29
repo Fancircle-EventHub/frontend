@@ -3,8 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEventEntryByCodeQuery } from "@/apis/event.api";
 import { useGuestSessionQuery, useLogoutGuestMutation } from "@/apis/guest.api";
-import { useAuthGuard } from "@/lib/auth-guard";
-import { useEffect } from "react";
+import { useAuthGuard, useRedirectWhenGuestSessionFails } from "@/lib/auth-guard";
 import { clearSession, setEventContext } from "@/slices/session.slice";
 import { baseApi } from "@/services/api/baseApi";
 import { useAppDispatch } from "@/store/hooks";
@@ -14,7 +13,8 @@ export default function GuestEventAccessPage() {
   const dispatch = useAppDispatch();
   const [logout, { isLoading: logoutLoading }] = useLogoutGuestMutation();
   useAuthGuard("guest", "/guest/auth/login");
-  const { isLoading: sessionLoading, isError: sessionError } = useGuestSessionQuery();
+  const { isLoading: sessionLoading, isError: isSessionError } = useGuestSessionQuery();
+  useRedirectWhenGuestSessionFails(isSessionError);
   const params = useParams<{ code: string }>();
   const { data } = useEventEntryByCodeQuery(params.code);
 
@@ -27,10 +27,6 @@ export default function GuestEventAccessPage() {
     dispatch(baseApi.util.resetApiState());
     router.replace("/guest/auth/login");
   }
-
-  useEffect(() => {
-    if (sessionError) router.replace("/guest/auth/login");
-  }, [router, sessionError]);
 
   if (sessionLoading) {
     return <div className="mx-auto w-full max-w-xl p-6 text-zinc-300">Checking session...</div>;

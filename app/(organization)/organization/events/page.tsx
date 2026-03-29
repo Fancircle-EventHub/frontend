@@ -6,10 +6,10 @@ import { useAuthGuard, useRedirectWhenOrganizationSessionFails } from "@/lib/aut
 import { clearSession } from "@/slices/session.slice";
 import { baseApi } from "@/services/api/baseApi";
 import { useAppDispatch } from "@/store/hooks";
-import { OrganizationCreateEventScreen } from "@/components/organization-dashboard/OrganizationCreateEventScreen";
 import { OrganizationDashboardShell } from "@/components/organization-dashboard/OrganizationDashboardShell";
+import { OrganizationEventsPageContent } from "@/components/organization-dashboard/OrganizationEventsPageContent";
 
-export default function CreateOrganizationEventPage() {
+export default function OrganizationEventsPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [logout, { isLoading: logoutLoading }] = useLogoutOrganizationMutation();
@@ -34,7 +34,7 @@ export default function CreateOrganizationEventPage() {
       <div className="flex min-h-screen items-center justify-center bg-[#121417] text-eh-text-secondary">
         <div className="flex flex-col items-center gap-3">
           <div className="size-10 animate-spin rounded-full border-2 border-eh-accent/30 border-t-eh-accent" />
-          <p className="text-sm">Loading…</p>
+          <p className="text-sm">Loading events…</p>
         </div>
       </div>
     );
@@ -47,7 +47,7 @@ export default function CreateOrganizationEventPage() {
       onLogout={() => void handleLogout()}
       logoutLoading={logoutLoading}
     >
-      <OrganizationCreateEventScreen />
+      <OrganizationEventsPageContent />
     </OrganizationDashboardShell>
   );
 }

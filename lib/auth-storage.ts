@@ -1,13 +1,8 @@
 const TOKEN_KEY = "eventhub_token";
 const DOMAIN_KEY = "eventhub_domain";
 
-/** Keys for cross-tab `storage` listeners (same-origin tabs only). */
 export const AUTH_STORAGE_KEYS = { token: TOKEN_KEY, domain: DOMAIN_KEY } as const;
 
-/**
- * One-time migration: older builds used sessionStorage (not shared across tabs).
- * Copy into localStorage so new tabs see the same session.
- */
 function migrateSessionStorageToLocalStorage(): void {
   if (typeof window === "undefined") return;
   const sessionToken = sessionStorage.getItem(TOKEN_KEY);

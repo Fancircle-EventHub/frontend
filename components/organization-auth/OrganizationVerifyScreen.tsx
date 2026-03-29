@@ -19,7 +19,6 @@ export function OrganizationVerifyScreen() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
-  /** Empty on first paint so server and client match; filled in useEffect (URL + localStorage only exist on client). */
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [verify, { isLoading }] = useVerifyOrganizationOtpMutation();

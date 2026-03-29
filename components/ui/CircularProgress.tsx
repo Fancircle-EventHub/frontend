@@ -1,10 +1,5 @@
 type CircularProgressProps = {
-  /** Width and height in pixels. */
   size?: number;
-  /**
-   * `accent` — gold track + arc (default), for dark surfaces.
-   * `on-accent` — dark arc, for `bg-eh-accent` primary buttons.
-   */
   variant?: "accent" | "on-accent";
   className?: string;
   "aria-label"?: string;

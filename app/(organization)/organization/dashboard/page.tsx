@@ -1,69 +1,62 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useListOrganizationEventsQuery } from "@/apis/event.api";
 import { useLogoutOrganizationMutation, useOrganizationSessionQuery } from "@/apis/organization.api";
-import { useAuthGuard } from "@/lib/auth-guard";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useAuthGuard, useRedirectWhenOrganizationSessionFails } from "@/lib/auth-guard";
 import { clearSession } from "@/slices/session.slice";
 import { baseApi } from "@/services/api/baseApi";
 import { useAppDispatch } from "@/store/hooks";
+import { DashboardHomeContent } from "@/components/organization-dashboard/DashboardHomeContent";
+import { OrganizationDashboardShell } from "@/components/organization-dashboard/OrganizationDashboardShell";
 
 export default function OrganizationDashboardPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [logout, { isLoading: logoutLoading }] = useLogoutOrganizationMutation();
   useAuthGuard("organization", "/organization/auth/login");
-  const { isLoading: sessionLoading, isError: sessionError } = useOrganizationSessionQuery();
-  const { data } = useListOrganizationEventsQuery();
-  const events = data?.data ?? [];
+  const { data: sessionData, isLoading: sessionLoading, isError: isSessionError } = useOrganizationSessionQuery();
+  useRedirectWhenOrganizationSessionFails(isSessionError);
+  const { data: eventsData, isLoading: eventsLoading } = useListOrganizationEventsQuery();
+  const organization = sessionData?.data.organization;
+  const events = eventsData?.data ?? [];
 
   async function handleLogout() {
     try {
       await logout().unwrap();
-    } catch {}
+    } catch {
+      /* still clear client session */
+    }
     dispatch(clearSession());
     dispatch(baseApi.util.resetApiState());
     router.replace("/organization/auth/login");
   }
 
-  useEffect(() => {
-    if (sessionError) router.replace("/organization/auth/login");
-  }, [router, sessionError]);
-
-  if (sessionLoading) {
-    return <div className="mx-auto w-full max-w-4xl p-6 text-zinc-300">Checking session...</div>;
+  if (sessionLoading || !organization) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#121417] text-eh-text-secondary">
+        <div className="flex flex-col items-center gap-3">
+          <div className="size-10 animate-spin rounded-full border-2 border-eh-accent/30 border-t-eh-accent" />
+          <p className="text-sm">Loading your workspace…</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold">Organization Dashboard</h1>
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => void handleLogout()}
-            disabled={logoutLoading}
-            className="rounded border border-zinc-600 px-4 py-2 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
-          >
-            {logoutLoading ? "Logging out…" : "Log out"}
-          </button>
-          <Link className="rounded bg-blue-600 px-4 py-2" href="/organization/events/new">Add Event</Link>
+    <OrganizationDashboardShell
+      organizationName={organization.name}
+      userEmail={organization.email}
+      onLogout={() => void handleLogout()}
+      logoutLoading={logoutLoading}
+    >
+      {eventsLoading ? (
+        <div className="flex min-h-[40vh] items-center justify-center text-eh-text-secondary">
+          <div className="size-8 animate-spin rounded-full border-2 border-eh-accent/30 border-t-eh-accent" />
         </div>
-      </div>
-      {events.length === 0 ? (
-        <div className="rounded border border-zinc-700 p-6 text-zinc-300">No events yet. Start by clicking Add Event.</div>
       ) : (
-        <div className="grid gap-3">
-          {events.map((event) => (
-            <div key={event.id} className="rounded border border-zinc-700 p-4">
-              <div className="font-medium">{event.title}</div>
-              <div className="text-sm text-zinc-400">{event.join_link}</div>
-            </div>
-          ))}
-        </div>
+        <DashboardHomeContent organizationName={organization.name} events={events} />
       )}
-    </div>
+    </OrganizationDashboardShell>
   );
 }

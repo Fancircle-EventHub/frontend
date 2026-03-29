@@ -19,7 +19,6 @@ const sessionSlice = createSlice({
       state.domain = action.payload.domain;
       setAuthInStorage(action.payload.token, action.payload.domain);
     },
-    /** Updates Redux only; storage is already the source of truth (hydration / other tabs). */
     restoreSession(state, action: PayloadAction<{ token: string; domain: "organization" | "guest" }>) {
       state.token = action.payload.token;
       state.domain = action.payload.domain;

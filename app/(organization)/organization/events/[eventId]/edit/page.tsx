@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useLogoutOrganizationMutation, useOrganizationSessionQuery } from "@/apis/organization.api";
 import { useAuthGuard, useRedirectWhenOrganizationSessionFails } from "@/lib/auth-guard";
 import { clearSession } from "@/slices/session.slice";
@@ -9,9 +9,11 @@ import { useAppDispatch } from "@/store/hooks";
 import { OrganizationCreateEventScreen } from "@/components/organization-dashboard/OrganizationCreateEventScreen";
 import { OrganizationDashboardShell } from "@/components/organization-dashboard/OrganizationDashboardShell";
 
-export default function CreateOrganizationEventPage() {
+export default function EditOrganizationEventPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const params = useParams();
+  const eventId = typeof params.eventId === "string" ? params.eventId : "";
   const [logout, { isLoading: logoutLoading }] = useLogoutOrganizationMutation();
   useAuthGuard("organization", "/organization/auth/login");
   const { data: sessionData, isLoading: sessionLoading, isError: isSessionError } = useOrganizationSessionQuery();
@@ -47,7 +49,7 @@ export default function CreateOrganizationEventPage() {
       onLogout={() => void handleLogout()}
       logoutLoading={logoutLoading}
     >
-      <OrganizationCreateEventScreen />
+      <OrganizationCreateEventScreen eventId={eventId} />
     </OrganizationDashboardShell>
   );
 }

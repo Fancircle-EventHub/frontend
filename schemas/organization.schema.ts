@@ -23,7 +23,6 @@ export const organizationRegisterFormSchema = z
     path: ["password_confirmation"],
   });
 
-/** Alias for API-aligned naming (same shape as form). */
 export const organizationRegisterSchema = organizationRegisterFormSchema;
 
 export const organizationLoginSchema = z.object({
