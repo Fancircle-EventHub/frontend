@@ -2,7 +2,12 @@ import { TAG_TYPES } from "@/constants/tagTypes";
 import { baseApi } from "@/services/api/baseApi";
 import type { ApiEnvelope } from "@/types/api.types";
 import type { AuthTokenResponse, ForgotPasswordPayload, ResetPasswordPayload, VerifyOtpPayload } from "@/types/auth.types";
-import type { Organization, OrganizationLoginPayload, OrganizationRegisterPayload } from "@/types/organization.types";
+import type {
+  Organization,
+  OrganizationLoginPayload,
+  OrganizationRegisterPayload,
+  UpdateOrganizationProfilePayload,
+} from "@/types/organization.types";
 
 export const organizationApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -32,6 +37,10 @@ export const organizationApi = baseApi.injectEndpoints({
     resetOrganizationPassword: builder.mutation<ApiEnvelope<null>, ResetPasswordPayload>({
       query: (body) => ({ url: "/organization/auth/reset-password", method: "POST", body }),
     }),
+    updateOrganizationProfile: builder.mutation<ApiEnvelope<{ organization: Organization }>, UpdateOrganizationProfilePayload>({
+      query: (body) => ({ url: "/organization/profile", method: "PATCH", body }),
+      invalidatesTags: [TAG_TYPES.OrganizationSession],
+    }),
   }),
 });
 
@@ -44,4 +53,5 @@ export const {
   useLogoutOrganizationMutation,
   useForgotOrganizationPasswordMutation,
   useResetOrganizationPasswordMutation,
+  useUpdateOrganizationProfileMutation,
 } = organizationApi;

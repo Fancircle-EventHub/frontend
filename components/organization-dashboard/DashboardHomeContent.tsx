@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { OrganizationLogoRow } from "@/components/organization-dashboard/OrganizationLogoRow";
 import type { Event } from "@/types/event.types";
+import type { Organization } from "@/types/organization.types";
 
 function EngagementChart() {
   return (
@@ -51,7 +53,7 @@ function EngagementChart() {
 }
 
 type DashboardHomeContentProps = {
-  organizationName: string;
+  organization: Organization;
   events: Event[];
 };
 
@@ -70,7 +72,8 @@ function formatEventWhen(ev: Event): string | null {
   return parts.length ? parts.join(" · ") : null;
 }
 
-export function DashboardHomeContent({ organizationName, events }: DashboardHomeContentProps) {
+export function DashboardHomeContent({ organization, events }: DashboardHomeContentProps) {
+  const organizationName = organization.name;
   const nextEvent = events[0];
   const secondEvent = events[1];
   const thirdEvent = events[2];
@@ -79,6 +82,8 @@ export function DashboardHomeContent({ organizationName, events }: DashboardHome
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
+      <OrganizationLogoRow organization={organization} />
+
       <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-eh-accent">Welcome back</p>

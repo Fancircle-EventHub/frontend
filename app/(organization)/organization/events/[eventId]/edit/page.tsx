@@ -23,9 +23,7 @@ export default function EditOrganizationEventPage() {
   async function handleLogout() {
     try {
       await logout().unwrap();
-    } catch {
-      /* still clear client session */
-    }
+    } catch {}
     dispatch(clearSession());
     dispatch(baseApi.util.resetApiState());
     router.replace("/organization/auth/login");
@@ -46,6 +44,7 @@ export default function EditOrganizationEventPage() {
     <OrganizationDashboardShell
       organizationName={organization.name}
       userEmail={organization.email}
+      organizationLogoUrl={organization.logo_url ?? null}
       onLogout={() => void handleLogout()}
       logoutLoading={logoutLoading}
     >

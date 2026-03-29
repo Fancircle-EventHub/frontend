@@ -1,6 +1,6 @@
+import { optionalStoragePathOrLegacyUrl } from "@/lib/storage-path";
 import { z } from "zod";
 
-/** Matches backend + create form venue dropdown. */
 export const EVENT_VENUE_VALUES = ["arena", "club", "theater", "outdoor", "other"] as const;
 export type EventVenue = (typeof EVENT_VENUE_VALUES)[number];
 
@@ -31,13 +31,7 @@ export const createEventSchema = z.object({
     .min(1, "Doors time is required")
     .transform((s) => (s.length >= 5 ? s.slice(0, 5) : s))
     .refine((s) => /^\d{2}:\d{2}$/.test(s), "Enter a valid doors time"),
-  hero_image_url: z.preprocess(
-    (raw) => {
-      if (raw === undefined || raw === null || raw === "") return undefined;
-      return typeof raw === "string" ? raw.trim() : undefined;
-    },
-    z.union([z.undefined(), z.string().url({ message: "Enter a valid http(s) URL" }).max(2048)]),
-  ),
+  hero_image_url: optionalStoragePathOrLegacyUrl,
 });
 
 export type CreateEventFormValues = z.infer<typeof createEventSchema>;

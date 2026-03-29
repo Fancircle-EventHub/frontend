@@ -100,6 +100,7 @@ const secondaryNavComingSoon = [
 type OrganizationDashboardShellProps = {
   organizationName: string;
   userEmail?: string;
+  organizationLogoUrl?: string | null;
   children: ReactNode;
   onLogout: () => void;
   logoutLoading: boolean;
@@ -108,6 +109,7 @@ type OrganizationDashboardShellProps = {
 export function OrganizationDashboardShell({
   organizationName,
   userEmail,
+  organizationLogoUrl,
   children,
   onLogout,
   logoutLoading,
@@ -258,9 +260,16 @@ export function OrganizationDashboardShell({
         </nav>
         <div className="mt-auto border-t border-white/10 p-3">
           <div className="mb-3 flex items-center gap-3 rounded-lg px-1 py-2">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-[#1a1d21] text-xs font-bold text-eh-accent">
-              {initials}
-            </div>
+            {organizationLogoUrl ? (
+              <span className="flex size-10 shrink-0 overflow-hidden rounded-full border border-white/15">
+                { }
+                <img src={organizationLogoUrl} alt="" className="size-full object-cover" />
+              </span>
+            ) : (
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-[#1a1d21] text-xs font-bold text-eh-accent">
+                {initials}
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-white">{organizationName}</p>
               <p className="text-[9px] font-bold uppercase tracking-wider text-eh-accent">Organizer account</p>
@@ -318,11 +327,16 @@ export function OrganizationDashboardShell({
                       <button
                         type="button"
                         onClick={() => setMenuOpen((o) => !o)}
-                        className="flex size-10 items-center justify-center rounded-full border border-white/15 bg-eh-surface text-sm font-semibold text-eh-accent"
+                        className="flex size-10 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-eh-surface text-sm font-semibold text-eh-accent"
                         aria-expanded={menuOpen}
                         aria-haspopup="true"
                       >
-                        {initials}
+                        {organizationLogoUrl ? (
+                           
+                          <img src={organizationLogoUrl} alt="" className="size-full object-cover" />
+                        ) : (
+                          initials
+                        )}
                       </button>
                       {menuOpen ? (
                         <>
@@ -383,11 +397,15 @@ export function OrganizationDashboardShell({
                     <button
                       type="button"
                       onClick={() => setMenuOpen((o) => !o)}
-                      className="flex size-10 items-center justify-center rounded-full border border-white/15 bg-eh-surface text-sm font-semibold text-eh-accent"
+                      className="flex size-10 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-eh-surface text-sm font-semibold text-eh-accent"
                       aria-expanded={menuOpen}
                       aria-haspopup="true"
                     >
-                      {initials}
+                      {organizationLogoUrl ? (
+                        <img src={organizationLogoUrl} alt="" className="size-full object-cover" />
+                      ) : (
+                        initials
+                      )}
                     </button>
                     {menuOpen ? (
                       <>
@@ -458,11 +476,16 @@ export function OrganizationDashboardShell({
                   <button
                     type="button"
                     onClick={() => setMenuOpen((o) => !o)}
-                    className="flex size-10 items-center justify-center rounded-full border border-white/15 bg-eh-surface text-sm font-semibold text-eh-accent"
+                    className="flex size-10 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-eh-surface text-sm font-semibold text-eh-accent"
                     aria-expanded={menuOpen}
                     aria-haspopup="true"
                   >
-                    {initials}
+                    {organizationLogoUrl ? (
+                       
+                      <img src={organizationLogoUrl} alt="" className="size-full object-cover" />
+                    ) : (
+                      initials
+                    )}
                   </button>
                   {menuOpen ? (
                     <>

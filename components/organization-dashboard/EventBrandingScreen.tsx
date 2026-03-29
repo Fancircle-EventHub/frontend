@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { startTransition, useEffect, useRef, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { useGetOrganizationEventQuery, useUpdateOrganizationEventMutation } from "@/apis/event.api";
 import { eventBrandingSchema } from "@/schemas/event-branding.schema";
+import { rawStorageFromEvent } from "@/lib/storage-path";
 import { extractApiErrorMessage } from "@/lib/api-error";
+import { usePresignedFileUrl } from "@/hooks/usePresignedFileUrl";
 import { Button } from "@/components/ui/button";
 import { FieldError, inputClassName, labelClass } from "@/components/organization-auth/auth-form-primitives";
+import { ImageUploadField } from "@/components/organization-dashboard/ImageUploadField";
 
 const DEFAULT_BG = "#23272F";
 const DEFAULT_FONT = "#FFFFFF";
@@ -22,15 +25,6 @@ type BrandingForm = {
   font_color: string;
   button_color: string;
 };
-
-function isValidHttpUrl(s: string): boolean {
-  try {
-    const u = new URL(s.trim());
-    return u.protocol === "http:" || u.protocol === "https:";
-  } catch {
-    return false;
-  }
-}
 
 function coerceHex(v: string, fallback: string): string {
   let s = v.trim();
@@ -48,6 +42,8 @@ function eventToForm(ev: {
   description: string | null;
   logo_url: string | null;
   hero_image_url: string | null;
+  logo_path?: string | null;
+  hero_image_path?: string | null;
   background_color: string | null;
   font_color: string | null;
   button_color: string | null;
@@ -55,8 +51,8 @@ function eventToForm(ev: {
   return {
     title: ev.title,
     description: ev.description ?? "",
-    logo_url: ev.logo_url ?? "",
-    hero_image_url: ev.hero_image_url ?? "",
+    logo_url: rawStorageFromEvent(ev.logo_path, ev.logo_url),
+    hero_image_url: rawStorageFromEvent(ev.hero_image_path, ev.hero_image_url),
     background_color: ev.background_color ?? DEFAULT_BG,
     font_color: ev.font_color ?? DEFAULT_FONT,
     button_color: ev.button_color ?? DEFAULT_BUTTON,
@@ -101,14 +97,18 @@ function ColorField({
   );
 }
 
-function BrandingPhonePreview(form: BrandingForm) {
+function BrandingPhonePreview({
+  form,
+  heroSrc,
+  logoSrc,
+}: {
+  form: BrandingForm;
+  heroSrc: string | null;
+  logoSrc: string | null;
+}) {
   const bg = /^#[0-9A-Fa-f]{6}$/.test(form.background_color) ? form.background_color : DEFAULT_BG;
   const fg = /^#[0-9A-Fa-f]{6}$/.test(form.font_color) ? form.font_color : DEFAULT_FONT;
   const btn = /^#[0-9A-Fa-f]{6}$/.test(form.button_color) ? form.button_color : DEFAULT_BUTTON;
-  const hero =
-    form.hero_image_url.trim() && isValidHttpUrl(form.hero_image_url) ? form.hero_image_url.trim() : null;
-  const logo =
-    form.logo_url.trim() && isValidHttpUrl(form.logo_url) ? form.logo_url.trim() : null;
 
   return (
     <div className="mx-auto w-full max-w-[260px] rounded-[2rem] border border-white/20 bg-[#0a0a0a] p-2 shadow-2xl shadow-black/60">
@@ -117,8 +117,9 @@ function BrandingPhonePreview(form: BrandingForm) {
         style={{ backgroundColor: bg, color: fg }}
       >
         <div className="relative h-32 w-full bg-black/30">
-          {hero ? (
-            <img src={hero} alt="" className="h-full w-full object-cover" />
+          {heroSrc ? (
+             
+            <img src={heroSrc} alt="" className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center bg-gradient-to-br from-zinc-700/80 to-zinc-900 text-[10px] text-white/40">
               Cover image
@@ -126,8 +127,9 @@ function BrandingPhonePreview(form: BrandingForm) {
           )}
         </div>
         <div className="space-y-3 px-4 pb-6 pt-4">
-          {logo ? (
-            <img src={logo} alt="" className="h-8 max-w-[140px] object-contain object-left" />
+          {logoSrc ? (
+             
+            <img src={logoSrc} alt="" className="h-8 max-w-[140px] object-contain object-left" />
           ) : (
             <div className="h-8 w-24 rounded bg-white/10" />
           )}
@@ -154,7 +156,6 @@ type EventBrandingScreenProps = {
 
 export function EventBrandingScreen({ eventId }: EventBrandingScreenProps) {
   const router = useRouter();
-  const logoInputRef = useRef<HTMLInputElement>(null);
   const { data, isLoading, isError } = useGetOrganizationEventQuery(eventId, { skip: !eventId });
   const [updateEvent, { isLoading: saving }] = useUpdateOrganizationEventMutation();
 
@@ -162,6 +163,9 @@ export function EventBrandingScreen({ eventId }: EventBrandingScreenProps) {
   const [baseline, setBaseline] = useState<BrandingForm | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const heroPreview = usePresignedFileUrl(form?.hero_image_url || undefined);
+  const logoPreview = usePresignedFileUrl(form?.logo_url || undefined);
 
   useEffect(() => {
     const ev = data?.data;
@@ -257,9 +261,6 @@ export function EventBrandingScreen({ eventId }: EventBrandingScreenProps) {
     );
   }
 
-  const logoPreview = form.logo_url.trim() && isValidHttpUrl(form.logo_url) ? form.logo_url.trim() : null;
-  const coverPreview = form.hero_image_url.trim() && isValidHttpUrl(form.hero_image_url) ? form.hero_image_url.trim() : null;
-
   return (
     <div className="mx-auto max-w-6xl">
       <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
@@ -325,48 +326,16 @@ export function EventBrandingScreen({ eventId }: EventBrandingScreenProps) {
           </section>
 
           <section className="rounded-xl border border-white/10 bg-[#16181c] p-5 shadow-sm">
-            <label className={labelClass} htmlFor="brand-logo-url">
-              Logo URL
-            </label>
-            <p className="mb-3 text-[11px] leading-relaxed text-eh-text-tertiary">
-              SVG or PNG via public URL (e.g. Cloudflare R2). Recommended for the header.
-            </p>
-            <input
-              ref={logoInputRef}
-              id="brand-logo-url"
-              type="url"
-              className={inputClassName(!!fieldErrors.logo_url)}
+            <ImageUploadField
+              label="Logo"
+              hint="PNG, JPG, WebP, SVG, or GIF. Shown in the guest hub header."
               value={form.logo_url}
-              onChange={(e) => patch("logo_url", e.target.value)}
-              placeholder="https://…"
-              autoComplete="off"
+              onChange={(v) => patch("logo_url", v)}
+              uploadType="event_logo"
+              eventId={eventId}
+              error={fieldErrors.logo_url}
+              variant="logo"
             />
-            <FieldError message={fieldErrors.logo_url} />
-            <div className="mt-4 flex flex-wrap items-center gap-4">
-              <div className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/15 bg-[#0e1012]">
-                {logoPreview ? (
-                  <img src={logoPreview} alt="" className="max-h-full max-w-full object-contain p-2" />
-                ) : (
-                  <span className="px-2 text-center text-[10px] text-eh-text-tertiary">No logo</span>
-                )}
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => logoInputRef.current?.focus()}
-                  className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-eh-text-primary transition hover:bg-white/10"
-                >
-                  Replace asset
-                </button>
-                <button
-                  type="button"
-                  onClick={() => patch("logo_url", "")}
-                  className="rounded-lg border border-white/10 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-eh-text-tertiary transition hover:bg-white/5 hover:text-eh-text-primary"
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
           </section>
 
           <section className="rounded-xl border border-white/10 bg-[#16181c] p-5 shadow-sm">
@@ -393,29 +362,16 @@ export function EventBrandingScreen({ eventId }: EventBrandingScreenProps) {
           </section>
 
           <section className="rounded-xl border border-white/10 bg-[#16181c] p-5 shadow-sm">
-            <label className={labelClass} htmlFor="brand-cover-url">
-              Cover image
-            </label>
-            <p className="mb-3 text-[11px] text-eh-text-tertiary">Wide image URL for the top of the hub (e.g. R2).</p>
-            <input
-              id="brand-cover-url"
-              type="url"
-              className={inputClassName(!!fieldErrors.hero_image_url)}
+            <ImageUploadField
+              label="Cover image"
+              hint="Wide image for the top of the hub. Recommended landscape."
               value={form.hero_image_url}
-              onChange={(e) => patch("hero_image_url", e.target.value)}
-              placeholder="https://…"
-              autoComplete="off"
+              onChange={(v) => patch("hero_image_url", v)}
+              uploadType="event_cover"
+              eventId={eventId}
+              error={fieldErrors.hero_image_url}
+              variant="cover"
             />
-            <FieldError message={fieldErrors.hero_image_url} />
-            <div className="mt-4 aspect-[21/9] w-full overflow-hidden rounded-lg border border-white/10 bg-[#0e1012]">
-              {coverPreview ? (
-                <img src={coverPreview} alt="" className="size-full object-cover" />
-              ) : (
-                <div className="flex h-full min-h-[120px] items-center justify-center text-xs text-eh-text-tertiary">
-                  Cover preview
-                </div>
-              )}
-            </div>
           </section>
 
           <div className="pt-4">
@@ -436,7 +392,11 @@ export function EventBrandingScreen({ eventId }: EventBrandingScreenProps) {
         <aside className="lg:sticky lg:top-6">
           <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.2em] text-eh-text-tertiary">Live preview</p>
           <div className="rounded-xl border border-white/10 bg-[#0e1012]/80 p-6 backdrop-blur-sm">
-            <BrandingPhonePreview {...form} />
+            <BrandingPhonePreview
+              form={form}
+              heroSrc={heroPreview.loading ? null : heroPreview.url}
+              logoSrc={logoPreview.loading ? null : logoPreview.url}
+            />
             <p className="mt-4 text-center text-[10px] text-eh-text-tertiary">Guest app appearance (illustrative)</p>
           </div>
         </aside>

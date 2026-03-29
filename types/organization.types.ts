@@ -3,6 +3,8 @@ export type Organization = {
   name: string;
   contact_person: string | null;
   website: string | null;
+  logo_url?: string | null;
+  logo_path?: string | null;
   email: string;
   email_verified_at: string | null;
   terms_accepted_at: string | null;
@@ -22,4 +24,8 @@ export type OrganizationLoginPayload = {
   email: string;
   password: string;
   remember?: boolean;
+};
+
+export type UpdateOrganizationProfilePayload = {
+  logo_url?: string | null;
 };

@@ -14,6 +14,8 @@ export type Event = {
   doors_time: string | null;
   hero_image_url: string | null;
   logo_url: string | null;
+  hero_image_path?: string | null;
+  logo_path?: string | null;
   background_color: string | null;
   font_color: string | null;
   button_color: string | null;

@@ -1,3 +1,4 @@
+import { optionalStoragePathOrLegacyUrl } from "@/lib/storage-path";
 import { z } from "zod";
 
 const hex6 = z
@@ -11,20 +12,8 @@ export const eventBrandingSchema = z.object({
     .max(5000)
     .optional()
     .transform((s) => (s === undefined || s.trim() === "" ? undefined : s.trim())),
-  logo_url: z.preprocess(
-    (raw) => {
-      if (raw === undefined || raw === null || raw === "") return undefined;
-      return typeof raw === "string" ? raw.trim() : undefined;
-    },
-    z.union([z.undefined(), z.string().url({ message: "Enter a valid logo URL" }).max(2048)]),
-  ),
-  hero_image_url: z.preprocess(
-    (raw) => {
-      if (raw === undefined || raw === null || raw === "") return undefined;
-      return typeof raw === "string" ? raw.trim() : undefined;
-    },
-    z.union([z.undefined(), z.string().url({ message: "Enter a valid cover image URL" }).max(2048)]),
-  ),
+  logo_url: optionalStoragePathOrLegacyUrl,
+  hero_image_url: optionalStoragePathOrLegacyUrl,
   background_color: hex6,
   font_color: hex6,
   button_color: hex6,

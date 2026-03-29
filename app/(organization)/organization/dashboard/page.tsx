@@ -24,9 +24,7 @@ export default function OrganizationDashboardPage() {
   async function handleLogout() {
     try {
       await logout().unwrap();
-    } catch {
-      /* still clear client session */
-    }
+    } catch {}
     dispatch(clearSession());
     dispatch(baseApi.util.resetApiState());
     router.replace("/organization/auth/login");
@@ -47,6 +45,7 @@ export default function OrganizationDashboardPage() {
     <OrganizationDashboardShell
       organizationName={organization.name}
       userEmail={organization.email}
+      organizationLogoUrl={organization.logo_url ?? null}
       onLogout={() => void handleLogout()}
       logoutLoading={logoutLoading}
     >
@@ -55,7 +54,7 @@ export default function OrganizationDashboardPage() {
           <div className="size-8 animate-spin rounded-full border-2 border-eh-accent/30 border-t-eh-accent" />
         </div>
       ) : (
-        <DashboardHomeContent organizationName={organization.name} events={events} />
+        <DashboardHomeContent organization={organization} events={events} />
       )}
     </OrganizationDashboardShell>
   );

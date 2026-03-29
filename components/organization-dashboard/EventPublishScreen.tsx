@@ -53,9 +53,7 @@ export function EventPublishScreen({ eventId }: EventPublishScreenProps) {
     if (!publishUrl || typeof navigator === "undefined" || !navigator.clipboard) return;
     try {
       await navigator.clipboard.writeText(publishUrl);
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   }
 
   async function handleDone() {

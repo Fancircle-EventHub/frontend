@@ -46,6 +46,7 @@ export default function EventPublishPage() {
     <OrganizationDashboardShell
       organizationName={organization.name}
       userEmail={organization.email}
+      organizationLogoUrl={organization.logo_url ?? null}
       onLogout={() => void handleLogout()}
       logoutLoading={logoutLoading}
     >
