@@ -12,6 +12,8 @@ import { FieldError, inputClassName, labelClass } from "@/components/organizatio
 import type { OrganizationMeetupItem } from "@/types/guest-meetup.types";
 import { dateAndTimePartsToIso, isoToDateAndTimeParts } from "@/lib/datetime-form";
 import { extractApiErrorMessage } from "@/lib/api-error";
+import { partitionMeetupsByHost } from "@/lib/guest-meetups";
+import { ImageUploadField } from "@/components/organization-dashboard/ImageUploadField";
 import { Button } from "@/components/ui/button";
 
 type Props = {
@@ -30,6 +32,7 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
   const [meetupDate, setMeetupDate] = useState("");
   const [meetupTime, setMeetupTime] = useState("");
   const [maxCap, setMaxCap] = useState("");
+  const [meetupImageKey, setMeetupImageKey] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -59,6 +62,7 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
           location: location.trim() || "TBD",
           meetup_at: dateAndTimePartsToIso(meetupDate, meetupTime),
           max_capacity: maxCap.trim() ? Number.parseInt(maxCap, 10) : null,
+          image_url: meetupImageKey.trim() || null,
         },
       }).unwrap();
       setTitle("");
@@ -67,6 +71,7 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
       setMeetupDate("");
       setMeetupTime("");
       setMaxCap("");
+      setMeetupImageKey("");
     } catch (err) {
       setFormError(extractApiErrorMessage(err));
     }
@@ -96,6 +101,7 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
           location: editDraft.location ?? undefined,
           meetup_at: dateAndTimePartsToIso(editMeetupDate, editMeetupTime),
           max_capacity: editDraft.max_capacity,
+          image_url: editDraft.image_url ?? null,
         },
       }).unwrap();
       setEditingId(null);
@@ -132,6 +138,168 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
   }
 
   const meetups = data.data.meetups;
+  const { organizer, guestHosts } = partitionMeetupsByHost(meetups);
+
+  const meetupListItem = (m: OrganizationMeetupItem) => (
+    <li key={m.id} className="rounded-xl border border-white/10 bg-[#1a1d24]/90 p-5">
+      {editingId === m.id && editDraft ? (
+        <div className="space-y-4">
+          <div>
+            <label className={labelClass} htmlFor={`edit-title-${m.id}`}>
+              Title
+            </label>
+            <input
+              id={`edit-title-${m.id}`}
+              value={editDraft.title ?? ""}
+              onChange={(e) => setEditDraft((d) => ({ ...d!, title: e.target.value }))}
+              className={inputClassName(false)}
+            />
+          </div>
+          <div>
+            <label className={labelClass} htmlFor={`edit-desc-${m.id}`}>
+              Description
+            </label>
+            <textarea
+              id={`edit-desc-${m.id}`}
+              value={editDraft.description ?? ""}
+              onChange={(e) => setEditDraft((d) => ({ ...d!, description: e.target.value }))}
+              rows={2}
+              className={`${inputClassName(false)} min-h-[88px] resize-y`}
+            />
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label className={labelClass} htmlFor={`edit-date-${m.id}`}>
+                Date
+              </label>
+              <input
+                id={`edit-date-${m.id}`}
+                type="date"
+                value={editMeetupDate}
+                onChange={(e) => setEditMeetupDate(e.target.value)}
+                className={inputClassName(false)}
+              />
+            </div>
+            <div>
+              <label className={labelClass} htmlFor={`edit-time-${m.id}`}>
+                Time
+              </label>
+              <input
+                id={`edit-time-${m.id}`}
+                type="time"
+                value={editMeetupTime}
+                onChange={(e) => setEditMeetupTime(e.target.value)}
+                className={inputClassName(false)}
+              />
+            </div>
+          </div>
+          <div>
+            <label className={labelClass} htmlFor={`edit-loc-${m.id}`}>
+              Location
+            </label>
+            <input
+              id={`edit-loc-${m.id}`}
+              value={editDraft.location ?? ""}
+              onChange={(e) => setEditDraft((d) => ({ ...d!, location: e.target.value }))}
+              className={inputClassName(false)}
+            />
+          </div>
+          <div>
+            <label className={labelClass} htmlFor={`edit-cap-${m.id}`}>
+              Max people (optional)
+            </label>
+            <input
+              id={`edit-cap-${m.id}`}
+              type="number"
+              min={1}
+              value={editDraft.max_capacity ?? ""}
+              onChange={(e) =>
+                setEditDraft((d) => ({
+                  ...d!,
+                  max_capacity: e.target.value ? Number.parseInt(e.target.value, 10) : null,
+                }))
+              }
+              className={inputClassName(false)}
+            />
+          </div>
+          <ImageUploadField
+            id={`edit-img-${m.id}`}
+            label="Image (optional)"
+            hint="Replace or remove via Remove, then save."
+            value={editDraft.image_url ?? ""}
+            onChange={(next) => setEditDraft((d) => ({ ...d!, image_url: next || null }))}
+            uploadType="event_meetup_image"
+            eventId={eventId}
+            variant="logo"
+          />
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              variant="primary"
+              loading={busy}
+              className="px-8 sm:px-12"
+              onClick={() => void saveEdit()}
+            >
+              Save
+            </Button>
+            <button
+              type="button"
+              className="text-xs text-eh-text-tertiary hover:text-white"
+              onClick={() => {
+                setEditingId(null);
+                setEditDraft(null);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="flex gap-3">
+            <div className="relative size-11 shrink-0 overflow-hidden rounded-full bg-white/10">
+              {m.display_image_url ? (
+                <img src={m.display_image_url} alt="" className="size-full object-cover" />
+              ) : (
+                <span className="flex size-full items-center justify-center text-xs font-bold text-eh-text-tertiary">
+                  {m.title.trim().slice(0, 1).toUpperCase() || "?"}
+                </span>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-white">{m.title}</p>
+              <p className="mt-1 text-xs text-eh-text-tertiary">{m.location}</p>
+              <p className="mt-1 text-xs text-eh-text-secondary">{m.participant_count} joined</p>
+            </div>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="text-xs font-bold uppercase tracking-wide text-eh-accent hover:underline"
+              onClick={() => startEdit(m)}
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              className="text-xs font-bold uppercase tracking-wide text-red-400 hover:underline"
+              disabled={busy}
+              onClick={async () => {
+                if (!confirm("Delete this meetup?")) return;
+                try {
+                  await deleteMeetup({ eventId, meetupId: m.id }).unwrap();
+                } catch (err) {
+                  alert(extractApiErrorMessage(err));
+                }
+              }}
+            >
+              Delete
+            </button>
+          </div>
+        </>
+      )}
+    </li>
+  );
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -222,145 +390,35 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
             className={inputClassName(false)}
           />
         </div>
+        <ImageUploadField
+          id="mu-img"
+          label="Image (optional)"
+          hint="Upload a photo for this meetup. If you skip it, your organization logo is used in the guest hub."
+          value={meetupImageKey}
+          onChange={setMeetupImageKey}
+          uploadType="event_meetup_image"
+          eventId={eventId}
+          variant="logo"
+        />
         <FieldError message={formError ?? undefined} />
         <Button type="submit" variant="primary" loading={busy} className="w-full min-w-[11rem] px-10 sm:w-auto sm:px-12">
           {creating ? "Creating…" : "Add meetup"}
         </Button>
       </form>
 
-      <ul className="mt-10 space-y-4">
-        {meetups.map((m) => (
-          <li key={m.id} className="rounded-xl border border-white/10 bg-[#1a1d24]/90 p-5">
-            {editingId === m.id && editDraft ? (
-              <div className="space-y-4">
-                <div>
-                  <label className={labelClass} htmlFor={`edit-title-${m.id}`}>
-                    Title
-                  </label>
-                  <input
-                    id={`edit-title-${m.id}`}
-                    value={editDraft.title ?? ""}
-                    onChange={(e) => setEditDraft((d) => ({ ...d!, title: e.target.value }))}
-                    className={inputClassName(false)}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass} htmlFor={`edit-desc-${m.id}`}>
-                    Description
-                  </label>
-                  <textarea
-                    id={`edit-desc-${m.id}`}
-                    value={editDraft.description ?? ""}
-                    onChange={(e) => setEditDraft((d) => ({ ...d!, description: e.target.value }))}
-                    rows={2}
-                    className={`${inputClassName(false)} min-h-[88px] resize-y`}
-                  />
-                </div>
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className={labelClass} htmlFor={`edit-date-${m.id}`}>
-                      Date
-                    </label>
-                    <input
-                      id={`edit-date-${m.id}`}
-                      type="date"
-                      value={editMeetupDate}
-                      onChange={(e) => setEditMeetupDate(e.target.value)}
-                      className={inputClassName(false)}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass} htmlFor={`edit-time-${m.id}`}>
-                      Time
-                    </label>
-                    <input
-                      id={`edit-time-${m.id}`}
-                      type="time"
-                      value={editMeetupTime}
-                      onChange={(e) => setEditMeetupTime(e.target.value)}
-                      className={inputClassName(false)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className={labelClass} htmlFor={`edit-loc-${m.id}`}>
-                    Location
-                  </label>
-                  <input
-                    id={`edit-loc-${m.id}`}
-                    value={editDraft.location ?? ""}
-                    onChange={(e) => setEditDraft((d) => ({ ...d!, location: e.target.value }))}
-                    className={inputClassName(false)}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass} htmlFor={`edit-cap-${m.id}`}>
-                    Max people (optional)
-                  </label>
-                  <input
-                    id={`edit-cap-${m.id}`}
-                    type="number"
-                    min={1}
-                    value={editDraft.max_capacity ?? ""}
-                    onChange={(e) =>
-                      setEditDraft((d) => ({
-                        ...d!,
-                        max_capacity: e.target.value ? Number.parseInt(e.target.value, 10) : null,
-                      }))
-                    }
-                    className={inputClassName(false)}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Button type="button" variant="primary" loading={busy} onClick={() => void saveEdit()}>
-                    Save
-                  </Button>
-                  <button
-                    type="button"
-                    className="text-xs text-eh-text-tertiary hover:text-white"
-                    onClick={() => {
-                      setEditingId(null);
-                      setEditDraft(null);
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <>
-                <p className="text-sm font-semibold text-white">{m.title}</p>
-                <p className="mt-1 text-xs text-eh-text-tertiary">{m.location}</p>
-                <p className="mt-1 text-xs text-eh-text-secondary">{m.participant_count} joined</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    className="text-xs font-bold uppercase tracking-wide text-eh-accent hover:underline"
-                    onClick={() => startEdit(m)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="text-xs font-bold uppercase tracking-wide text-red-400 hover:underline"
-                    disabled={busy}
-                    onClick={async () => {
-                      if (!confirm("Delete this meetup?")) return;
-                      try {
-                        await deleteMeetup({ eventId, meetupId: m.id }).unwrap();
-                      } catch (err) {
-                        alert(extractApiErrorMessage(err));
-                      }
-                    }}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
+      <ul className="mt-10 space-y-4">{organizer.map(meetupListItem)}</ul>
+      {guestHosts.length > 0 ? (
+        <>
+          <div className="mt-10 flex items-center gap-3" role="separator" aria-label="Guest hosts">
+            <hr className="min-w-0 flex-1 border-white/10" />
+            <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.18em] text-eh-text-tertiary">
+              GUEST HOSTS
+            </span>
+            <hr className="min-w-0 flex-1 border-white/10" />
+          </div>
+          <ul className="mt-4 space-y-4">{guestHosts.map(meetupListItem)}</ul>
+        </>
+      ) : null}
     </div>
   );
 }

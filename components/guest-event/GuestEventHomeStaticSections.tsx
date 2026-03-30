@@ -4,22 +4,15 @@ import type { GuestEventNotificationItem } from "@/types/event-notification.type
 import type { GuestMeetupItem } from "@/types/guest-meetup.types";
 import type { GuestRidePostItem } from "@/types/guest-ride.types";
 import { GuestTourPromotionSection } from "@/components/guest-event/GuestTourPromotionSection";
+import { formatMeetupSchedule } from "@/lib/datetime-form";
 import { guestHub } from "@/lib/guest-event-branding";
 import { isModuleEnabled } from "@/lib/event-modules";
+import { partitionMeetupsByHost } from "@/lib/guest-meetups";
 import { notificationCardBorderClass } from "@/lib/notification-accent";
 
 function rideRouteLine(p: GuestRidePostItem) {
   const d = p.destination_area?.trim();
   return d ? `${p.origin_area} → ${d}` : p.origin_area;
-}
-
-function formatMeetupPreviewTime(iso: string) {
-  try {
-    const d = new Date(iso);
-    return d.toLocaleString(undefined, { weekday: "short", hour: "numeric", minute: "2-digit" });
-  } catch {
-    return iso;
-  }
 }
 
 type Props = {
@@ -171,20 +164,51 @@ export function GuestEventHomeStaticSections({
           ) : meetupsPreview.length === 0 ? (
             <p className={`mt-3 text-sm ${guestHub.fgMuted}`}>No meetups posted yet.</p>
           ) : (
-            <ul className="mt-3 space-y-3">
-              {meetupsPreview.map((m) => (
+            (() => {
+              const { organizer, guestHosts } = partitionMeetupsByHost(meetupsPreview);
+              const row = (m: GuestMeetupItem) => (
                 <li key={m.id}>
                   <Link
                     href={`${base}/meetups`}
-                    className={`block min-w-0 rounded-2xl border border-white/10 p-3 text-left transition hover:brightness-[1.03] sm:p-4 ${guestHub.surface} ${guestHub.cardHoverBorder}`}
+                    className={`flex min-w-0 gap-3 rounded-2xl border border-white/10 p-3 text-left transition hover:brightness-[1.03] sm:p-4 ${guestHub.surface} ${guestHub.cardHoverBorder}`}
                   >
-                    <p className={`text-sm font-semibold leading-snug ${guestHub.fg} ${guestHub.wrap}`}>{m.title}</p>
-                    <p className={`mt-0.5 line-clamp-3 text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>{m.location}</p>
-                    <p className={`mt-1 text-xs font-semibold ${guestHub.accent} ${guestHub.wrap}`}>{formatMeetupPreviewTime(m.meetup_at)}</p>
+                    <div className="relative size-11 shrink-0 overflow-hidden rounded-full bg-white/10">
+                      {m.display_image_url ? (
+                        <img src={m.display_image_url} alt="" className="size-full object-cover" />
+                      ) : (
+                        <span className={`flex size-full items-center justify-center text-xs font-bold ${guestHub.fgMuted}`}>
+                          {m.title.trim().slice(0, 1).toUpperCase() || "?"}
+                        </span>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className={`text-sm font-semibold leading-snug ${guestHub.fg} ${guestHub.wrap}`}>{m.title}</p>
+                      <p className={`mt-0.5 line-clamp-3 text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>{m.location}</p>
+                      <p className={`mt-1 text-xs font-semibold ${guestHub.accent} ${guestHub.wrap}`}>
+                        {formatMeetupSchedule(m.meetup_at)}
+                      </p>
+                    </div>
                   </Link>
                 </li>
-              ))}
-            </ul>
+              );
+              return (
+                <div className="mt-3 space-y-3">
+                  {organizer.length > 0 ? <ul className="space-y-3">{organizer.map(row)}</ul> : null}
+                  {guestHosts.length > 0 ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-3" role="separator" aria-label="Guest hosts">
+                        <hr className="min-w-0 flex-1 border-white/15" />
+                        <span className={`shrink-0 text-[10px] font-bold uppercase tracking-[0.18em] ${guestHub.fgMuted}`}>
+                          GUEST HOSTS
+                        </span>
+                        <hr className="min-w-0 flex-1 border-white/15" />
+                      </div>
+                      <ul className="space-y-3">{guestHosts.map(row)}</ul>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })()
           )}
         </section>
       ) : null}

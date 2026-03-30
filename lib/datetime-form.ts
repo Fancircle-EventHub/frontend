@@ -24,3 +24,25 @@ export function dateAndTimePartsToIso(date: string, time: string): string {
   const parsed = new Date(`${date}T${t}`);
   return parsed.toISOString();
 }
+
+/**
+ * Full calendar date + time for meetup cards so the day is unambiguous (not just "Fri").
+ * Example: "Fri, Mar 28, 2026 · 11:09 PM" (locale-aware).
+ */
+export function formatMeetupSchedule(iso: string): string {
+  if (!iso.trim()) return "";
+  try {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return iso;
+    const datePart = d.toLocaleDateString(undefined, {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+    const timePart = d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+    return `${datePart} · ${timePart}`;
+  } catch {
+    return iso;
+  }
+}

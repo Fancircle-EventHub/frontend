@@ -120,6 +120,30 @@ export const guestApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (_r, _e, arg) => [{ type: TAG_TYPES.GuestEventMeetups, id: arg.accessCode }],
     }),
+    guestMeetupCreate: builder.mutation<
+      ApiEnvelope<{ meetup: GuestMeetupItem }>,
+      {
+        accessCode: string;
+        body: {
+          title: string;
+          description?: string | null;
+          meetup_at: string;
+          location: string;
+          max_capacity?: number | null;
+          image_url?: string | null;
+        };
+      }
+    >({
+      query: ({ accessCode, body }) => ({
+        url: `/guest/events/${accessCode}/meetups`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: (_r, _e, arg) => [
+        { type: TAG_TYPES.GuestEventMeetups, id: arg.accessCode },
+        TAG_TYPES.EventEntry,
+      ],
+    }),
     guestEventRides: builder.query<
       ApiEnvelope<{ ride_posts: GuestRidePostItem[]; event_venue: string | null; event_city: string | null }>,
       string
@@ -195,6 +219,7 @@ export const {
   useGuestEventMeetupsQuery,
   useGuestMeetupJoinMutation,
   useGuestMeetupLeaveMutation,
+  useGuestMeetupCreateMutation,
   useGuestEventRidesQuery,
   useGuestRideCreateMutation,
   useGuestRideDeleteMutation,

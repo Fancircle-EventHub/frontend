@@ -15,6 +15,7 @@ import { PageCenterSpinner } from "@/components/ui/PageCenterSpinner";
 import { useHydrated } from "@/hooks/useHydrated";
 import { guestHub } from "@/lib/guest-event-branding";
 import { isModuleEnabled } from "@/lib/event-modules";
+import { sortMeetupsOrganizerFirst } from "@/lib/guest-meetups";
 
 export default function GuestEventAccessPage() {
   const router = useRouter();
@@ -72,7 +73,7 @@ export default function GuestEventAccessPage() {
   }
 
   const showHero = Boolean(event?.hero_image_url);
-  const meetupsPreview = (meetupsEnvelope?.data?.meetups ?? []).slice(0, 2);
+  const meetupsPreview = sortMeetupsOrganizerFirst(meetupsEnvelope?.data?.meetups ?? []).slice(0, 2);
   const ridesPreview = (ridesEnvelope?.data?.ride_posts ?? []).slice(0, 2);
   const notificationsPreview = (notificationsEnvelope?.data?.notifications ?? []).slice(0, 2);
 

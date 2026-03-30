@@ -92,6 +92,7 @@ export const eventApi = baseApi.injectEndpoints({
           meetup_at: string;
           location: string;
           max_capacity?: number | null;
+          image_url?: string | null;
         };
       }
     >({
@@ -116,6 +117,7 @@ export const eventApi = baseApi.injectEndpoints({
           meetup_at?: string;
           location?: string;
           max_capacity?: number | null;
+          image_url?: string | null;
         };
       }
     >({
