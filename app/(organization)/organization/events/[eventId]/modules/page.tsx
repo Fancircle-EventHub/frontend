@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useLogoutOrganizationMutation, useOrganizationSessionQuery } from "@/apis/organization.api";
 import { useAuthGuard, useRedirectWhenOrganizationSessionFails } from "@/lib/auth-guard";
 import { clearSession } from "@/slices/session.slice";
@@ -13,6 +13,8 @@ export default function EventModulesPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const params = useParams();
+  const searchParams = useSearchParams();
+  const standalone = searchParams.get("standalone") === "1";
   const eventId = typeof params.eventId === "string" ? params.eventId : "";
   const [logout, { isLoading: logoutLoading }] = useLogoutOrganizationMutation();
   useAuthGuard("organization", "/organization/auth/login");
@@ -50,7 +52,7 @@ export default function EventModulesPage() {
       onLogout={() => void handleLogout()}
       logoutLoading={logoutLoading}
     >
-      <EventModulesScreen eventId={eventId} />
+      <EventModulesScreen eventId={eventId} standalone={standalone} />
     </OrganizationDashboardShell>
   );
 }

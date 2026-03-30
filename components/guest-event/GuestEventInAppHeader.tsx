@@ -1,17 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { useHydrated } from "@/hooks/useHydrated";
 import { GuestEventMenuDrawer } from "./GuestEventMenuDrawer";
 
 export type GuestEventInAppHeaderProps = {
   eventCode: string;
+  /** Event branding logo from organizer setup (`logo_url`). */
+  logoUrl?: string | null;
 };
 
 /**
  * Top bar for in-event screens: menu opens sidebar (My profile, Sign out).
  */
-export function GuestEventInAppHeader({ eventCode }: GuestEventInAppHeaderProps) {
+export function GuestEventInAppHeader({ eventCode, logoUrl }: GuestEventInAppHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const hydrated = useHydrated();
+  const showLogo = Boolean(hydrated && logoUrl);
 
   return (
     <>
@@ -27,10 +32,20 @@ export function GuestEventInAppHeader({ eventCode }: GuestEventInAppHeaderProps)
             <path d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <p className="text-center text-sm font-bold tracking-tight">
-          <span className="text-eh-accent">Fancircle</span> <span className="text-white">EventHub</span>
-        </p>
-        <div className="w-10" aria-hidden />
+        <div className="flex min-w-0 flex-1 items-center justify-center px-2">
+          {showLogo && logoUrl ? (
+            <img
+              src={logoUrl}
+              alt=""
+              className="h-8 max-h-9 w-auto max-w-[min(160px,calc(100vw-8rem))] object-contain object-center"
+            />
+          ) : (
+            <p className="text-center text-sm font-bold tracking-tight">
+              <span className="text-eh-accent">Fancircle</span> <span className="text-white">EventHub</span>
+            </p>
+          )}
+        </div>
+        <div className="w-10 shrink-0" aria-hidden />
       </header>
       <GuestEventMenuDrawer open={menuOpen} onClose={() => setMenuOpen(false)} eventCode={eventCode} />
     </>

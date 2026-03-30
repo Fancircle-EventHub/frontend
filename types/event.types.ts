@@ -1,5 +1,18 @@
 export type EventStatus = "draft" | "live";
 
+/** Curated related hubs (tour promotion); same shape as guest entry payload. */
+export type RelatedEventSummary = {
+  id: string;
+  title: string;
+  artist: string | null;
+  event_date: string | null;
+  venue: string | null;
+  city: string | null;
+  access_code: string;
+  join_link: string;
+  hero_image_url: string | null;
+};
+
 export type Event = {
   id: string;
   organization_id: string;
@@ -23,6 +36,7 @@ export type Event = {
   modules: Record<string, boolean> | null;
   access_code: string;
   join_link: string;
+  related_events?: RelatedEventSummary[];
   shot_of_the_night?: {
     id: string;
     kind: "image" | "video";

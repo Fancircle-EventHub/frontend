@@ -2,6 +2,7 @@
 
 import { useGuestEventOnboardingQuery, useGuestEventMediaMineQuery } from "@/apis/guest.api";
 import { PageCenterSpinner } from "@/components/ui/PageCenterSpinner";
+import { guestHub } from "@/lib/guest-event-branding";
 import { useGuestEventGalleryUpload } from "@/hooks/useGuestEventGalleryUpload";
 
 type Props = {
@@ -47,9 +48,9 @@ export function GuestEventUploadContent({ accessCode, eventId }: Props) {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-2xl border border-white/10 bg-[#1a1d24]/90 p-5">
-        <h2 className="text-lg font-semibold text-white">Add to the gallery</h2>
-        <p className="mt-1 text-sm text-eh-text-secondary">
+      <div className={`rounded-2xl border border-white/10 p-5 ${guestHub.surface}`}>
+        <h2 className={`text-lg font-semibold ${guestHub.fg}`}>Add to the gallery</h2>
+        <p className={`mt-1 text-sm ${guestHub.fgMuted}`}>
           Upload images or short videos (MP4, WebM, MOV). They appear in the event gallery for everyone after upload.
         </p>
         <div className="mt-4">
@@ -72,14 +73,14 @@ export function GuestEventUploadContent({ accessCode, eventId }: Props) {
       </div>
 
       <div>
-        <h2 className="text-lg font-semibold text-white">Your uploads</h2>
-        <p className="mt-1 text-sm text-eh-text-secondary">Media you shared for this event.</p>
+        <h2 className={`text-lg font-semibold ${guestHub.fg}`}>Your uploads</h2>
+        <p className={`mt-1 text-sm ${guestHub.fgMuted}`}>Media you shared for this event.</p>
         {mine.length === 0 ? (
-          <p className="mt-4 text-sm text-eh-text-tertiary">No uploads yet.</p>
+          <p className={`mt-4 text-sm ${guestHub.fgMuted}`}>No uploads yet.</p>
         ) : (
           <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
             {mine.map((item) => (
-              <li key={item.id} className="overflow-hidden rounded-xl border border-white/10 bg-[#252830]">
+              <li key={item.id} className={`overflow-hidden rounded-xl border border-white/10 ${guestHub.surface}`}>
                 {item.kind === "video" ? (
                   <video src={item.url} className="aspect-square w-full object-cover" controls muted playsInline />
                 ) : (

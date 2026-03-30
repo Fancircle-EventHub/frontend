@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useGuestEventGalleryQuery } from "@/apis/guest.api";
 import { PageCenterSpinner } from "@/components/ui/PageCenterSpinner";
+import { guestHub } from "@/lib/guest-event-branding";
 
 type Filter = "all" | "image" | "video";
 
@@ -38,8 +39,8 @@ export function GuestEventGalleryContent({ accessCode }: Props) {
             onClick={() => setFilter(id)}
             className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider transition ${
               filter === id
-                ? "bg-eh-accent text-[#0a0a0a]"
-                : "border border-white/10 bg-[#1a1d24] text-eh-text-secondary hover:border-white/20"
+                ? `${guestHub.accentBg} text-[#0a0a0a]`
+                : `border border-white/10 hover:border-white/20 ${guestHub.surface} ${guestHub.fgMuted}`
             }`}
           >
             {label}
@@ -50,7 +51,7 @@ export function GuestEventGalleryContent({ accessCode }: Props) {
       {loading ? (
         <PageCenterSpinner />
       ) : items.length === 0 ? (
-        <p className="text-sm text-eh-text-secondary">No media yet. Be the first to upload from the Upload tab.</p>
+        <p className={`text-sm ${guestHub.fgMuted}`}>No media yet. Be the first to upload from the Upload tab.</p>
       ) : (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {items.map((item) => (

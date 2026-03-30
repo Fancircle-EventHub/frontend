@@ -2,10 +2,17 @@
 
 import { useParams } from "next/navigation";
 import { GuestEventCommunityContent } from "@/components/guest-event/GuestEventCommunityContent";
+import { PageCenterSpinner } from "@/components/ui/PageCenterSpinner";
+import { useGuestModuleRedirect } from "@/hooks/useGuestModuleRedirect";
 
 export default function GuestEventCommunityPage() {
   const params = useParams<{ code: string }>();
   const code = params.code ?? "";
+  const gate = useGuestModuleRedirect(code, "community");
+
+  if (gate !== "ok") {
+    return <PageCenterSpinner fixed />;
+  }
 
   return (
     <div className="px-4 pb-8 pt-6 sm:px-6 lg:mx-auto lg:max-w-lg">

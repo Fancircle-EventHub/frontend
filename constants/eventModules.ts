@@ -16,3 +16,26 @@ export const EVENT_MODULE_LIST = [
 export type EventModuleId = (typeof EVENT_MODULE_LIST)[number]["id"];
 
 export const EVENT_MODULE_TOTAL = EVENT_MODULE_LIST.length;
+
+export const MODULE_IMPLEMENTATION: Record<EventModuleId, "live" | "coming_soon"> = {
+  event_info: "live",
+  community: "live",
+  meetups: "live",
+  carpooling: "live",
+  fan_gallery: "live",
+  voting: "coming_soon",
+  merch: "coming_soon",
+  tour_promotion: "live",
+  social_links: "coming_soon",
+  streaming_links: "coming_soon",
+  maps: "coming_soon",
+  notifications: "live",
+};
+
+export const LIVE_MODULE_IDS = (
+  Object.entries(MODULE_IMPLEMENTATION) as [EventModuleId, "live" | "coming_soon"][]
+)
+  .filter(([, status]) => status === "live")
+  .map(([id]) => id);
+
+export const LIVE_MODULE_TOTAL = LIVE_MODULE_IDS.length;

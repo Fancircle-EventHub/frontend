@@ -2,6 +2,7 @@
 
 import { useGuestEventCommunityQuery } from "@/apis/guest.api";
 import { PageCenterSpinner } from "@/components/ui/PageCenterSpinner";
+import { guestHub } from "@/lib/guest-event-branding";
 
 type Props = {
   accessCode: string;
@@ -27,7 +28,7 @@ export function GuestEventCommunityContent({ accessCode }: Props) {
         <button
           type="button"
           onClick={() => void refetch()}
-          className="mt-4 text-xs font-semibold uppercase tracking-wide text-eh-accent hover:underline"
+          className={`mt-4 text-xs font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
         >
           Try again
         </button>
@@ -41,10 +42,10 @@ export function GuestEventCommunityContent({ accessCode }: Props) {
 
   return (
     <div className="space-y-10">
-      <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#1e2229] to-[#14161c] p-6 shadow-inner">
-        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-eh-text-tertiary">Fans in this hub</p>
-        <p className="mt-2 font-mono text-5xl font-bold tabular-nums text-white sm:text-6xl">{fans}</p>
-        <p className="mt-3 text-sm leading-relaxed text-eh-text-secondary">
+      <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-[color:var(--guest-elevated)] to-[color:var(--guest-bg)] p-6 shadow-inner">
+        <p className={`text-[11px] font-bold uppercase tracking-[0.2em] ${guestHub.fgMuted}`}>Fans in this hub</p>
+        <p className={`mt-2 font-mono text-5xl font-bold tabular-nums sm:text-6xl ${guestHub.fg}`}>{fans}</p>
+        <p className={`mt-3 text-sm leading-relaxed ${guestHub.fgMuted}`}>
           Guests who completed their event profile — ready to connect, upload, and explore.
         </p>
       </section>
@@ -52,38 +53,38 @@ export function GuestEventCommunityContent({ accessCode }: Props) {
       <section>
         <div className="mb-4 flex items-end justify-between gap-2">
           <div>
-            <h2 className="text-lg font-semibold text-white">Top photographers</h2>
-            <p className="mt-1 text-sm text-eh-text-secondary">Most gallery photos shared (images only).</p>
+            <h2 className={`text-lg font-semibold ${guestHub.fg}`}>Top photographers</h2>
+            <p className={`mt-1 text-sm ${guestHub.fgMuted}`}>Most gallery photos shared (images only).</p>
           </div>
         </div>
 
         {top.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/15 bg-[#1a1d24]/80 px-5 py-10 text-center">
-            <p className="text-sm text-eh-text-secondary">No photo uploads yet — open Upload and be the first on the board.</p>
+          <div className={`rounded-2xl border border-dashed border-white/15 px-5 py-10 text-center ${guestHub.surface}`}>
+            <p className={`text-sm ${guestHub.fgMuted}`}>No photo uploads yet — open Upload and be the first on the board.</p>
           </div>
         ) : (
           <ol className="space-y-3">
             {top.map((u, i) => (
               <li
                 key={u.guest_id}
-                className={`flex items-center gap-4 rounded-2xl border bg-gradient-to-r p-4 ${rankStyle[i] ?? "border-white/10 from-[#252830] to-[#1a1d24]"}`}
+                className={`flex items-center gap-4 rounded-2xl border bg-gradient-to-r p-4 ${rankStyle[i] ?? `border-white/10 from-[color:var(--guest-card)] to-[color:var(--guest-bg)]`}`}
               >
                 <span
-                  className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-black/40 text-lg font-bold text-eh-accent"
+                  className={`flex size-10 shrink-0 items-center justify-center rounded-xl bg-black/40 text-lg font-bold ${guestHub.accent}`}
                   aria-hidden
                 >
                   {i + 1}
                 </span>
-                <div className="relative size-14 shrink-0 overflow-hidden rounded-full border-2 border-white/10 bg-[#252830]">
+                <div className={`relative size-14 shrink-0 overflow-hidden rounded-full border-2 border-white/10 ${guestHub.surface}`}>
                   {u.avatar_url ? (
                     <img src={u.avatar_url} alt="" className="size-full object-cover" />
                   ) : (
-                    <div className="flex size-full items-center justify-center text-lg text-eh-text-tertiary">?</div>
+                    <div className={`flex size-full items-center justify-center text-lg ${guestHub.fgMuted}`}>?</div>
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold text-white">{u.username ? `@${u.username}` : "Guest"}</p>
-                  <p className="text-xs text-eh-text-tertiary">
+                  <p className={`truncate font-semibold ${guestHub.fg}`}>{u.username ? `@${u.username}` : "Guest"}</p>
+                  <p className={`text-xs ${guestHub.fgMuted}`}>
                     {u.image_upload_count} {u.image_upload_count === 1 ? "photo" : "photos"}
                   </p>
                 </div>

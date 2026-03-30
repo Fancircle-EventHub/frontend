@@ -4,9 +4,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { startTransition, useEffect, useState } from "react";
 import { useGetOrganizationEventQuery, useUpdateOrganizationEventMutation } from "@/apis/event.api";
-import { EVENT_MODULE_LIST, EVENT_MODULE_TOTAL } from "@/constants/eventModules";
+import { EVENT_MODULE_LIST, LIVE_MODULE_TOTAL, MODULE_IMPLEMENTATION } from "@/constants/eventModules";
 import type { EventModuleId } from "@/constants/eventModules";
-import { countActiveModules, defaultModulesState, mergeModulesFromApi } from "@/lib/event-modules";
+import {
+  countLiveActiveModules,
+  defaultModulesState,
+  isModuleLiveImplementation,
+  mergeModulesFromApi,
+  sanitizeModulesForSave,
+} from "@/lib/event-modules";
 import { extractApiErrorMessage } from "@/lib/api-error";
 import { Button } from "@/components/ui/button";
 
@@ -26,7 +32,7 @@ function ModuleToggle({
       aria-checked={checked}
       disabled={disabled}
       onClick={() => onChange(!checked)}
-      className={`relative h-7 w-12 shrink-0 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-eh-accent/50 disabled:opacity-50 ${
+      className={`relative h-7 w-12 shrink-0 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-eh-accent/50 disabled:cursor-not-allowed disabled:opacity-40 ${
         checked ? "bg-eh-accent" : "bg-white/15"
       }`}
     >
@@ -48,17 +54,63 @@ function ModuleGoldIcon({ className }: { className?: string }) {
   );
 }
 
+function ModuleCardFooter({ modId, eventId }: { modId: EventModuleId; eventId: string }) {
+  switch (modId) {
+    case "tour_promotion":
+      return (
+        <Link
+          href={`/organization/events/${eventId}/related`}
+          className="inline-flex text-[10px] font-bold uppercase tracking-wider text-eh-accent transition hover:underline"
+        >
+          Manage related shows →
+        </Link>
+      );
+    case "meetups":
+      return (
+        <Link
+          href={`/organization/events/${eventId}/meetups`}
+          className="inline-flex text-[10px] font-bold uppercase tracking-wider text-eh-accent transition hover:underline"
+        >
+          Manage meetups →
+        </Link>
+      );
+    case "community":
+      return <p className="text-[10px] leading-relaxed text-eh-text-tertiary">Fan count & top uploaders on the guest Community tab.</p>;
+    case "carpooling":
+      return <p className="text-[10px] leading-relaxed text-eh-text-tertiary">Guests post offers and requests from the Carpool screen.</p>;
+    case "fan_gallery":
+      return <p className="text-[10px] leading-relaxed text-eh-text-tertiary">Upload & gallery routes in the guest hub.</p>;
+    case "event_info":
+      return (
+        <p className="text-[10px] leading-relaxed text-eh-text-tertiary">
+          Uses event details from your event setup (edit event). Guests see an Event info screen when enabled.
+        </p>
+      );
+    case "notifications":
+      return (
+        <Link
+          href={`/organization/events/${eventId}/notifications`}
+          className="inline-flex text-[10px] font-bold uppercase tracking-wider text-eh-accent transition hover:underline"
+        >
+          Manage announcements →
+        </Link>
+      );
+    default:
+      return null;
+  }
+}
+
 type EventModulesScreenProps = {
   eventId: string;
+  standalone?: boolean;
 };
 
-export function EventModulesScreen({ eventId }: EventModulesScreenProps) {
+export function EventModulesScreen({ eventId, standalone = false }: EventModulesScreenProps) {
   const router = useRouter();
   const { data, isLoading, isError } = useGetOrganizationEventQuery(eventId, { skip: !eventId });
   const [updateEvent, { isLoading: saving }] = useUpdateOrganizationEventMutation();
 
   const [modules, setModules] = useState<Record<EventModuleId, boolean>>(defaultModulesState);
-  const [baseline, setBaseline] = useState<Record<EventModuleId, boolean>>(defaultModulesState);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -67,41 +119,40 @@ export function EventModulesScreen({ eventId }: EventModulesScreenProps) {
     const next = mergeModulesFromApi(ev.modules);
     startTransition(() => {
       setModules(next);
-      setBaseline(next);
       setErrorMessage(null);
     });
   }, [data]);
 
-  function patch(id: EventModuleId, value: boolean) {
-    setModules((m) => ({ ...m, [id]: value }));
-    setErrorMessage(null);
-  }
-
-  function discard() {
-    setModules({ ...baseline });
-    setErrorMessage(null);
-  }
-
-  async function saveAndContinue() {
+  async function patchAndSave(id: EventModuleId, value: boolean) {
+    if (!isModuleLiveImplementation(id)) return;
     const ev = data?.data;
     if (!ev) return;
+
+    const next = { ...modules, [id]: value };
+    const safe = sanitizeModulesForSave(next);
+    const previous = { ...modules };
+
+    setModules(next);
     setErrorMessage(null);
     try {
       await updateEvent({
         eventId,
         body: {
           title: ev.title,
-          modules: { ...modules },
+          modules: { ...safe },
         },
       }).unwrap();
-      setBaseline({ ...modules });
-      router.push(`/organization/events/${eventId}/publish`);
     } catch (e) {
       setErrorMessage(extractApiErrorMessage(e));
+      setModules(previous);
     }
   }
 
-  const activeCount = countActiveModules(modules);
+  function continueAfterModules() {
+    router.push(standalone ? "/organization/modules" : `/organization/events/${eventId}/publish`);
+  }
+
+  const activeLiveCount = countLiveActiveModules(modules);
 
   if (!eventId) {
     return <p className="text-sm text-eh-text-secondary">Invalid event.</p>;
@@ -131,70 +182,111 @@ export function EventModulesScreen({ eventId }: EventModulesScreenProps) {
 
   return (
     <div className="mx-auto max-w-6xl">
+      {standalone ? (
+        <div className="mb-6">
+          <Link
+            href="/organization/modules"
+            className="text-sm font-medium text-eh-accent transition hover:underline"
+          >
+            ← Back to event list
+          </Link>
+        </div>
+      ) : null}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-eh-accent">Configuration</p>
           <h1 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">Event modules</h1>
           <p className="mt-2 max-w-2xl text-sm text-eh-text-secondary">
-            Turn on interaction layers for your event hub—guests only see what you enable.
+            Turn on features that are live in the guest hub — each switch saves immediately. Other tiles are preview-only
+            until we ship them.
           </p>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs font-semibold uppercase tracking-wide">
+            <Link href={`/organization/events/${eventId}/related`} className="text-eh-accent hover:underline">
+              Tour promotion
+            </Link>
+            <Link href={`/organization/events/${eventId}/meetups`} className="text-eh-accent hover:underline">
+              Meetups
+            </Link>
+            <Link href={`/organization/events/${eventId}/notifications`} className="text-eh-accent hover:underline">
+              Announcements
+            </Link>
+          </div>
         </div>
         <div className="shrink-0 rounded-lg border border-eh-accent/40 bg-eh-accent/10 px-4 py-2 text-center">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-eh-text-tertiary">Active modules</p>
+          <p className="text-[9px] font-bold uppercase tracking-wider text-eh-text-tertiary">Live features on</p>
           <p className="text-lg font-bold tabular-nums text-eh-accent">
-            {String(activeCount).padStart(2, "0")} / {EVENT_MODULE_TOTAL}
+            {String(activeLiveCount).padStart(2, "0")} / {String(LIVE_MODULE_TOTAL).padStart(2, "0")}
           </p>
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {EVENT_MODULE_LIST.map((mod) => (
-          <div
-            key={mod.id}
-            className="flex flex-col rounded-xl border border-white/10 bg-[#16181c] p-5 shadow-sm transition hover:border-white/15"
-          >
-            <div className="mb-3 flex items-start justify-between gap-3">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <ModuleGoldIcon className="shrink-0 text-eh-accent" />
-                <h2 className="text-sm font-bold uppercase tracking-wide text-white">{mod.title}</h2>
-              </div>
-              <ModuleToggle checked={modules[mod.id]} onChange={(v) => patch(mod.id, v)} disabled={saving} />
-            </div>
-            <p className="mb-4 flex-1 text-xs leading-relaxed text-eh-text-secondary">{mod.description}</p>
-            <button
-              type="button"
-              className="text-left text-[10px] font-bold uppercase tracking-wider text-eh-accent/90 transition hover:text-eh-accent"
+        {EVENT_MODULE_LIST.map((mod) => {
+          const isLive = MODULE_IMPLEMENTATION[mod.id] === "live";
+          return (
+            <div
+              key={mod.id}
+              className={`relative flex flex-col overflow-hidden rounded-xl border bg-[#16181c] shadow-sm transition ${
+                isLive ? "border-white/10 hover:border-white/15" : "border-white/[0.06]"
+              }`}
             >
-              Configure <span aria-hidden>→</span>
-            </button>
-          </div>
-        ))}
+              {!isLive ? (
+                <div className="shrink-0 border-b border-amber-400/25 bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-transparent px-4 py-2.5">
+                  <p className="text-center text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100/95">
+                    Coming soon
+                  </p>
+                </div>
+              ) : null}
+              <div className="flex flex-1 flex-col p-5">
+                <div className="mb-3 flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <ModuleGoldIcon className={`shrink-0 ${isLive ? "text-eh-accent" : "text-eh-text-tertiary/50"}`} />
+                    <h2 className="text-sm font-bold uppercase tracking-wide text-white">{mod.title}</h2>
+                  </div>
+                  <ModuleToggle
+                    checked={modules[mod.id]}
+                    onChange={(v) => void patchAndSave(mod.id, v)}
+                    disabled={saving || !isLive}
+                  />
+                </div>
+                <p className="mb-4 flex-1 text-xs leading-relaxed text-eh-text-secondary">{mod.description}</p>
+                <div className="mt-auto min-h-[2.5rem] border-t border-white/5 pt-3">
+                  {isLive ? (
+                    <ModuleCardFooter modId={mod.id} eventId={eventId} />
+                  ) : (
+                    <p className="text-[10px] leading-relaxed text-eh-text-tertiary/90">
+                      Toggle unlocks when this experience ships.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      <div className="mt-10 rounded-xl border border-eh-accent/20 bg-eh-accent/5 p-6">
-        <p className="text-[10px] font-bold uppercase tracking-wider text-eh-accent">+42% engagement lift</p>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-eh-text-secondary">
-          Smart module activation helps guests discover the right touchpoints at the right time—without overwhelming the
-          experience.
+      <div className="mt-10 rounded-xl border border-white/10 bg-[#14161a] p-5">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-eh-text-tertiary">Note</p>
+        <p className="mt-1 text-xs leading-relaxed text-eh-text-secondary">
+          Only modules marked as live above change what guests see. Coming soon modules stay off until released. Toggles
+          are saved as soon as you flip them.
         </p>
       </div>
 
-      <div className="mt-10 flex flex-col-reverse gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
-        <button
-          type="button"
-          onClick={discard}
-          className="text-sm font-medium text-eh-text-tertiary transition hover:text-eh-text-secondary"
-        >
-          ✕ Discard draft
-        </button>
+      <div className="mt-10 flex justify-end border-t border-white/10 pt-8">
         <Button
           type="button"
           variant="primary"
-          loading={saving}
           className="w-full min-w-0 px-8 sm:w-auto sm:min-w-[240px]"
-          onClick={() => void saveAndContinue()}
+          onClick={continueAfterModules}
         >
-          Continue <span aria-hidden>→</span>
+          {standalone ? (
+            "Done"
+          ) : (
+            <>
+              Continue <span aria-hidden>→</span>
+            </>
+          )}
         </Button>
       </div>
 

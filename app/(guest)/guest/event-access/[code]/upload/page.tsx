@@ -4,12 +4,20 @@ import { useParams } from "next/navigation";
 import { useGuestEventOnboardingQuery } from "@/apis/guest.api";
 import { GuestEventUploadContent } from "@/components/guest-event/GuestEventUploadContent";
 import { PageCenterSpinner } from "@/components/ui/PageCenterSpinner";
+import { useGuestModuleRedirect } from "@/hooks/useGuestModuleRedirect";
 
 export default function GuestEventUploadPage() {
   const params = useParams<{ code: string }>();
   const code = params.code ?? "";
-  const { data: onboardingEnvelope, isLoading } = useGuestEventOnboardingQuery(code, { skip: !code });
+  const gate = useGuestModuleRedirect(code, "fan_gallery");
+  const { data: onboardingEnvelope, isLoading } = useGuestEventOnboardingQuery(code, {
+    skip: !code || gate !== "ok",
+  });
   const eventId = onboardingEnvelope?.data?.event?.id ?? "";
+
+  if (gate !== "ok") {
+    return <PageCenterSpinner fixed />;
+  }
 
   if (isLoading || !eventId) {
     return <PageCenterSpinner fixed />;
