@@ -13,11 +13,6 @@ function rideRouteLine(p: GuestRidePostItem) {
   return d ? `${p.origin_area} → ${d}` : p.origin_area;
 }
 
-function meetupInitial(title: string) {
-  const t = title.trim();
-  return t ? t.slice(0, 1).toUpperCase() : "M";
-}
-
 function formatMeetupPreviewTime(iso: string) {
   try {
     const d = new Date(iso);
@@ -96,7 +91,7 @@ export function GuestEventHomeStaticSections({
   }
 
   return (
-    <div className="space-y-8 px-4 pb-4 sm:px-6 lg:mx-auto lg:max-w-3xl">
+    <div className="min-w-0 space-y-8 px-4 pb-4 sm:px-6 lg:mx-auto lg:max-w-3xl">
       {quickLinks.length > 0 ? (
         <section aria-labelledby="quick-actions-heading">
           <h2 id="quick-actions-heading" className="sr-only">
@@ -107,10 +102,10 @@ export function GuestEventHomeStaticSections({
               <Link
                 key={action.id}
                 href={action.href}
-                className={`block rounded-2xl border border-white/10 p-4 text-left transition ${guestHub.surface} ${guestHub.cardHoverBorder}`}
+                className={`block min-w-0 rounded-2xl border border-white/10 p-4 text-left transition ${guestHub.surface} ${guestHub.cardHoverBorder}`}
               >
-                <p className={`text-sm font-semibold ${guestHub.fg}`}>{action.title}</p>
-                <p className={`mt-1 text-xs ${guestHub.fgMuted}`}>{action.subtitle}</p>
+                <p className={`text-sm font-semibold ${guestHub.fg} ${guestHub.wrap}`}>{action.title}</p>
+                <p className={`mt-1 text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>{action.subtitle}</p>
               </Link>
             ))}
           </div>
@@ -119,13 +114,13 @@ export function GuestEventHomeStaticSections({
 
       {showNotifications ? (
         <section aria-labelledby="notifications-preview">
-          <div className="flex items-center justify-between gap-2">
-            <h2 id="notifications-preview" className={`text-lg font-semibold ${guestHub.fg}`}>
+          <div className="flex min-w-0 items-start justify-between gap-3">
+            <h2 id="notifications-preview" className={`min-w-0 flex-1 text-lg font-semibold ${guestHub.fg} ${guestHub.wrap}`}>
               Updates
             </h2>
             <Link
               href={`${base}/notifications`}
-              className={`text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
+              className={`shrink-0 text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
             >
               View all
             </Link>
@@ -140,14 +135,14 @@ export function GuestEventHomeStaticSections({
                 <li key={n.id}>
                   <Link
                     href={`${base}/notifications`}
-                    className={`block rounded-2xl p-4 transition hover:brightness-[1.03] ${guestHub.surface} ${notificationCardBorderClass(n.color)}`}
+                    className={`block min-w-0 rounded-2xl p-4 text-left transition hover:brightness-[1.03] ${guestHub.surface} ${notificationCardBorderClass(n.color)}`}
                   >
-                    <p className={`text-[10px] font-bold uppercase tracking-wider ${guestHub.fgMuted}`}>
+                    <p className={`text-[10px] font-bold uppercase tracking-wider ${guestHub.fgMuted} ${guestHub.wrap}`}>
                       {n.created_at ? new Date(n.created_at).toLocaleString(undefined, { dateStyle: "medium" }) : "Update"}
                       {n.category ? ` · ${n.category}` : ""}
                     </p>
-                    <p className={`mt-1 text-sm font-semibold ${guestHub.fg}`}>{n.title}</p>
-                    <p className={`mt-1 line-clamp-2 text-xs ${guestHub.fgMuted}`}>{n.body}</p>
+                    <p className={`mt-1 text-sm font-semibold ${guestHub.fg} ${guestHub.wrap}`}>{n.title}</p>
+                    <p className={`mt-1 line-clamp-2 text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>{n.body}</p>
                   </Link>
                 </li>
               ))}
@@ -160,11 +155,14 @@ export function GuestEventHomeStaticSections({
 
       {showMeetups ? (
         <section aria-labelledby="meetups-preview">
-          <div className="flex items-center justify-between gap-2">
-            <h2 id="meetups-preview" className={`text-lg font-semibold ${guestHub.fg}`}>
+          <div className="flex min-w-0 items-start justify-between gap-3">
+            <h2 id="meetups-preview" className={`min-w-0 flex-1 text-lg font-semibold ${guestHub.fg} ${guestHub.wrap}`}>
               Meetups
             </h2>
-            <Link href={`${base}/meetups`} className={`text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}>
+            <Link
+              href={`${base}/meetups`}
+              className={`shrink-0 text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
+            >
               View all
             </Link>
           </div>
@@ -178,16 +176,11 @@ export function GuestEventHomeStaticSections({
                 <li key={m.id}>
                   <Link
                     href={`${base}/meetups`}
-                    className={`flex gap-3 rounded-2xl border border-white/10 p-3 transition hover:brightness-[1.03] sm:p-4 ${guestHub.surface} ${guestHub.cardHoverBorder}`}
+                    className={`block min-w-0 rounded-2xl border border-white/10 p-3 text-left transition hover:brightness-[1.03] sm:p-4 ${guestHub.surface} ${guestHub.cardHoverBorder}`}
                   >
-                    <div className="relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5 text-xs font-bold sm:size-12">
-                      <span className={guestHub.fg}>{meetupInitial(m.title)}</span>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className={`text-sm font-semibold leading-snug ${guestHub.fg}`}>{m.title}</p>
-                      <p className={`mt-0.5 line-clamp-1 text-xs ${guestHub.fgMuted}`}>{m.location}</p>
-                      <p className={`mt-1 text-xs font-semibold ${guestHub.accent}`}>{formatMeetupPreviewTime(m.meetup_at)}</p>
-                    </div>
+                    <p className={`text-sm font-semibold leading-snug ${guestHub.fg} ${guestHub.wrap}`}>{m.title}</p>
+                    <p className={`mt-0.5 line-clamp-3 text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>{m.location}</p>
+                    <p className={`mt-1 text-xs font-semibold ${guestHub.accent} ${guestHub.wrap}`}>{formatMeetupPreviewTime(m.meetup_at)}</p>
                   </Link>
                 </li>
               ))}
@@ -198,11 +191,14 @@ export function GuestEventHomeStaticSections({
 
       {showRides ? (
         <section aria-labelledby="rides-preview">
-          <div className="flex items-center justify-between gap-2">
-            <h2 id="rides-preview" className={`text-lg font-semibold ${guestHub.fg}`}>
+          <div className="flex min-w-0 items-start justify-between gap-3">
+            <h2 id="rides-preview" className={`min-w-0 flex-1 text-lg font-semibold ${guestHub.fg} ${guestHub.wrap}`}>
               Carpool
             </h2>
-            <Link href={`${base}/rides`} className={`text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}>
+            <Link
+              href={`${base}/rides`}
+              className={`shrink-0 text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
+            >
               View all
             </Link>
           </div>
@@ -216,7 +212,7 @@ export function GuestEventHomeStaticSections({
                 <li key={r.id}>
                   <Link
                     href={`${base}/rides`}
-                    className={`flex gap-3 rounded-2xl border border-white/10 p-4 transition ${guestHub.surface} ${guestHub.cardHoverBorder}`}
+                    className={`flex min-w-0 gap-3 rounded-2xl border border-white/10 p-4 text-left transition ${guestHub.surface} ${guestHub.cardHoverBorder}`}
                   >
                     <div className="relative size-11 shrink-0 overflow-hidden rounded-full bg-white/10">
                       {r.author_avatar_url ? (
@@ -228,9 +224,9 @@ export function GuestEventHomeStaticSections({
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className={`text-sm font-semibold leading-snug ${guestHub.fg}`}>{rideRouteLine(r)}</p>
-                      <p className={`mt-1 text-xs font-semibold ${guestHub.accent}`}>{formatDateTime(r.departure_at)}</p>
-                      <p className={`mt-0.5 text-[10px] uppercase tracking-wide ${guestHub.fgMuted}`}>
+                      <p className={`text-sm font-semibold leading-snug ${guestHub.fg} ${guestHub.wrap}`}>{rideRouteLine(r)}</p>
+                      <p className={`mt-1 text-xs font-semibold ${guestHub.accent} ${guestHub.wrap}`}>{formatDateTime(r.departure_at)}</p>
+                      <p className={`mt-0.5 text-[10px] uppercase tracking-wide ${guestHub.fgMuted} ${guestHub.wrap}`}>
                         {r.type === "offer" ? "Offer" : "Request"}
                         {r.type === "offer" && r.seats_available != null ? ` · ${r.seats_available} seats` : ""}
                       </p>
@@ -245,13 +241,13 @@ export function GuestEventHomeStaticSections({
 
       {showFanGallery ? (
         <section aria-labelledby="spotlight-heading">
-          <div className="flex items-center justify-between gap-2">
-            <h2 id="spotlight-heading" className={`text-lg font-semibold ${guestHub.fg}`}>
+          <div className="flex min-w-0 items-start justify-between gap-3">
+            <h2 id="spotlight-heading" className={`min-w-0 flex-1 text-lg font-semibold ${guestHub.fg} ${guestHub.wrap}`}>
               Shot of the night
             </h2>
             <Link
               href={`${base}/gallery`}
-              className={`text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
+              className={`shrink-0 text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
             >
               View all
             </Link>
@@ -266,11 +262,11 @@ export function GuestEventHomeStaticSections({
                 )}
               </div>
               <div className="flex items-center justify-between gap-2 p-3">
-                <div>
-                  <p className={`text-sm font-medium ${guestHub.fg}`}>
+                <div className="min-w-0">
+                  <p className={`text-sm font-medium ${guestHub.fg} ${guestHub.wrap}`}>
                     {shot.username ? `@${shot.username}` : "Fan highlight"}
                   </p>
-                  <p className={`text-xs ${guestHub.fgMuted}`}>Picked by the organizer</p>
+                  <p className={`text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>Picked by the organizer</p>
                 </div>
               </div>
             </div>
@@ -291,7 +287,7 @@ export function GuestEventHomeStaticSections({
       ) : null}
 
       <footer className="border-t border-white/10 pt-6 text-center">
-        <p className={`mt-6 text-[10px] ${guestHub.fgMuted}`}>
+        <p className={`mx-auto mt-6 max-w-full px-1 text-[10px] ${guestHub.fgMuted} ${guestHub.wrap}`}>
           {title} · Fancircle EventHub · {new Date().getFullYear()}
         </p>
       </footer>

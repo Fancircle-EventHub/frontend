@@ -31,9 +31,9 @@ export default function GuestEventMorePage() {
   ].filter(Boolean) as { href: string; label: string }[];
 
   return (
-    <div className="px-4 pb-8 pt-6 sm:px-6 lg:mx-auto lg:max-w-2xl">
-      <h1 className={`text-xl font-bold sm:text-2xl ${guestHub.fg}`}>More</h1>
-      <p className={`mt-2 text-sm ${guestHub.fgMuted}`}>Legal information and links to hub features for this event.</p>
+    <div className="min-w-0 px-4 pb-8 pt-6 sm:px-6 lg:mx-auto lg:max-w-2xl">
+      <h1 className={`text-xl font-bold sm:text-2xl ${guestHub.fg} ${guestHub.wrap}`}>More</h1>
+      <p className={`mt-2 text-sm ${guestHub.fgMuted} ${guestHub.wrap}`}>Legal information and links to hub features for this event.</p>
 
       {shortcuts.length > 0 ? (
         <nav className="mt-6 flex flex-wrap gap-3" aria-label="Hub modules">
@@ -41,7 +41,7 @@ export default function GuestEventMorePage() {
             <Link
               key={s.href}
               href={s.href}
-              className={`rounded-xl border border-white/10 px-4 py-3 text-sm font-semibold transition ${guestHub.surface} ${guestHub.fg} ${guestHub.cardHoverBorder}`}
+              className={`max-w-full rounded-xl border border-white/10 px-4 py-3 text-center text-sm font-semibold transition ${guestHub.surface} ${guestHub.fg} ${guestHub.wrap} ${guestHub.cardHoverBorder}`}
             >
               {s.label}
             </Link>

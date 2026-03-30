@@ -9,6 +9,7 @@ import { baseApi } from "@/services/api/baseApi";
 import { useAppDispatch } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
 import { guestEventAuthPaths } from "@/lib/guest-event-auth-paths";
+import { guestHub } from "@/lib/guest-event-branding";
 
 type Props = {
   open: boolean;
@@ -16,8 +17,7 @@ type Props = {
   eventCode: string;
 };
 
-const linkClass =
-  "rounded-xl px-3 py-3 text-sm font-semibold text-eh-accent transition hover:bg-white/5 hover:text-eh-accent";
+const linkClass = `rounded-xl px-3 py-3 text-sm font-semibold text-eh-accent transition hover:bg-white/5 hover:text-eh-accent ${guestHub.wrap}`;
 
 /**
  * Guest in-event menu: legal links (accent) + sign out.

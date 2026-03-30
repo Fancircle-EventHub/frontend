@@ -44,12 +44,12 @@ export function GuestTourPromotionSection({ related }: Props) {
                 />
                 <div className="relative flex min-h-[7.5rem] flex-col justify-end p-4 pr-4 sm:min-h-[6.5rem] sm:flex-row sm:items-end sm:justify-between sm:gap-4">
                   <div className="min-w-0">
-                    <p className="truncate text-base font-bold leading-tight text-white drop-shadow-md sm:text-lg">
+                    <p className={`text-base font-bold leading-tight text-white drop-shadow-md sm:text-lg ${guestHub.wrap} line-clamp-2`}>
                       {r.artist?.trim() || "Artist"}
                     </p>
-                    <p className="mt-1 line-clamp-2 text-sm text-white/80 drop-shadow">{r.title}</p>
+                    <p className={`mt-1 line-clamp-2 text-sm text-white/80 drop-shadow ${guestHub.wrap}`}>{r.title}</p>
                     {(r.event_date || r.venue || r.city) && (
-                      <p className="mt-1 line-clamp-1 text-xs text-white/55">
+                      <p className={`mt-1 line-clamp-2 text-xs text-white/55 ${guestHub.wrap}`}>
                         {[r.event_date, r.venue, r.city].filter(Boolean).join(" · ")}
                       </p>
                     )}

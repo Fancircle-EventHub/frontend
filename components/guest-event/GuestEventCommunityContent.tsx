@@ -45,16 +45,16 @@ export function GuestEventCommunityContent({ accessCode }: Props) {
       <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-[color:var(--guest-elevated)] to-[color:var(--guest-bg)] p-6 shadow-inner">
         <p className={`text-[11px] font-bold uppercase tracking-[0.2em] ${guestHub.fgMuted}`}>Fans in this hub</p>
         <p className={`mt-2 font-mono text-5xl font-bold tabular-nums sm:text-6xl ${guestHub.fg}`}>{fans}</p>
-        <p className={`mt-3 text-sm leading-relaxed ${guestHub.fgMuted}`}>
+        <p className={`mt-3 text-sm leading-relaxed ${guestHub.fgMuted} ${guestHub.wrap}`}>
           Guests who completed their event profile — ready to connect, upload, and explore.
         </p>
       </section>
 
       <section>
-        <div className="mb-4 flex items-end justify-between gap-2">
-          <div>
-            <h2 className={`text-lg font-semibold ${guestHub.fg}`}>Top photographers</h2>
-            <p className={`mt-1 text-sm ${guestHub.fgMuted}`}>Most gallery photos shared (images only).</p>
+        <div className="mb-4 flex min-w-0 items-end justify-between gap-2">
+          <div className="min-w-0">
+            <h2 className={`text-lg font-semibold ${guestHub.fg} ${guestHub.wrap}`}>Top photographers</h2>
+            <p className={`mt-1 text-sm ${guestHub.fgMuted} ${guestHub.wrap}`}>Most gallery photos shared (images only).</p>
           </div>
         </div>
 
@@ -83,7 +83,7 @@ export function GuestEventCommunityContent({ accessCode }: Props) {
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className={`truncate font-semibold ${guestHub.fg}`}>{u.username ? `@${u.username}` : "Guest"}</p>
+                  <p className={`font-semibold ${guestHub.fg} ${guestHub.wrap}`}>{u.username ? `@${u.username}` : "Guest"}</p>
                   <p className={`text-xs ${guestHub.fgMuted}`}>
                     {u.image_upload_count} {u.image_upload_count === 1 ? "photo" : "photos"}
                   </p>

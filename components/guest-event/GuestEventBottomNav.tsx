@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEventEntryByCodeQuery } from "@/apis/event.api";
 import { isModuleEnabled } from "@/lib/event-modules";
+import { guestHub } from "@/lib/guest-event-branding";
 
 const NAV_H = "h-[4.25rem] sm:h-[4.5rem]";
 
@@ -63,10 +64,14 @@ function SideNavLink({
   return (
     <Link
       href={href}
-      className="flex min-w-0 flex-col items-center justify-end gap-1 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wide transition sm:text-[11px]"
+      className="flex min-w-0 max-w-[5.5rem] flex-col items-center justify-end gap-1 pb-1 pt-2 text-center text-[10px] font-semibold uppercase leading-tight tracking-wide transition sm:max-w-[6.5rem] sm:text-[11px]"
     >
-      <span className="flex h-8 w-8 items-center justify-center sm:h-9 sm:w-9">{icon(active)}</span>
-      <span className={active ? "text-eh-accent" : "text-eh-text-tertiary"}>{label}</span>
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center sm:h-9 sm:w-9">{icon(active)}</span>
+      <span
+        className={`line-clamp-2 w-full ${guestHub.wrap} ${active ? "text-eh-accent" : "text-eh-text-tertiary"}`}
+      >
+        {label}
+      </span>
     </Link>
   );
 }
@@ -128,7 +133,7 @@ export function GuestEventBottomNav({ eventCode }: GuestEventBottomNavProps) {
               </svg>
             </Link>
             <span
-              className={`text-[10px] font-semibold uppercase tracking-wide sm:text-[11px] ${uploadActive ? "text-eh-accent" : "text-eh-text-tertiary"}`}
+              className={`text-center text-[10px] font-semibold uppercase leading-tight tracking-wide sm:text-[11px] ${uploadActive ? "text-eh-accent" : "text-eh-text-tertiary"} ${guestHub.wrap}`}
             >
               Upload
             </span>

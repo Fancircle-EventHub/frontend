@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useState } from "react";
 import {
   useGuestEventMeetupsQuery,
   useGuestMeetupJoinMutation,
@@ -13,11 +14,6 @@ import { PageCenterSpinner } from "@/components/ui/PageCenterSpinner";
 type Props = {
   accessCode: string;
 };
-
-function meetupInitial(title: string) {
-  const t = title.trim();
-  return t ? t.slice(0, 1).toUpperCase() : "M";
-}
 
 function formatMeetupHighlight(iso: string) {
   try {
@@ -40,11 +36,55 @@ function meetupVenueMeta(m: GuestMeetupItem): string {
   return parts.join(" · ");
 }
 
+function MeetupDescription({
+  meetupId,
+  description,
+  expanded,
+  onToggle,
+}: {
+  meetupId: string;
+  description: string;
+  expanded: boolean;
+  onToggle: (id: string) => void;
+}) {
+  const desc = description.trim();
+  const needsToggle = desc.length > 140;
+  return (
+    <div className="mt-2">
+      <p
+        className={`text-xs leading-relaxed ${guestHub.fgMuted} ${guestHub.wrap} ${needsToggle && !expanded ? "line-clamp-2" : ""}`}
+      >
+        {desc}
+      </p>
+      {needsToggle ? (
+        <button
+          type="button"
+          onClick={() => onToggle(meetupId)}
+          aria-expanded={expanded}
+          className={`mt-1 text-[11px] font-semibold uppercase tracking-wide underline-offset-2 hover:underline ${guestHub.accent}`}
+        >
+          {expanded ? "Show less" : "Show more"}
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
 export function GuestEventMeetupsContent({ accessCode }: Props) {
   const { data, isLoading, isError, refetch } = useGuestEventMeetupsQuery(accessCode, { skip: !accessCode });
   const [join, { isLoading: joining }] = useGuestMeetupJoinMutation();
   const [leave, { isLoading: leaving }] = useGuestMeetupLeaveMutation();
   const busy = joining || leaving;
+  const [expandedDescIds, setExpandedDescIds] = useState<Set<string>>(() => new Set());
+
+  const toggleDescription = useCallback((id: string) => {
+    setExpandedDescIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
 
   if (isLoading) {
     return <PageCenterSpinner />;
@@ -70,7 +110,9 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
   return (
     <section className={`rounded-2xl border border-white/10 p-4 sm:p-5 ${guestHub.surface}`}>
       <h2 className={`text-xl font-bold tracking-tight ${guestHub.accent}`}>Meetups</h2>
-      <p className={`mt-1 text-sm ${guestHub.fgMuted}`}>Join fan meetups before the show — coordinated here, no DMs.</p>
+      <p className={`mt-1 text-sm ${guestHub.fgMuted}`}>
+        Participate in fan meetups before the show — coordinated here, no DMs.
+      </p>
 
       {meetups.length === 0 ? (
         <p className={`mt-8 rounded-2xl border border-dashed border-white/15 px-4 py-10 text-center text-sm ${guestHub.fgMuted}`}>
@@ -83,15 +125,19 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
               key={m.id}
               className="flex gap-3 rounded-2xl border border-white/10 bg-[color:var(--guest-bg)]/40 p-3 sm:gap-4 sm:p-4"
             >
-              <div className="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5 text-sm font-bold sm:size-14 sm:text-base">
-                <span className={guestHub.fg}>{meetupInitial(m.title)}</span>
-              </div>
               <div className="min-w-0 flex-1">
-                <p className={`text-sm font-semibold leading-snug sm:text-base ${guestHub.fg}`}>{m.title}</p>
-                <p className={`mt-1 text-xs leading-relaxed ${guestHub.fgMuted}`}>{meetupVenueMeta(m)}</p>
-                <p className={`mt-1.5 text-sm font-bold sm:text-base ${guestHub.accent}`}>{formatMeetupHighlight(m.meetup_at)}</p>
+                <p className={`text-sm font-semibold leading-snug sm:text-base ${guestHub.fg} ${guestHub.wrap}`}>{m.title}</p>
+                <p className={`mt-1 text-xs leading-relaxed ${guestHub.fgMuted} ${guestHub.wrap}`}>{meetupVenueMeta(m)}</p>
+                <p className={`mt-1.5 text-sm font-bold sm:text-base ${guestHub.accent} ${guestHub.wrap}`}>
+                  {formatMeetupHighlight(m.meetup_at)}
+                </p>
                 {m.description?.trim() ? (
-                  <p className={`mt-1 line-clamp-2 text-xs ${guestHub.accent} opacity-90`}>Details: {m.description}</p>
+                  <MeetupDescription
+                    meetupId={m.id}
+                    description={m.description}
+                    expanded={expandedDescIds.has(m.id)}
+                    onToggle={toggleDescription}
+                  />
                 ) : null}
               </div>
               <div className="flex shrink-0 flex-col items-end justify-center self-center">
@@ -123,7 +169,7 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
                     }}
                     className={`rounded-lg px-4 py-2.5 text-[10px] font-bold uppercase tracking-wide text-[#0a0a0a] hover:brightness-95 disabled:opacity-50 ${guestHub.accentBg}`}
                   >
-                    Join
+                    Participate
                   </button>
                 )}
               </div>

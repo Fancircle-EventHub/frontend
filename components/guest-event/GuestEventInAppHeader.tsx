@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useHydrated } from "@/hooks/useHydrated";
+import { guestHub } from "@/lib/guest-event-branding";
 import { GuestEventMenuDrawer } from "./GuestEventMenuDrawer";
 
 export type GuestEventInAppHeaderProps = {
@@ -40,7 +41,7 @@ export function GuestEventInAppHeader({ eventCode, logoUrl }: GuestEventInAppHea
               className="h-8 max-h-9 w-auto max-w-[min(160px,calc(100vw-8rem))] object-contain object-center"
             />
           ) : (
-            <p className="text-center text-sm font-bold tracking-tight">
+            <p className={`text-center text-sm font-bold tracking-tight ${guestHub.wrap}`}>
               <span className="text-eh-accent">Fancircle</span> <span className="text-white">EventHub</span>
             </p>
           )}

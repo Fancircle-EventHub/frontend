@@ -32,22 +32,27 @@ export default function GuestEventNotificationsPage() {
   }
 
   return (
-    <div className="px-4 pb-8 pt-6 sm:px-6 lg:mx-auto lg:max-w-xl">
-      <h1 className={`text-2xl font-bold ${guestHub.fg}`}>Updates</h1>
-      <p className={`mt-1 text-sm ${guestHub.fgMuted}`}>Announcements from the organizer.</p>
+    <div className="min-w-0 px-4 pb-8 pt-6 sm:px-6 lg:mx-auto lg:max-w-xl">
+      <h1 className={`text-2xl font-bold ${guestHub.fg} ${guestHub.wrap}`}>Updates</h1>
+      <p className={`mt-1 text-sm ${guestHub.fgMuted} ${guestHub.wrap}`}>Announcements from the organizer.</p>
 
       {list.length === 0 ? (
         <p className={`mt-8 text-sm ${guestHub.fgMuted}`}>No announcements yet.</p>
       ) : (
         <ul className="mt-8 space-y-4">
           {list.map((n) => (
-            <li key={n.id} className={`rounded-2xl p-5 ${guestHub.surface} ${notificationCardBorderClass(n.color)}`}>
-              <p className={`text-[10px] font-bold uppercase tracking-wider ${guestHub.fgMuted}`}>
+            <li
+              key={n.id}
+              className={`min-w-0 rounded-2xl p-5 ${guestHub.surface} ${notificationCardBorderClass(n.color)}`}
+            >
+              <p className={`text-[10px] font-bold uppercase tracking-wider ${guestHub.fgMuted} ${guestHub.wrap}`}>
                 {n.created_at ? new Date(n.created_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : ""}
                 {n.category ? ` · ${n.category}` : ""}
               </p>
-              <h2 className={`mt-2 text-lg font-semibold ${guestHub.fg}`}>{n.title}</h2>
-              <p className={`mt-2 whitespace-pre-wrap text-sm leading-relaxed ${guestHub.fgMuted}`}>{n.body}</p>
+              <h2 className={`mt-2 text-lg font-semibold ${guestHub.fg} ${guestHub.wrap}`}>{n.title}</h2>
+              <p className={`mt-2 whitespace-pre-wrap break-words text-sm leading-relaxed [overflow-wrap:anywhere] ${guestHub.fgMuted}`}>
+                {n.body}
+              </p>
             </li>
           ))}
         </ul>

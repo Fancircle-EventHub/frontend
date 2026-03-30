@@ -137,7 +137,7 @@ export function GuestOnboardingScreen({ accessCode }: Props) {
     <GuestAuthShell
       eyebrow={eyebrow}
       title="Almost there"
-      description="Choose a display name and profile photo for this event. Other fans will see this in the event room."
+      description="Choose a display name and profile photo for this event. Other fans will see this in Eventroom."
       eventLine={event?.title ?? undefined}
     >
       <form onSubmit={(e) => void onSubmit(e)} className="flex flex-col gap-6">

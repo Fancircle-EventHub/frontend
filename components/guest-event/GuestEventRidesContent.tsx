@@ -119,7 +119,7 @@ export function GuestEventRidesContent({ accessCode }: Props) {
             {posts.map((p) => (
               <li
                 key={p.id}
-                className="flex gap-3 rounded-2xl border border-white/10 bg-[color:var(--guest-bg)]/40 p-3 sm:gap-4 sm:p-4"
+                className="flex min-w-0 gap-3 rounded-2xl border border-white/10 bg-[color:var(--guest-bg)]/40 p-3 sm:gap-4 sm:p-4"
               >
                 <div className="relative size-12 shrink-0 overflow-hidden rounded-full border border-white/10 bg-white/5 sm:size-14">
                   {p.author_avatar_url ? (
@@ -131,9 +131,9 @@ export function GuestEventRidesContent({ accessCode }: Props) {
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className={`text-sm font-semibold leading-snug sm:text-base ${guestHub.fg}`}>{rideRouteLine(p)}</p>
+                  <p className={`text-sm font-semibold leading-snug sm:text-base ${guestHub.fg} ${guestHub.wrap}`}>{rideRouteLine(p)}</p>
                   {venueLine ? (
-                    <p className={`mt-1 text-xs ${guestHub.fgMuted}`}>
+                    <p className={`mt-1 text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>
                       {venueLine}
                       {p.type === "offer" && p.seats_available != null ? (
                         <span>
@@ -143,17 +143,17 @@ export function GuestEventRidesContent({ accessCode }: Props) {
                       ) : null}
                     </p>
                   ) : p.type === "offer" && p.seats_available != null ? (
-                    <p className={`mt-1 text-xs ${guestHub.fgMuted}`}>
+                    <p className={`mt-1 text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>
                       {p.seats_available} seat{p.seats_available === 1 ? "" : "s"} free
                     </p>
                   ) : null}
-                  <p className={`mt-1.5 text-sm font-bold sm:text-base ${guestHub.accent}`}>
+                  <p className={`mt-1.5 text-sm font-bold sm:text-base ${guestHub.accent} ${guestHub.wrap}`}>
                     {formatDepartureHighlight(p.departure_at)}
                   </p>
                   {p.note?.trim() ? (
-                    <p className={`mt-1 text-xs ${guestHub.fgMuted}`}>Meetup: {p.note}</p>
+                    <p className={`mt-1 text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>Meetup: {p.note}</p>
                   ) : null}
-                  <p className={`mt-1 text-[10px] uppercase tracking-wide ${guestHub.fgMuted}`}>
+                  <p className={`mt-1 text-[10px] uppercase tracking-wide ${guestHub.fgMuted} ${guestHub.wrap}`}>
                     {p.is_author
                       ? "Your post"
                       : p.author_username

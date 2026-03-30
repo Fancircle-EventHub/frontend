@@ -62,7 +62,7 @@ export function GuestEventGalleryContent({ accessCode }: Props) {
                 <img src={item.url} alt="" className="aspect-square w-full object-cover" />
               )}
               {item.username ? (
-                <p className="truncate px-2 py-1.5 text-[11px] text-eh-text-tertiary">@{item.username}</p>
+                <p className={`px-2 py-1.5 text-[11px] text-eh-text-tertiary ${guestHub.wrap} line-clamp-2`}>@{item.username}</p>
               ) : null}
             </li>
           ))}

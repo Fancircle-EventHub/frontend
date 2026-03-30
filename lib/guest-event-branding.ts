@@ -52,4 +52,9 @@ export const guestHub = {
   surface: "bg-[color:var(--guest-card)]",
   elevated: "bg-[color:var(--guest-elevated)]",
   nav: "bg-[color:var(--guest-nav)]",
+  /**
+   * Use on text inside grids/flex rows so long compounds (e.g. German) wrap instead of overflowing.
+   * Parent grid/flex items should also use `min-w-0` where needed.
+   */
+  wrap: "min-w-0 max-w-full break-words [overflow-wrap:anywhere]",
 } as const;

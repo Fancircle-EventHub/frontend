@@ -99,7 +99,7 @@ export default function EventEntryPage() {
         <div className="mx-auto max-w-lg rounded-2xl border border-white/10 bg-[color:var(--guest-elevated)]/90 p-6 shadow-[0_8px_40px_rgba(0,0,0,0.55)] backdrop-blur-md">
           <h2 className={`text-lg font-semibold ${guestHub.fg}`}>Join the event community</h2>
           <p className={`mt-2 text-sm leading-relaxed ${guestHub.fgMuted}`}>
-            Sign in or create a guest account to access the event room, community, and exclusive updates for this show.
+            Sign in or create a guest account to access Eventroom, community, and exclusive updates for this show.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Link

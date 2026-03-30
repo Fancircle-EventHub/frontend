@@ -90,7 +90,7 @@ export default function GuestEventAccessPage() {
 
   return (
     <>
-      <div className="relative min-h-[38vh] w-full overflow-hidden sm:min-h-[40vh] lg:min-h-[44vh]">
+      <div className="relative min-h-[38vh] w-full min-w-0 overflow-hidden sm:min-h-[40vh] lg:min-h-[44vh]">
         {showHero ? (
           <>
             <img src={event!.hero_image_url!} alt="" className="absolute inset-0 h-full w-full object-cover" />
@@ -99,7 +99,7 @@ export default function GuestEventAccessPage() {
         ) : (
           <div className="min-h-[38vh] bg-gradient-to-br from-[color:var(--guest-card)] to-[color:var(--guest-bg)] sm:min-h-[40vh]" />
         )}
-        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+        <div className="absolute inset-x-0 bottom-0 max-w-full p-5 sm:p-6">
           {showHeroLogo && event?.logo_url ? (
             <div className="mb-3">
               <img
@@ -112,16 +112,16 @@ export default function GuestEventAccessPage() {
             <p className={`text-[11px] font-semibold uppercase tracking-[0.25em] ${guestHub.accent}`}>Fancircle EventHub</p>
           )}
           <h1
-            className={`${showHeroLogo ? "mt-0" : "mt-2"} text-3xl font-bold leading-tight drop-shadow-md sm:text-4xl ${guestHub.fg}`}
+            className={`${showHeroLogo ? "mt-0" : "mt-2"} text-3xl font-bold leading-tight drop-shadow-md sm:text-4xl ${guestHub.fg} ${guestHub.wrap}`}
           >
             {eventLoading ? "Loading event…" : (event?.title ?? "Event")}
           </h1>
           {eventInfoEnabled && event?.artist ? (
-            <p className={`mt-2 text-lg font-semibold opacity-95 ${guestHub.fg}`}>{event.artist}</p>
+            <p className={`mt-2 text-lg font-semibold opacity-95 ${guestHub.fg} ${guestHub.wrap}`}>{event.artist}</p>
           ) : null}
           {eventInfoEnabled && (event?.venue || event?.city || event?.address) ? (
-            <p className={`mt-2 flex flex-wrap items-center gap-2 text-sm ${guestHub.fgMuted}`}>
-              <span className={guestHub.accent} aria-hidden>
+            <p className={`mt-2 text-sm ${guestHub.fgMuted} ${guestHub.wrap}`}>
+              <span className={`${guestHub.accent} mr-1.5 inline`} aria-hidden>
                 ●
               </span>
               {[event?.venue, event?.address, event?.city].filter(Boolean).join(" · ")}
@@ -130,12 +130,16 @@ export default function GuestEventAccessPage() {
         </div>
       </div>
 
-      <div className="relative z-10 -mt-3">
+      <div className="relative z-10 -mt-3 min-w-0">
         <div className="mx-auto max-w-3xl rounded-t-2xl border border-white/10 border-b-0 bg-[color:var(--guest-elevated)]/90 px-4 py-5 backdrop-blur-md sm:px-6 lg:max-w-4xl">
-          <h2 className={`text-lg font-semibold ${guestHub.fg}`}>Event room</h2>
-          <p className={`mt-1 text-sm ${guestHub.fgMuted}`}>Welcome in — explore updates and community below.</p>
+          <h2 translate="no" className={`text-lg font-semibold ${guestHub.fg} ${guestHub.wrap}`}>
+            Eventroom
+          </h2>
+          <p className={`mt-1 text-sm ${guestHub.fgMuted} ${guestHub.wrap}`}>Welcome in — explore updates and community below.</p>
           {event?.access_code ? (
-            <p className={`mt-3 text-[11px] uppercase tracking-wide ${guestHub.fgMuted}`}>Access · {event.access_code}</p>
+            <p className={`mt-3 break-all text-[11px] uppercase tracking-wide ${guestHub.fgMuted}`}>
+              Access · {event.access_code}
+            </p>
           ) : null}
         </div>
 
