@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useLogoutOrganizationMutation, useOrganizationSessionQuery } from "@/apis/organization.api";
 import { useAuthGuard, useRedirectWhenOrganizationSessionFails } from "@/lib/auth-guard";
@@ -50,7 +51,18 @@ export default function EventPublishPage() {
       onLogout={() => void handleLogout()}
       logoutLoading={logoutLoading}
     >
-      <EventPublishScreen eventId={eventId} />
+      <Suspense
+        fallback={
+          <div className="flex min-h-[50vh] items-center justify-center text-eh-text-secondary">
+            <div className="flex flex-col items-center gap-3">
+              <div className="size-10 animate-spin rounded-full border-2 border-eh-accent/30 border-t-eh-accent" />
+              <p className="text-sm">Loading…</p>
+            </div>
+          </div>
+        }
+      >
+        <EventPublishScreen eventId={eventId} />
+      </Suspense>
     </OrganizationDashboardShell>
   );
 }

@@ -191,7 +191,16 @@ export function OrganizationEventsPageContent() {
                   <p className="mt-1 line-clamp-2 text-xs text-eh-text-tertiary">
                     {event.description || `Code ${event.access_code}`}
                   </p>
-                  <p className="mt-2 truncate text-[11px] text-eh-text-tertiary">{event.join_link}</p>
+                  {status === "live" ? (
+                    <Link
+                      href={`/organization/events/${event.id}/publish?share=1`}
+                      className="mt-2 block truncate text-[11px] font-medium text-eh-accent underline-offset-2 transition hover:underline"
+                    >
+                      View hub link & QR
+                    </Link>
+                  ) : (
+                    <p className="mt-2 truncate text-[11px] text-eh-text-tertiary">{event.join_link}</p>
+                  )}
                   <div className="mt-4 flex flex-wrap gap-2">
                     {status === "draft" ? (
                       <div className="flex w-full flex-col gap-2">

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { useGetOrganizationEventQuery, useSendOrganizationEventHubSummaryEmailMutation } from "@/apis/event.api";
@@ -29,6 +29,8 @@ type EventPublishScreenProps = {
 
 export function EventPublishScreen({ eventId }: EventPublishScreenProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const shareOnly = searchParams.get("share") === "1";
   const { data, isLoading, isError } = useGetOrganizationEventQuery(eventId, { skip: !eventId });
   const [sendHubSummaryEmail, { isLoading: isSendingHubEmail }] = useSendOrganizationEventHubSummaryEmailMutation();
   const [doneError, setDoneError] = useState<string | null>(null);
@@ -98,10 +100,16 @@ export function EventPublishScreen({ eventId }: EventPublishScreenProps) {
   return (
     <div className="mx-auto max-w-6xl">
       <div className="mb-10">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-eh-accent">Configuration</p>
-        <h1 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">Publish event hub</h1>
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-eh-accent">
+          {shareOnly ? "Hub" : "Configuration"}
+        </p>
+        <h1 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
+          {shareOnly ? "Guest link & QR" : "Publish event hub"}
+        </h1>
         <p className="mt-2 max-w-2xl text-sm text-eh-text-secondary">
-          Share the guest link and add this QR code to tickets or posters.
+          {shareOnly
+            ? "Copy the guest link or download the QR code for tickets, posters, and on-site signage."
+            : "Share the guest link and add this QR code to tickets or posters."}
         </p>
       </div>
 
@@ -196,29 +204,40 @@ export function EventPublishScreen({ eventId }: EventPublishScreenProps) {
       </div>
 
       <div className="mt-10 space-y-4 border-t border-white/10 pt-8">
-        {doneError ? (
-          <p className="text-sm text-red-400" role="alert">
-            {doneError}
-          </p>
-        ) : null}
-        <div className="flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <button
-            type="button"
-            onClick={() => router.push(`/organization/events/${eventId}/modules`)}
-            className="text-sm font-medium text-eh-text-tertiary transition hover:text-eh-text-secondary"
+        {shareOnly ? (
+          <Link
+            href="/organization/events"
+            className="inline-flex text-sm font-medium text-eh-text-tertiary transition hover:text-eh-text-secondary"
           >
-            ← Back to modules
-          </button>
-          <Button
-            type="button"
-            variant="primary"
-            className="w-full min-w-0 px-8 sm:w-auto sm:min-w-[240px]"
-            loading={isSendingHubEmail}
-            onClick={() => void handleDone()}
-          >
-            Done <span aria-hidden>→</span>
-          </Button>
-        </div>
+            ← Back to events
+          </Link>
+        ) : (
+          <>
+            {doneError ? (
+              <p className="text-sm text-red-400" role="alert">
+                {doneError}
+              </p>
+            ) : null}
+            <div className="flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <button
+                type="button"
+                onClick={() => router.push(`/organization/events/${eventId}/modules`)}
+                className="text-sm font-medium text-eh-text-tertiary transition hover:text-eh-text-secondary"
+              >
+                ← Back to modules
+              </button>
+              <Button
+                type="button"
+                variant="primary"
+                className="w-full min-w-0 px-8 sm:w-auto sm:min-w-[240px]"
+                loading={isSendingHubEmail}
+                onClick={() => void handleDone()}
+              >
+                Done <span aria-hidden>→</span>
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

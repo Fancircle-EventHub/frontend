@@ -123,7 +123,16 @@ export function DashboardHomeContent({ organization, events }: DashboardHomeCont
                 </span>
               </div>
               <h3 className="font-semibold text-white">{nextEvent.title}</h3>
-              <p className="mt-1 line-clamp-2 text-xs text-eh-text-tertiary">{nextEvent.join_link}</p>
+              {nextEvent.status === "live" ? (
+                <Link
+                  href={`/organization/events/${nextEvent.id}/publish?share=1`}
+                  className="mt-1 line-clamp-2 block text-xs font-medium text-eh-accent underline-offset-2 transition hover:underline"
+                >
+                  View hub link & QR
+                </Link>
+              ) : (
+                <p className="mt-1 line-clamp-2 text-xs text-eh-text-tertiary">{nextEvent.join_link}</p>
+              )}
               {nextWhenLine ? <p className="mt-3 text-sm text-eh-text-secondary">{nextWhenLine}</p> : null}
             </>
           ) : (
