@@ -167,8 +167,8 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
               className={`${inputClassName(false)} min-h-[88px] resize-y`}
             />
           </div>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div>
+          <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
+            <div className="min-w-0">
               <label className={labelClass} htmlFor={`edit-date-${m.id}`}>
                 Date
               </label>
@@ -177,10 +177,10 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
                 type="date"
                 value={editMeetupDate}
                 onChange={(e) => setEditMeetupDate(e.target.value)}
-                className={inputClassName(false)}
+                className={`${inputClassName(false)} min-w-0 max-w-full`}
               />
             </div>
-            <div>
+            <div className="min-w-0">
               <label className={labelClass} htmlFor={`edit-time-${m.id}`}>
                 Time
               </label>
@@ -189,7 +189,7 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
                 type="time"
                 value={editMeetupTime}
                 onChange={(e) => setEditMeetupTime(e.target.value)}
-                className={inputClassName(false)}
+                className={`${inputClassName(false)} min-w-0 max-w-full`}
               />
             </div>
           </div>
@@ -337,8 +337,8 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
             className={`${inputClassName(false)} min-h-[88px] resize-y`}
           />
         </div>
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div>
+        <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
+          <div className="min-w-0">
             <label className={labelClass} htmlFor="mu-date">
               Date <span className="text-red-400">*</span>
             </label>
@@ -347,11 +347,11 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
               type="date"
               value={meetupDate}
               onChange={(e) => setMeetupDate(e.target.value)}
-              className={inputClassName(false)}
+              className={`${inputClassName(false)} min-w-0 max-w-full`}
               required
             />
           </div>
-          <div>
+          <div className="min-w-0">
             <label className={labelClass} htmlFor="mu-time">
               Time <span className="text-red-400">*</span>
             </label>
@@ -360,7 +360,7 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
               type="time"
               value={meetupTime}
               onChange={(e) => setMeetupTime(e.target.value)}
-              className={inputClassName(false)}
+              className={`${inputClassName(false)} min-w-0 max-w-full`}
               required
             />
           </div>

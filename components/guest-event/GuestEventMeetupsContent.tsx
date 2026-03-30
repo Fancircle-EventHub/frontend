@@ -233,7 +233,7 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
   const { organizer, guestHosts } = partitionMeetupsByHost(meetups);
 
   return (
-    <section className={`rounded-2xl border border-white/10 p-4 sm:p-5 ${guestHub.surface}`}>
+    <section className={`min-w-0 rounded-2xl border border-white/10 p-4 sm:p-5 ${guestHub.surface}`}>
       <h2 className={`text-xl font-bold tracking-tight ${guestHub.accent}`}>Meetups</h2>
       <p className={`mt-1 text-sm ${guestHub.fgMuted}`}>
         Participate in fan meetups before the show — coordinated here, no DMs.
@@ -258,7 +258,7 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
 
       <form
         onSubmit={(e) => void onCreateMeetup(e)}
-        className={`mt-6 space-y-4 rounded-2xl border border-white/10 p-4 sm:p-5 ${guestHub.elevated}`}
+        className={`mt-6 min-w-0 space-y-4 rounded-2xl border border-white/10 p-4 sm:p-5 ${guestHub.elevated}`}
       >
         <h3 className={`text-sm font-bold uppercase tracking-wide ${guestHub.accent}`}>Host a meetup</h3>
         <div>
@@ -285,8 +285,8 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
             className={`${inputClassName(false)} min-h-[80px] resize-y`}
           />
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
+        <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="min-w-0">
             <label className={labelClass} htmlFor="gmu-date">
               Date <span className="text-red-400">*</span>
             </label>
@@ -295,11 +295,11 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
               type="date"
               value={createDate}
               onChange={(e) => setCreateDate(e.target.value)}
-              className={inputClassName(false)}
+              className={`${inputClassName(false)} min-w-0 max-w-full`}
               required
             />
           </div>
-          <div>
+          <div className="min-w-0">
             <label className={labelClass} htmlFor="gmu-time">
               Time <span className="text-red-400">*</span>
             </label>
@@ -308,7 +308,7 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
               type="time"
               value={createTime}
               onChange={(e) => setCreateTime(e.target.value)}
-              className={inputClassName(false)}
+              className={`${inputClassName(false)} min-w-0 max-w-full`}
               required
             />
           </div>
