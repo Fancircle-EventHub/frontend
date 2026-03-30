@@ -75,7 +75,10 @@ export function GuestEventMenuDrawer({ open, onClose, eventCode }: Props) {
           </button>
         </div>
 
-        <nav className="flex flex-1 flex-col gap-1 p-3" aria-label="Legal and help">
+        <nav className="flex flex-1 flex-col gap-1 p-3" aria-label="Account and legal">
+          <Link href={`${base}/profile`} className={linkClass} onClick={onClose}>
+            My profile
+          </Link>
           <Link href={`${base}/legal`} className={linkClass} onClick={onClose}>
             Legal notice
           </Link>

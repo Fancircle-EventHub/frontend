@@ -152,9 +152,11 @@ function BrandingPhonePreview({
 
 type EventBrandingScreenProps = {
   eventId: string;
+  /** When true, opened from organizer sidebar / hub — skip wizard-only navigation. */
+  standalone?: boolean;
 };
 
-export function EventBrandingScreen({ eventId }: EventBrandingScreenProps) {
+export function EventBrandingScreen({ eventId, standalone = false }: EventBrandingScreenProps) {
   const router = useRouter();
   const { data, isLoading, isError } = useGetOrganizationEventQuery(eventId, { skip: !eventId });
   const [updateEvent, { isLoading: saving }] = useUpdateOrganizationEventMutation();
@@ -232,7 +234,13 @@ export function EventBrandingScreen({ eventId }: EventBrandingScreenProps) {
 
   async function continueNext() {
     const ok = await saveDraft();
-    if (ok) router.push(`/organization/events/${eventId}/modules`);
+    if (ok) {
+      router.push(
+        standalone
+          ? `/organization/events/${eventId}/modules?standalone=1`
+          : `/organization/events/${eventId}/modules`,
+      );
+    }
   }
 
   if (!eventId) {
@@ -263,6 +271,16 @@ export function EventBrandingScreen({ eventId }: EventBrandingScreenProps) {
 
   return (
     <div className="mx-auto max-w-6xl">
+      {standalone ? (
+        <div className="mb-6">
+          <Link
+            href="/organization/branding"
+            className="text-sm font-medium text-eh-accent transition hover:underline"
+          >
+            ← Back to event list
+          </Link>
+        </div>
+      ) : null}
       <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
@@ -382,7 +400,13 @@ export function EventBrandingScreen({ eventId }: EventBrandingScreenProps) {
               className="w-full py-3 text-sm font-bold uppercase tracking-wider sm:max-w-md"
               onClick={() => void continueNext()}
             >
-              Continue <span aria-hidden>→</span>
+              {standalone ? (
+                "Save & edit modules"
+              ) : (
+                <>
+                  Continue <span aria-hidden>→</span>
+                </>
+              )}
             </Button>
           </div>
 

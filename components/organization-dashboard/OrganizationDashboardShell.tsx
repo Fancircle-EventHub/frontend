@@ -148,12 +148,29 @@ export function OrganizationDashboardShell({
   const isEventsSection = pathname.startsWith("/organization/events");
   const isEventDetailsEditor =
     pathname === "/organization/events/new" || /\/organization\/events\/[^/]+\/edit$/.test(pathname ?? "");
-  const isBrandingPage = /\/organization\/events\/[^/]+\/branding/.test(pathname ?? "");
-  const isModulesPage = /\/organization\/events\/[^/]+\/modules$/.test(pathname ?? "");
+  const isBrandingHub = pathname === "/organization/branding";
+  const isModulesHub = pathname === "/organization/modules";
+  const isEventBrandingPage = /\/organization\/events\/[^/]+\/branding/.test(pathname ?? "");
+  const isEventModulesPage = /\/organization\/events\/[^/]+\/modules$/.test(pathname ?? "");
+  const isRelatedPage = /\/organization\/events\/[^/]+\/related$/.test(pathname ?? "");
+  const isOrgMeetupsPage = /\/organization\/events\/[^/]+\/meetups$/.test(pathname ?? "");
   const isPublishPage = /\/organization\/events\/[^/]+\/publish$/.test(pathname ?? "");
-  const isEventsNavActive = isEventsSection && !isBrandingPage && !isModulesPage && !isPublishPage;
-  const isModuleNavActive = isModulesPage;
-  const isEventEditorHeader = isEventDetailsEditor || isBrandingPage || isModulesPage || isPublishPage;
+  const isBrandingNavActive = isBrandingHub || isEventBrandingPage;
+  const isModulesNavActive = isModulesHub || isEventModulesPage;
+  const isEventsNavActive =
+    isEventsSection &&
+    !isEventBrandingPage &&
+    !isEventModulesPage &&
+    !isPublishPage &&
+    !isRelatedPage &&
+    !isOrgMeetupsPage;
+  const isEventEditorHeader =
+    isEventDetailsEditor ||
+    isEventBrandingPage ||
+    isEventModulesPage ||
+    isPublishPage ||
+    isRelatedPage ||
+    isOrgMeetupsPage;
   const initials = organizationName
     .split(/\s+/)
     .map((w) => w[0])
@@ -225,28 +242,30 @@ export function OrganizationDashboardShell({
             <NavIconEventsTicket className={isEventsNavActive ? "text-eh-accent" : "text-eh-text-tertiary"} />
             Events
           </Link>
-          <span
-            className={`flex cursor-default items-center gap-3 rounded-lg px-3 py-2.5 pl-[10px] text-[11px] font-semibold uppercase tracking-[0.12em] ${
-              isBrandingPage
-                ? "border-l-2 border-eh-accent bg-white/5 text-eh-accent"
-                : "border-l-2 border-transparent text-eh-text-tertiary/80"
+          <Link
+            href="/organization/branding"
+            onClick={closeSidebar}
+            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] transition ${
+              isBrandingNavActive
+                ? "border-l-2 border-eh-accent bg-white/5 pl-[10px] text-eh-accent"
+                : "border-l-2 border-transparent pl-[10px] text-eh-text-secondary hover:bg-white/5 hover:text-eh-text-primary"
             }`}
-            title="Use Continue on each screen to move through branding and modules."
           >
-            <NavIconPalette className={isBrandingPage ? "text-eh-accent" : "text-eh-text-tertiary/60"} />
+            <NavIconPalette className={isBrandingNavActive ? "text-eh-accent" : "text-eh-text-tertiary"} />
             Branding
-          </span>
-          <span
-            className={`flex cursor-default items-center gap-3 rounded-lg px-3 py-2.5 pl-[10px] text-[11px] font-semibold uppercase tracking-[0.12em] ${
-              isModuleNavActive
-                ? "border-l-2 border-eh-accent bg-white/5 text-eh-accent"
-                : "border-l-2 border-transparent text-eh-text-tertiary/80"
+          </Link>
+          <Link
+            href="/organization/modules"
+            onClick={closeSidebar}
+            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] transition ${
+              isModulesNavActive
+                ? "border-l-2 border-eh-accent bg-white/5 pl-[10px] text-eh-accent"
+                : "border-l-2 border-transparent pl-[10px] text-eh-text-secondary hover:bg-white/5 hover:text-eh-text-primary"
             }`}
-            title="Use Continue on each screen to move through branding and modules."
           >
-            <NavIconPuzzle className={isModuleNavActive ? "text-eh-accent" : "text-eh-text-tertiary/60"} />
-            Module
-          </span>
+            <NavIconPuzzle className={isModulesNavActive ? "text-eh-accent" : "text-eh-text-tertiary"} />
+            Modules
+          </Link>
           {secondaryNavComingSoon.map(({ label, icon: Icon }) => (
             <span
               key={label}

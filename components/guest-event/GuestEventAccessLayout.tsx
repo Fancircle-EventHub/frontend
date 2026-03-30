@@ -2,8 +2,10 @@
 
 import type { ReactNode } from "react";
 import { notFound, useParams } from "next/navigation";
+import { useEventEntryByCodeQuery } from "@/apis/event.api";
 import { useGuestSessionQuery } from "@/apis/guest.api";
 import { useAuthGuard, useRedirectWhenGuestSessionFails } from "@/lib/auth-guard";
+import { guestEventBrandingVars } from "@/lib/guest-event-branding";
 import { GUEST_INVALID_SESSION_PATH, guestEventAuthPaths } from "@/lib/guest-event-auth-paths";
 import { GuestEventBottomNav, GUEST_EVENT_NAV_BOTTOM_PADDING } from "./GuestEventBottomNav";
 import { GuestEventInAppHeader } from "./GuestEventInAppHeader";
@@ -21,14 +23,22 @@ export function GuestEventAccessLayout({ children }: { children: ReactNode }) {
   const { isError: guestSessionError } = useGuestSessionQuery();
   useRedirectWhenGuestSessionFails(guestSessionError, code);
 
+  const { data: eventEnvelope } = useEventEntryByCodeQuery(code, { skip: !code || code === "no-context" });
+  const brandStyle = guestEventBrandingVars(eventEnvelope?.data);
+
   if (!code || code === "no-context") {
     notFound();
   }
 
   return (
-    <div className="min-h-dvh bg-black text-eh-text-primary">
-      <GuestEventInAppHeader eventCode={code} />
-      <main className={GUEST_EVENT_NAV_BOTTOM_PADDING}>{children}</main>
+    <div className="flex min-h-dvh flex-col bg-black text-eh-text-primary">
+      <GuestEventInAppHeader eventCode={code} logoUrl={eventEnvelope?.data?.logo_url ?? null} />
+      <main
+        className={`flex-1 min-h-0 ${GUEST_EVENT_NAV_BOTTOM_PADDING} bg-[color:var(--guest-bg)] text-[color:var(--guest-fg)] antialiased`}
+        style={brandStyle}
+      >
+        {children}
+      </main>
       <GuestEventBottomNav eventCode={code} />
     </div>
   );
