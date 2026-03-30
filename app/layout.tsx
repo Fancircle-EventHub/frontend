@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { rootMetadata } from "@/lib/site-metadata";
@@ -21,6 +23,8 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-eh-default text-eh-text-primary">
         <StoreProvider>{children}</StoreProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
