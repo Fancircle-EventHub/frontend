@@ -15,10 +15,10 @@ export default function GuestEventRidesPage() {
   }
 
   return (
-    <div className="px-4 pb-8 pt-6 sm:px-6 lg:mx-auto lg:max-w-lg">
+    <div className="min-w-0 px-4 pb-8 pt-6 sm:px-6 lg:mx-auto lg:max-w-lg">
       <h1 className="text-2xl font-bold text-white">Carpool</h1>
       <p className="mt-1 text-sm text-eh-text-secondary">Offer or request rides — coordinate simply, no DMs.</p>
-      <div className="mt-8">{code ? <GuestEventRidesContent accessCode={code} /> : null}</div>
+      <div className="mt-8 min-w-0">{code ? <GuestEventRidesContent accessCode={code} /> : null}</div>
     </div>
   );
 }

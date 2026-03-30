@@ -107,8 +107,8 @@ export function GuestEventRidesContent({ accessCode }: Props) {
   const venueLine = [eventVenue, eventCity].filter(Boolean).join(" · ");
 
   return (
-    <div className="space-y-8">
-      <section className={`rounded-2xl border border-white/10 p-4 sm:p-5 ${guestHub.surface}`}>
+    <div className="min-w-0 space-y-8">
+      <section className={`min-w-0 rounded-2xl border border-white/10 p-4 sm:p-5 ${guestHub.surface}`}>
         <h2 className={`text-xl font-bold tracking-tight ${guestHub.accent}`}>Carpool</h2>
         <p className={`mt-1 text-sm ${guestHub.fgMuted}`}>Share a ride or find others going to the venue.</p>
 
@@ -217,11 +217,11 @@ export function GuestEventRidesContent({ accessCode }: Props) {
         )}
       </section>
 
-      <section className={`rounded-2xl border border-white/10 p-4 sm:p-5 ${guestHub.surface}`}>
+      <section className={`min-w-0 rounded-2xl border border-white/10 p-4 sm:p-5 ${guestHub.surface}`}>
         <h2 className={`text-sm font-bold uppercase tracking-wide ${guestHub.fg}`}>Create a ride</h2>
         <p className={`mt-1 text-xs ${guestHub.fgMuted}`}>Offer seats or ask for a ride — interest is visible to others.</p>
-        <form onSubmit={(e) => void onSubmit(e)} className="mt-5 space-y-4">
-          <div className="flex gap-2">
+        <form onSubmit={(e) => void onSubmit(e)} className="mt-5 min-w-0 space-y-4">
+          <div className="flex min-w-0 gap-2">
             <button
               type="button"
               onClick={() => setType("offer")}
@@ -241,8 +241,8 @@ export function GuestEventRidesContent({ accessCode }: Props) {
               Request
             </button>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
+          <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="min-w-0">
               <label className={labelClass} htmlFor="ride-origin">
                 From
               </label>
@@ -250,12 +250,12 @@ export function GuestEventRidesContent({ accessCode }: Props) {
                 id="ride-origin"
                 value={originArea}
                 onChange={(e) => setOriginArea(e.target.value)}
-                className={inputClassName(false)}
+                className={`${inputClassName(false)} min-w-0 max-w-full`}
                 placeholder="e.g. Mannheim"
                 required
               />
             </div>
-            <div>
+            <div className="min-w-0">
               <label className={labelClass} htmlFor="ride-dest">
                 To (optional)
               </label>
@@ -263,13 +263,13 @@ export function GuestEventRidesContent({ accessCode }: Props) {
                 id="ride-dest"
                 value={destinationArea}
                 onChange={(e) => setDestinationArea(e.target.value)}
-                className={inputClassName(false)}
+                className={`${inputClassName(false)} min-w-0 max-w-full`}
                 placeholder="e.g. venue area"
               />
             </div>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
+          <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="min-w-0">
               <label className={labelClass} htmlFor="ride-date">
                 Departure date
               </label>
@@ -278,11 +278,11 @@ export function GuestEventRidesContent({ accessCode }: Props) {
                 type="date"
                 value={departureDate}
                 onChange={(e) => setDepartureDate(e.target.value)}
-                className={inputClassName(false)}
+                className={`${inputClassName(false)} min-w-0 max-w-full`}
                 required
               />
             </div>
-            <div>
+            <div className="min-w-0">
               <label className={labelClass} htmlFor="ride-time">
                 Departure time
               </label>
@@ -291,13 +291,13 @@ export function GuestEventRidesContent({ accessCode }: Props) {
                 type="time"
                 value={departureTime}
                 onChange={(e) => setDepartureTime(e.target.value)}
-                className={inputClassName(false)}
+                className={`${inputClassName(false)} min-w-0 max-w-full`}
                 required
               />
             </div>
           </div>
           {type === "offer" ? (
-            <div>
+            <div className="min-w-0">
               <label className={labelClass} htmlFor="ride-seats">
                 Seats available
               </label>
@@ -308,11 +308,11 @@ export function GuestEventRidesContent({ accessCode }: Props) {
                 max={50}
                 value={seats}
                 onChange={(e) => setSeats(e.target.value)}
-                className={inputClassName(false)}
+                className={`${inputClassName(false)} min-w-0 max-w-full`}
               />
             </div>
           ) : null}
-          <div>
+          <div className="min-w-0">
             <label className={labelClass} htmlFor="ride-note">
               Meetup note (optional)
             </label>
@@ -321,7 +321,7 @@ export function GuestEventRidesContent({ accessCode }: Props) {
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={2}
-              className={`${inputClassName(false)} min-h-[80px] resize-y`}
+              className={`${inputClassName(false)} min-h-[80px] min-w-0 max-w-full resize-y`}
               placeholder="e.g. Main station east exit"
             />
           </div>
