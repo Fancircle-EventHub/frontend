@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   useDeleteGuestChatMessageMutation,
   useGuestChatMessagesQuery,
@@ -11,6 +11,7 @@ import { useGuestSessionQuery } from "@/apis/guest.api";
 import { PageCenterSpinner } from "@/components/ui/PageCenterSpinner";
 import { extractApiErrorMessage } from "@/lib/api-error";
 import { guestHub } from "@/lib/guest-event-branding";
+import { useGuestChatRealtime } from "@/hooks/useGuestChatRealtime";
 import type { GuestChatMessage } from "@/types/chat.types";
 
 type Props = {
@@ -46,6 +47,8 @@ export function GuestChatThread({ accessCode, roomId }: Props) {
   const [stashedTail, setStashedTail] = useState<GuestChatMessage[] | null>(null);
   const [hiddenIds, setHiddenIds] = useState<Record<string, true>>({});
   const [pending, setPending] = useState<PendingMsg[]>([]);
+  const [socketMessages, setSocketMessages] = useState<GuestChatMessage[]>([]);
+  const seenIdsRef = useRef<Set<string>>(new Set());
   const [composer, setComposer] = useState("");
   const [sendError, setSendError] = useState<string | null>(null);
 
@@ -80,6 +83,40 @@ export function GuestChatThread({ accessCode, roomId }: Props) {
     [merged, hiddenIds],
   );
 
+  useEffect(() => {
+    for (const m of merged) {
+      seenIdsRef.current.add(m.id);
+    }
+  }, [merged]);
+
+  const mergedIds = useMemo(() => new Set(merged.map((m) => m.id)), [merged]);
+  const socketMessagesNotInRest = useMemo(
+    () => socketMessages.filter((m) => !mergedIds.has(m.id)),
+    [socketMessages, mergedIds],
+  );
+
+  const handleRealtimeMessage = useCallback((msg: GuestChatMessage) => {
+    if (!msg.id || seenIdsRef.current.has(msg.id)) return;
+    seenIdsRef.current.add(msg.id);
+    setPending((p) =>
+      p.filter((m) => !(m.id.startsWith("temp-") && m.guest_id === msg.guest_id && m.body === msg.body)),
+    );
+    setSocketMessages((prev) => (prev.some((x) => x.id === msg.id) ? prev : [...prev, msg]));
+  }, []);
+
+  const handleRealtimeDelete = useCallback((messageId: string) => {
+    seenIdsRef.current.delete(messageId);
+    setHiddenIds((prev) => ({ ...prev, [messageId]: true }));
+    setSocketMessages((s) => s.filter((m) => m.id !== messageId));
+  }, []);
+
+  useGuestChatRealtime({
+    roomId,
+    enabled: Boolean(accessCode && roomId && !isError),
+    onMessage: handleRealtimeMessage,
+    onDeleteMessage: handleRealtimeDelete,
+  });
+
   const display = useMemo(() => {
     const map = new Map<string, GuestChatMessage>();
     for (const m of mergedVisible) {
@@ -88,8 +125,11 @@ export function GuestChatThread({ accessCode, roomId }: Props) {
     for (const m of pending) {
       map.set(m.id, m);
     }
+    for (const m of socketMessagesNotInRest) {
+      map.set(m.id, m);
+    }
     return Array.from(map.values()).sort(sortMessages);
-  }, [mergedVisible, pending]);
+  }, [mergedVisible, pending, socketMessagesNotInRest]);
 
   const lastMessageId = display.length > 0 ? display[display.length - 1]?.id : null;
 
@@ -121,7 +161,9 @@ export function GuestChatThread({ accessCode, roomId }: Props) {
     setPending((p) => [...p, optimistic]);
     setComposer("");
     try {
-      await sendMessage({ accessCode, roomId, body: text }).unwrap();
+      const res = await sendMessage({ accessCode, roomId, body: text }).unwrap();
+      const mid = res?.data?.message?.id;
+      if (mid) seenIdsRef.current.add(mid);
       setPending((p) => p.filter((m) => m.id !== tempId));
       setBeforeId(undefined);
       setStashedTail(null);
