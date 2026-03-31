@@ -9,7 +9,7 @@ import {
   useGuestMeetupLeaveMutation,
 } from "@/apis/guest.api";
 import { GuestMeetupImageField } from "@/components/guest-event/GuestMeetupImageField";
-import { FieldError, inputClassName, labelClass } from "@/components/organization-auth/auth-form-primitives";
+import { dateTimeInputClassName, FieldError, inputClassName, labelClass } from "@/components/organization-auth/auth-form-primitives";
 import type { GuestMeetupItem } from "@/types/guest-meetup.types";
 import { dateAndTimePartsToIso, formatMeetupSchedule } from "@/lib/datetime-form";
 import { extractApiErrorMessage } from "@/lib/api-error";
@@ -285,8 +285,8 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
             className={`${inputClassName(false)} min-h-[80px] resize-y`}
           />
         </div>
-        <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="min-w-0">
+        <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start">
+          <div className="min-w-0 w-full flex-1 basis-0 sm:min-w-0">
             <label className={labelClass} htmlFor="gmu-date">
               Date <span className="text-red-400">*</span>
             </label>
@@ -295,11 +295,11 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
               type="date"
               value={createDate}
               onChange={(e) => setCreateDate(e.target.value)}
-              className={`${inputClassName(false)} min-w-0 max-w-full`}
+              className={dateTimeInputClassName(false)}
               required
             />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 w-full flex-1 basis-0 sm:min-w-0">
             <label className={labelClass} htmlFor="gmu-time">
               Time <span className="text-red-400">*</span>
             </label>
@@ -308,7 +308,7 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
               type="time"
               value={createTime}
               onChange={(e) => setCreateTime(e.target.value)}
-              className={`${inputClassName(false)} min-w-0 max-w-full`}
+              className={dateTimeInputClassName(false)}
               required
             />
           </div>

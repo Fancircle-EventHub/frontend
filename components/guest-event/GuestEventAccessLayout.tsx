@@ -34,7 +34,7 @@ export function GuestEventAccessLayout({ children }: { children: ReactNode }) {
     <div className="flex min-h-dvh flex-col bg-black text-eh-text-primary">
       <GuestEventInAppHeader eventCode={code} logoUrl={eventEnvelope?.data?.logo_url ?? null} />
       <main
-        className={`flex-1 min-h-0 ${GUEST_EVENT_NAV_BOTTOM_PADDING} bg-[color:var(--guest-bg)] text-[color:var(--guest-fg)] antialiased`}
+        className={`min-w-0 flex-1 min-h-0 overflow-x-clip ${GUEST_EVENT_NAV_BOTTOM_PADDING} bg-[color:var(--guest-bg)] text-[color:var(--guest-fg)] antialiased`}
         style={brandStyle}
       >
         {children}

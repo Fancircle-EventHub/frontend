@@ -8,7 +8,7 @@ import {
   useGuestRideInterestMutation,
   useGuestRideLeaveInterestMutation,
 } from "@/apis/guest.api";
-import { FieldError, inputClassName, labelClass } from "@/components/organization-auth/auth-form-primitives";
+import { dateTimeInputClassName, FieldError, inputClassName, labelClass } from "@/components/organization-auth/auth-form-primitives";
 import type { GuestRidePostItem } from "@/types/guest-ride.types";
 import { dateAndTimePartsToIso } from "@/lib/datetime-form";
 import { extractApiErrorMessage } from "@/lib/api-error";
@@ -268,8 +268,8 @@ export function GuestEventRidesContent({ accessCode }: Props) {
               />
             </div>
           </div>
-          <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="min-w-0">
+          <div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-start">
+            <div className="min-w-0 w-full flex-1 basis-0 md:min-w-0">
               <label className={labelClass} htmlFor="ride-date">
                 Departure date
               </label>
@@ -278,11 +278,11 @@ export function GuestEventRidesContent({ accessCode }: Props) {
                 type="date"
                 value={departureDate}
                 onChange={(e) => setDepartureDate(e.target.value)}
-                className={`${inputClassName(false)} min-w-0 max-w-full`}
+                className={dateTimeInputClassName(false)}
                 required
               />
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 w-full flex-1 basis-0 md:min-w-0">
               <label className={labelClass} htmlFor="ride-time">
                 Departure time
               </label>
@@ -291,7 +291,7 @@ export function GuestEventRidesContent({ accessCode }: Props) {
                 type="time"
                 value={departureTime}
                 onChange={(e) => setDepartureTime(e.target.value)}
-                className={`${inputClassName(false)} min-w-0 max-w-full`}
+                className={dateTimeInputClassName(false)}
                 required
               />
             </div>

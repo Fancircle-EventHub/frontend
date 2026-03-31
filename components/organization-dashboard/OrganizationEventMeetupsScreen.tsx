@@ -8,7 +8,7 @@ import {
   useOrganizationEventMeetupsQuery,
   useUpdateOrganizationEventMeetupMutation,
 } from "@/apis/event.api";
-import { FieldError, inputClassName, labelClass } from "@/components/organization-auth/auth-form-primitives";
+import { dateTimeInputClassName, FieldError, inputClassName, labelClass } from "@/components/organization-auth/auth-form-primitives";
 import type { OrganizationMeetupItem } from "@/types/guest-meetup.types";
 import { dateAndTimePartsToIso, isoToDateAndTimeParts } from "@/lib/datetime-form";
 import { extractApiErrorMessage } from "@/lib/api-error";
@@ -167,8 +167,8 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
               className={`${inputClassName(false)} min-h-[88px] resize-y`}
             />
           </div>
-          <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
-            <div className="min-w-0">
+          <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-start">
+            <div className="min-w-0 w-full flex-1 basis-0 sm:min-w-0">
               <label className={labelClass} htmlFor={`edit-date-${m.id}`}>
                 Date
               </label>
@@ -177,10 +177,10 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
                 type="date"
                 value={editMeetupDate}
                 onChange={(e) => setEditMeetupDate(e.target.value)}
-                className={`${inputClassName(false)} min-w-0 max-w-full`}
+                className={dateTimeInputClassName(false)}
               />
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 w-full flex-1 basis-0 sm:min-w-0">
               <label className={labelClass} htmlFor={`edit-time-${m.id}`}>
                 Time
               </label>
@@ -189,7 +189,7 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
                 type="time"
                 value={editMeetupTime}
                 onChange={(e) => setEditMeetupTime(e.target.value)}
-                className={`${inputClassName(false)} min-w-0 max-w-full`}
+                className={dateTimeInputClassName(false)}
               />
             </div>
           </div>
@@ -337,8 +337,8 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
             className={`${inputClassName(false)} min-h-[88px] resize-y`}
           />
         </div>
-        <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
-          <div className="min-w-0">
+        <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-start">
+          <div className="min-w-0 w-full flex-1 basis-0 sm:min-w-0">
             <label className={labelClass} htmlFor="mu-date">
               Date <span className="text-red-400">*</span>
             </label>
@@ -347,11 +347,11 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
               type="date"
               value={meetupDate}
               onChange={(e) => setMeetupDate(e.target.value)}
-              className={`${inputClassName(false)} min-w-0 max-w-full`}
+              className={dateTimeInputClassName(false)}
               required
             />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 w-full flex-1 basis-0 sm:min-w-0">
             <label className={labelClass} htmlFor="mu-time">
               Time <span className="text-red-400">*</span>
             </label>
@@ -360,7 +360,7 @@ export function OrganizationEventMeetupsScreen({ eventId }: Props) {
               type="time"
               value={meetupTime}
               onChange={(e) => setMeetupTime(e.target.value)}
-              className={`${inputClassName(false)} min-w-0 max-w-full`}
+              className={dateTimeInputClassName(false)}
               required
             />
           </div>

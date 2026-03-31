@@ -14,3 +14,11 @@ export function inputClassName(hasError: boolean): string {
   }
   return `${inputBase} border-eh-border bg-[#23272f] focus:border-eh-accent focus:ring-eh-accent`;
 }
+
+/**
+ * Native `date` / `time` inputs have a large intrinsic min-width; combine with
+ * `minmax(0,1fr)` grid tracks or `flex-1 basis-0 min-w-0` parents so they don't overflow.
+ */
+export function dateTimeInputClassName(hasError: boolean): string {
+  return `${inputClassName(hasError)} box-border min-w-0 max-w-full shrink [&::-webkit-datetime-edit]:min-w-0 [&::-webkit-datetime-edit-fields-wrapper]:min-w-0`;
+}

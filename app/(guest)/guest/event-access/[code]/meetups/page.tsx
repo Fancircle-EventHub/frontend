@@ -16,10 +16,10 @@ export default function GuestEventMeetupsPage() {
   }
 
   return (
-    <div className="px-4 pb-8 pt-6 sm:px-6 lg:mx-auto lg:max-w-xl">
+    <div className="min-w-0 max-w-full px-4 pb-8 pt-6 sm:px-6 lg:mx-auto lg:max-w-xl">
       <h1 className={`text-2xl font-bold ${guestHub.fg}`}>Meetups</h1>
       <p className={`mt-1 text-sm ${guestHub.fgMuted}`}>Participate in informal fan meetups before the show.</p>
-      <div className="mt-6">{code ? <GuestEventMeetupsContent accessCode={code} /> : null}</div>
+      <div className="mt-6 min-w-0">{code ? <GuestEventMeetupsContent accessCode={code} /> : null}</div>
     </div>
   );
 }
