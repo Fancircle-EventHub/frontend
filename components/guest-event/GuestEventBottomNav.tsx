@@ -3,8 +3,9 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useGuestChatUnreadQuery } from "@/apis/guestChat.api";
 import { useEventEntryByCodeQuery } from "@/apis/event.api";
-import { isModuleEnabled } from "@/lib/event-modules";
+import { isChatHubAccessible, isModuleEnabled } from "@/lib/event-modules";
 import { guestHub } from "@/lib/guest-event-branding";
 
 const NAV_H = "h-[4.25rem] sm:h-[4.5rem]";
@@ -55,18 +56,27 @@ function SideNavLink({
   label,
   active,
   icon,
+  badgeCount,
 }: {
   href: string;
   label: string;
   active: boolean;
   icon: (active: boolean) => ReactNode;
+  badgeCount?: number;
 }) {
   return (
     <Link
       href={href}
       className="flex min-w-0 max-w-[5.5rem] flex-col items-center justify-end gap-1 pb-1 pt-2 text-center text-[10px] font-semibold uppercase leading-tight tracking-wide transition sm:max-w-[6.5rem] sm:text-[11px]"
     >
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center sm:h-9 sm:w-9">{icon(active)}</span>
+      <span className="relative flex h-8 w-8 shrink-0 items-center justify-center sm:h-9 sm:w-9">
+        {icon(active)}
+        {badgeCount != null && badgeCount > 0 ? (
+          <span className="absolute -right-0.5 -top-0.5 flex min-w-[1.1rem] items-center justify-center rounded-full bg-eh-accent px-[3px] py-px text-[9px] font-bold leading-none text-[#0a0a0a]">
+            {badgeCount > 99 ? "99+" : badgeCount}
+          </span>
+        ) : null}
+      </span>
       <span
         className={`line-clamp-2 w-full ${guestHub.wrap} ${active ? "text-eh-accent" : "text-eh-text-tertiary"}`}
       >
@@ -91,8 +101,13 @@ export function GuestEventBottomNav({ eventCode }: GuestEventBottomNavProps) {
   const modules = entry?.data?.modules;
 
   const showCommunity = isModuleEnabled(modules, "community");
+  const showChatHub = isChatHubAccessible(modules);
   const showGallery = isModuleEnabled(modules, "fan_gallery");
   const showUploadFab = showGallery;
+  const { data: unreadEnv } = useGuestChatUnreadQuery(eventCode, {
+    skip: !eventCode || !showChatHub || !showCommunity,
+  });
+  const chatUnreadTotal = unreadEnv?.data?.total_unread ?? 0;
 
   const uploadHref = `${base}/upload`;
   const uploadActive = pathname.startsWith(uploadHref);
@@ -118,6 +133,7 @@ export function GuestEventBottomNav({ eventCode }: GuestEventBottomNavProps) {
             label="Community"
             active={communityActive}
             icon={(a) => <CommunityIcon active={a} />}
+            badgeCount={showChatHub ? chatUnreadTotal : undefined}
           />
         ) : null}
 

@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useGuestChatUnreadQuery } from "@/apis/guestChat.api";
+import { useEventEntryByCodeQuery } from "@/apis/event.api";
 import { useLogoutGuestMutation } from "@/apis/guest.api";
 import { clearSession, setEventContext } from "@/slices/session.slice";
 import { baseApi } from "@/services/api/baseApi";
@@ -10,6 +12,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
 import { guestEventAuthPaths } from "@/lib/guest-event-auth-paths";
 import { guestHub } from "@/lib/guest-event-branding";
+import { isChatHubAccessible } from "@/lib/event-modules";
 
 type Props = {
   open: boolean;
@@ -20,7 +23,7 @@ type Props = {
 const linkClass = `rounded-xl px-3 py-3 text-sm font-semibold text-eh-accent transition hover:bg-white/5 hover:text-eh-accent ${guestHub.wrap}`;
 
 /**
- * Guest in-event menu: legal links (accent) + sign out.
+ * Guest in-event menu: profile, chat hub (when enabled), legal links, sign out.
  * Opens from the header hamburger on event routes.
  */
 export function GuestEventMenuDrawer({ open, onClose, eventCode }: Props) {
@@ -28,6 +31,10 @@ export function GuestEventMenuDrawer({ open, onClose, eventCode }: Props) {
   const dispatch = useAppDispatch();
   const [logout, { isLoading: logoutLoading }] = useLogoutGuestMutation();
   const base = `/guest/event-access/${eventCode}`;
+  const { data: entryEnvelope } = useEventEntryByCodeQuery(eventCode, { skip: !eventCode || !open });
+  const showChatHub = isChatHubAccessible(entryEnvelope?.data?.modules);
+  const { data: unreadEnv } = useGuestChatUnreadQuery(eventCode, { skip: !eventCode || !open || !showChatHub });
+  const chatUnreadTotal = unreadEnv?.data?.total_unread ?? 0;
 
   useEffect(() => {
     if (!open) return;
@@ -79,6 +86,18 @@ export function GuestEventMenuDrawer({ open, onClose, eventCode }: Props) {
           <Link href={`${base}/profile`} className={linkClass} onClick={onClose}>
             My profile
           </Link>
+          {showChatHub ? (
+            <Link href={`${base}/chat`} className={linkClass} onClick={onClose}>
+              <span className="flex items-center justify-between gap-2">
+                <span>All chats</span>
+                {chatUnreadTotal > 0 ? (
+                  <span className="flex min-w-[1.25rem] shrink-0 items-center justify-center rounded-full bg-eh-accent px-1.5 py-0.5 text-[11px] font-bold leading-none text-[#0a0a0a]">
+                    {chatUnreadTotal > 99 ? "99+" : chatUnreadTotal}
+                  </span>
+                ) : null}
+              </span>
+            </Link>
+          ) : null}
           <Link href={`${base}/legal`} className={linkClass} onClick={onClose}>
             Legal notice
           </Link>

@@ -1,6 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import { useGuestChatRoomsQuery } from "@/apis/guestChat.api";
+import { useEventEntryByCodeQuery } from "@/apis/event.api";
 import {
   useGuestEventRidesQuery,
   useGuestRideCreateMutation,
@@ -13,6 +16,8 @@ import type { GuestRidePostItem } from "@/types/guest-ride.types";
 import { dateAndTimePartsToIso } from "@/lib/datetime-form";
 import { extractApiErrorMessage } from "@/lib/api-error";
 import { guestHub } from "@/lib/guest-event-branding";
+import { guestChatRoomIdForRide } from "@/lib/guest-chat-rooms";
+import { isModuleEnabled } from "@/lib/event-modules";
 import { PageCenterSpinner } from "@/components/ui/PageCenterSpinner";
 
 type Props = {
@@ -34,6 +39,11 @@ function formatDepartureHighlight(iso: string) {
 }
 
 export function GuestEventRidesContent({ accessCode }: Props) {
+  const { data: entryEnvelope } = useEventEntryByCodeQuery(accessCode, { skip: !accessCode });
+  const ridesModule = isModuleEnabled(entryEnvelope?.data?.modules, "carpooling");
+  const { data: chatRoomsEnvelope } = useGuestChatRoomsQuery(accessCode, { skip: !accessCode || !ridesModule });
+  const chatRooms = chatRoomsEnvelope?.data?.rooms ?? [];
+
   const { data, isLoading, isError, refetch } = useGuestEventRidesQuery(accessCode, { skip: !accessCode });
   const [createPost, { isLoading: creating }] = useGuestRideCreateMutation();
   const [removePost, { isLoading: deleting }] = useGuestRideDeleteMutation();
@@ -116,7 +126,10 @@ export function GuestEventRidesContent({ accessCode }: Props) {
           <p className={`mt-6 text-sm ${guestHub.fgMuted}`}>No ride posts yet — create one below.</p>
         ) : (
           <ul className="mt-6 space-y-4">
-            {posts.map((p) => (
+            {posts.map((p) => {
+              const rideChatId =
+                ridesModule && (p.is_author || p.interested) ? guestChatRoomIdForRide(chatRooms, p.id) : null;
+              return (
               <li
                 key={p.id}
                 className="flex min-w-0 gap-3 rounded-2xl border border-white/10 bg-[color:var(--guest-bg)]/40 p-3 sm:gap-4 sm:p-4"
@@ -161,6 +174,14 @@ export function GuestEventRidesContent({ accessCode }: Props) {
                         : "Guest"}{" "}
                     · {p.interest_count} interested
                   </p>
+                  {rideChatId ? (
+                    <Link
+                      href={`/guest/event-access/${accessCode}/chat/${rideChatId}`}
+                      className={`mt-2 inline-block text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
+                    >
+                      Open ride chat
+                    </Link>
+                  ) : null}
                 </div>
                 <div className="flex shrink-0 flex-col items-end justify-center gap-2 self-center">
                   {p.is_author ? (
@@ -212,7 +233,8 @@ export function GuestEventRidesContent({ accessCode }: Props) {
                   )}
                 </div>
               </li>
-            ))}
+            );
+            })}
           </ul>
         )}
       </section>

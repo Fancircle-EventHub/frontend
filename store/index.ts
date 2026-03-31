@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import "@/apis/guestChat.api";
 import "@/apis/guestUpload.api";
 import "@/apis/upload.api";
 import { baseApi } from "@/services/api/baseApi";
