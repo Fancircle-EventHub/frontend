@@ -8,7 +8,6 @@ import {
   useSendGuestChatMessageMutation,
 } from "@/apis/guestChat.api";
 import { useGuestSessionQuery } from "@/apis/guest.api";
-import { Button } from "@/components/ui/button";
 import { PageCenterSpinner } from "@/components/ui/PageCenterSpinner";
 import { extractApiErrorMessage } from "@/lib/api-error";
 import { guestHub } from "@/lib/guest-event-branding";
@@ -22,6 +21,14 @@ type Props = {
 type PendingMsg = GuestChatMessage & { _optimistic?: boolean };
 
 const EMPTY_MESSAGES: GuestChatMessage[] = [];
+
+function SendPlaneIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+    </svg>
+  );
+}
 
 function sortMessages(a: GuestChatMessage, b: GuestChatMessage): number {
   const ta = a.created_at ? new Date(a.created_at).getTime() : 0;
@@ -156,9 +163,13 @@ export function GuestChatThread({ accessCode, roomId }: Props) {
     return (
       <div className={`rounded-2xl border border-red-500/30 bg-red-500/10 p-6 text-center ${guestHub.fgMuted}`}>
         <p className="text-sm text-red-300">{msg}</p>
-        <Button type="button" variant="secondary" className="mt-4" onClick={() => void refetch()}>
+        <button
+          type="button"
+          className={`mt-4 rounded-lg border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white/90 transition hover:bg-white/10`}
+          onClick={() => void refetch()}
+        >
           Retry
-        </Button>
+        </button>
       </div>
     );
   }
@@ -180,7 +191,7 @@ export function GuestChatThread({ accessCode, roomId }: Props) {
         </div>
       ) : null}
 
-      <ul className="min-h-0 flex-1 space-y-3 overflow-y-auto px-1 py-2">
+      <ul className="min-h-0 flex-1 space-y-4 overflow-y-auto px-2 py-3 [scrollbar-gutter:stable]">
         {display.length === 0 ? (
           <li className={`text-center text-sm ${guestHub.fgMuted}`}>No messages yet — say hello.</li>
         ) : (
@@ -188,30 +199,33 @@ export function GuestChatThread({ accessCode, roomId }: Props) {
             const mine = Boolean(myGuestId && m.guest_id === myGuestId);
             const avatarUrl = m.avatar_url?.trim() || null;
             const initial = (m.username?.trim()?.[0] ?? "?").toUpperCase();
+            const displayName = (m.username?.trim() || "Fan").toUpperCase();
             return (
               <li key={m.id} className={`flex gap-2 ${mine ? "justify-end" : "justify-start"}`}>
                 {!mine ? (
-                  <div className="relative size-9 shrink-0 overflow-hidden rounded-full border border-white/10 bg-white/10">
+                  <div className="relative size-9 shrink-0 overflow-hidden rounded-full border border-white/10 bg-zinc-800/80">
                     {avatarUrl ? (
                       <img src={avatarUrl} alt="" className="size-full object-cover" />
                     ) : (
-                      <span className={`flex size-full items-center justify-center text-xs font-bold ${guestHub.fgMuted}`}>
+                      <span className={`flex size-full items-center justify-center text-xs font-bold text-eh-accent`}>
                         {initial}
                       </span>
                     )}
                   </div>
                 ) : null}
                 <div
-                  className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
-                    mine ? "bg-eh-accent/25 text-eh-text-primary" : `${guestHub.surface} ${guestHub.fg}`
+                  className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-snug ${
+                    mine
+                      ? "bg-eh-accent/20 text-white"
+                      : "border border-white/10 bg-zinc-800/90 text-white/95"
                   }`}
                 >
                   {!mine ? (
-                    <p className={`text-[10px] font-bold uppercase tracking-wide ${guestHub.fgMuted}`}>
-                      {m.username ? `@${m.username}` : "Fan"}
-                    </p>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-eh-accent">{displayName}</p>
                   ) : null}
-                  <p className="mt-0.5 whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{m.body}</p>
+                  <p className={`mt-1 whitespace-pre-wrap break-words [overflow-wrap:anywhere] ${!mine ? "text-white/90" : ""}`}>
+                    {m.body}
+                  </p>
                   {mine && !m.id.startsWith("temp-") ? (
                     <button
                       type="button"
@@ -230,20 +244,28 @@ export function GuestChatThread({ accessCode, roomId }: Props) {
         <div ref={bottomRef} />
       </ul>
 
-      <form onSubmit={(e) => void onSend(e)} className="shrink-0 border-t border-white/10 bg-[color:var(--guest-bg)] p-3">
+      <form
+        onSubmit={(e) => void onSend(e)}
+        className="shrink-0 border-t border-white/10 bg-black/20 p-3 backdrop-blur-[2px]"
+      >
         {sendError ? <p className="mb-2 text-center text-xs text-red-400">{sendError}</p> : null}
-        <div className="flex gap-2">
+        <div className="flex items-end gap-2 rounded-2xl border border-white/10 bg-zinc-900/70 p-1.5 pl-3 shadow-inner">
           <textarea
             value={composer}
             onChange={(e) => setComposer(e.target.value)}
-            placeholder="Message…"
-            rows={2}
+            placeholder="Nachricht schreiben…"
+            rows={1}
             maxLength={2000}
-            className="min-h-[44px] flex-1 resize-y rounded-xl border border-white/15 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/35"
+            className="max-h-32 min-h-[44px] flex-1 resize-none rounded-xl border-0 bg-transparent px-2 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-0"
           />
-          <Button type="submit" disabled={sending || !composer.trim()} className="self-end px-5 py-2.5 min-w-[5.5rem]">
-            Send
-          </Button>
+          <button
+            type="submit"
+            disabled={sending || !composer.trim()}
+            className={`flex shrink-0 items-center justify-center rounded-xl px-4 py-3.5 text-[#0a0a0a] shadow-sm transition hover:brightness-95 disabled:opacity-50 ${guestHub.accentBg}`}
+            aria-label="Send"
+          >
+            {sending ? <span className="text-xs font-bold">…</span> : <SendPlaneIcon />}
+          </button>
         </div>
       </form>
     </div>
