@@ -19,6 +19,8 @@ export default function GuestEventMorePage() {
   const showFanGallery = isModuleEnabled(modules, "fan_gallery");
   const showNotifications = isModuleEnabled(modules, "notifications");
   const showCommunity = isModuleEnabled(modules, "community");
+  const showTourPromo = isModuleEnabled(modules, "tour_promotion");
+  const promoCount = (entryEnvelope?.data?.external_promo_items ?? []).filter((i) => i.is_active).length;
 
   const shortcuts = [
     showEventInfo ? { href: `${base}/info`, label: "Event info" } : null,
@@ -28,6 +30,7 @@ export default function GuestEventMorePage() {
     showMeetups ? { href: `${base}/meetups`, label: "Meetups" } : null,
     showRides ? { href: `${base}/rides`, label: "Carpool" } : null,
     showNotifications ? { href: `${base}/notifications`, label: "Updates" } : null,
+    showTourPromo && promoCount > 0 ? { href: `${base}/promo`, label: "You may also like" } : null,
   ].filter(Boolean) as { href: string; label: string }[];
 
   return (

@@ -17,7 +17,6 @@ export function mergeModulesFromApi(raw: unknown): Record<EventModuleId, boolean
   const base = defaultModulesState();
   if (!raw || typeof raw !== "object") return base;
   const r = { ...(raw as Record<string, unknown>) };
-  // Legacy API/events may still have `chat` instead of `channel`
   if (typeof r.channel !== "boolean" && typeof r.chat === "boolean") {
     r.channel = r.chat;
   }
@@ -58,15 +57,11 @@ export function isModuleEnabled(
   return Boolean(modules[id]);
 }
 
-/** Event-wide Channel (legacy key `chat` still honored from API merge). */
 export function isChannelEnabled(modules: Record<string, boolean> | null | undefined): boolean {
   if (!modules) return false;
   return Boolean(modules.channel) || Boolean((modules as Record<string, boolean>).chat);
 }
 
-/**
- * Guest /chat area: Channel (event-wide), Meetups, or Carpooling unlocks the hub and API rooms list.
- */
 export function isChatHubAccessible(modules: Record<string, boolean> | null | undefined): boolean {
   return isChannelEnabled(modules) || isModuleEnabled(modules, "meetups") || isModuleEnabled(modules, "carpooling");
 }

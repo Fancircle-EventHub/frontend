@@ -90,10 +90,6 @@ export type GuestEventBottomNavProps = {
   eventCode: string;
 };
 
-/**
- * Fixed bottom navigation for the in-event guest experience.
- * Items respect `event.modules` from entry (community, fan gallery upload, gallery tab).
- */
 export function GuestEventBottomNav({ eventCode }: GuestEventBottomNavProps) {
   const pathname = usePathname();
   const base = `/guest/event-access/${eventCode}`;

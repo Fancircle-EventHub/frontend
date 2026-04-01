@@ -1,5 +1,3 @@
-/** Central branding and SEO defaults for Fancircle EventHub. */
-
 export const BRAND_NAME = "Fancircle";
 export const PRODUCT_NAME = "Fancircle EventHub";
 export const SITE_TITLE = "Fancircle EventHub";
@@ -11,10 +9,6 @@ export const SITE_DESCRIPTION =
 export const SITE_LOCALE = "en_US";
 export const APPLICATION_CATEGORY = "Events / Social / Networking";
 
-/**
- * Canonical public URL for metadata, OG, sitemap, and robots.
- * Prefer NEXT_PUBLIC_APP_URL in production; Vercel provides VERCEL_URL when unset.
- */
 export function getSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/$/, "");
   if (explicit) return explicit;

@@ -152,7 +152,6 @@ function BrandingPhonePreview({
 
 type EventBrandingScreenProps = {
   eventId: string;
-  /** When true, opened from organizer sidebar / hub — skip wizard-only navigation. */
   standalone?: boolean;
 };
 

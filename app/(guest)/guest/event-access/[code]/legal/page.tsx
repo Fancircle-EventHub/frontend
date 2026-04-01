@@ -1,6 +1,3 @@
-/**
- * STATIC: Legal notice (Impressum) — replace with organizer-specific content when available.
- */
 export default function GuestEventLegalPage() {
   return (
     <div className="px-4 pb-8 pt-6 sm:px-6 lg:mx-auto lg:max-w-2xl">

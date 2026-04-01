@@ -12,7 +12,6 @@ import {
 
 const ogLocale = SITE_LOCALE.replace("_", "-");
 
-/** Global defaults for the App Router metadata API (merged with route-level metadata). */
 export const rootMetadata: Metadata = {
   metadataBase: getMetadataBase(),
   title: {

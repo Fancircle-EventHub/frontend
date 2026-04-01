@@ -22,10 +22,6 @@ type Props = {
 
 const linkClass = `rounded-xl px-3 py-3 text-sm font-semibold text-eh-accent transition hover:bg-white/5 hover:text-eh-accent ${guestHub.wrap}`;
 
-/**
- * Guest in-event menu: profile, chat hub (when enabled), legal links, sign out.
- * Opens from the header hamburger on event routes.
- */
 export function GuestEventMenuDrawer({ open, onClose, eventCode }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -116,9 +112,7 @@ export function GuestEventMenuDrawer({ open, onClose, eventCode }: Props) {
             onClick={async () => {
               try {
                 await logout().unwrap();
-              } catch {
-                /* still clear local session */
-              }
+              } catch {}
               dispatch(setEventContext(null));
               dispatch(clearSession());
               dispatch(baseApi.util.resetApiState());

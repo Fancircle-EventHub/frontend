@@ -22,9 +22,7 @@ export function OrganizationEventGalleryContent({ eventId }: Props) {
     try {
       await updateEvent({ eventId, body: { shot_of_the_night_media_id: next } }).unwrap();
       await refetch();
-    } catch {
-      /* surfaced by global error handling if any */
-    }
+    } catch {}
   }
 
   return (

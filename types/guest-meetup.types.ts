@@ -8,10 +8,8 @@ export type GuestMeetupItem = {
   participant_count: number;
   spots_left: number | null;
   joined: boolean;
-  /** Raw stored value (storage key or URL). */
   image_url: string | null;
   created_by_guest_id: string | null;
-  /** Resolved image for display (explicit image, org logo, or guest avatar). */
   display_image_url: string | null;
 };
 

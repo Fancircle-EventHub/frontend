@@ -7,9 +7,6 @@ function eventShareImages(heroUrl: string | null | undefined): NonNullable<Metad
   return [{ url: heroUrl, alt: "" }];
 }
 
-/**
- * Metadata for guest flows scoped by event access code (title includes event name when the API returns data).
- */
 export async function metadataForEventScopedPage(
   params: Promise<{ code: string }>,
   label: string,
@@ -44,7 +41,6 @@ export async function metadataForEventScopedPage(
   };
 }
 
-/** Public landing for an event code (`/event/[code]`). */
 export async function metadataForPublicEventEntry(params: Promise<{ code: string }>): Promise<Metadata> {
   const { code } = await params;
   const event = await getCachedEventEntryByCode(code);

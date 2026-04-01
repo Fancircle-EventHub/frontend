@@ -4,6 +4,7 @@ import type { GuestEventNotificationItem } from "@/types/event-notification.type
 import type { GuestMeetupItem } from "@/types/guest-meetup.types";
 import type { GuestRidePostItem } from "@/types/guest-ride.types";
 import { GuestExternalPromoSection } from "@/components/guest-event/GuestExternalPromoSection";
+import { GUEST_EXTERNAL_PROMO_HOME_LIMIT } from "@/constants/guestExternalPromo";
 import { formatMeetupSchedule } from "@/lib/datetime-form";
 import { guestHub } from "@/lib/guest-event-branding";
 import { isModuleEnabled } from "@/lib/event-modules";
@@ -59,6 +60,9 @@ export function GuestEventHomeStaticSections({
     .slice()
     .sort((a, b) => a.sort_order - b.sort_order || a.id.localeCompare(b.id));
   const showExternalPromo = showTour && externalPromoItems.length > 0;
+  const externalPromoHomeItems = externalPromoItems.slice(0, GUEST_EXTERNAL_PROMO_HOME_LIMIT);
+  const externalPromoShowMoreHref =
+    showExternalPromo && externalPromoItems.length > GUEST_EXTERNAL_PROMO_HOME_LIMIT ? `${base}/promo` : undefined;
 
   const title = eventLoading ? "Loading…" : (event?.title ?? "Event");
   const shot = event?.shot_of_the_night;
@@ -105,7 +109,11 @@ export function GuestEventHomeStaticSections({
       ) : null}
 
       {showExternalPromo ? (
-        <GuestExternalPromoSection items={externalPromoItems} heading={event?.external_promo_section_label} />
+        <GuestExternalPromoSection
+          items={externalPromoHomeItems}
+          heading={event?.external_promo_section_label}
+          showMoreHref={externalPromoShowMoreHref}
+        />
       ) : null}
 
       {showMeetups ? (

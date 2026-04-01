@@ -1,12 +1,10 @@
 export type EventStatus = "draft" | "live";
 
-/** Manual external link card for tour promotion (guest entry returns active items only). */
 export type EventExternalPromoItem = {
   id: string;
   title: string;
   subtitle: string | null;
   image_url: string | null;
-  /** Storage key for organizer forms (same as meetup images). */
   image_path?: string | null;
   external_url: string;
   sort_order: number;

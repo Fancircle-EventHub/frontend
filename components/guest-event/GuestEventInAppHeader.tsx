@@ -7,13 +7,9 @@ import { GuestEventMenuDrawer } from "./GuestEventMenuDrawer";
 
 export type GuestEventInAppHeaderProps = {
   eventCode: string;
-  /** Event branding logo from organizer setup (`logo_url`). */
   logoUrl?: string | null;
 };
 
-/**
- * Top bar for in-event screens: menu opens sidebar (My profile, Sign out).
- */
 export function GuestEventInAppHeader({ eventCode, logoUrl }: GuestEventInAppHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const hydrated = useHydrated();

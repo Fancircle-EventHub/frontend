@@ -1,7 +1,6 @@
 import type { CSSProperties } from "react";
 import type { Event } from "@/types/event.types";
 
-/** Defaults aligned with `EventBrandingScreen` (branding wizard). */
 export const GUEST_BRANDING_DEFAULTS = {
   background: "#23272F",
   font: "#FFFFFF",
@@ -17,10 +16,6 @@ function normalizeHex(input: string | null | undefined): string | null {
   return `#${hex.toUpperCase()}`;
 }
 
-/**
- * CSS variables consumed by guest hub UI (`GuestEventAccessLayout` and children).
- * Organizer branding colors from PATCH / organization event → `GET /events/:code/entry`.
- */
 export function guestEventBrandingVars(event: Event | undefined | null): CSSProperties {
   const bg = normalizeHex(event?.background_color) ?? GUEST_BRANDING_DEFAULTS.background;
   const fg = normalizeHex(event?.font_color) ?? GUEST_BRANDING_DEFAULTS.font;
@@ -36,7 +31,6 @@ export function guestEventBrandingVars(event: Event | undefined | null): CSSProp
   } as CSSProperties;
 }
 
-/** Tailwind-friendly fragments (parent must set `guestEventBrandingVars`). */
 export const guestHub = {
   fg: "text-[color:var(--guest-fg)]",
   fgMuted: "text-[color:var(--guest-fg)]/70",
@@ -47,19 +41,10 @@ export const guestHub = {
   accentBorderSubtle: "border-[color:color-mix(in_srgb,var(--guest-btn)_40%,transparent)]",
   accentBorderHover: "hover:border-[color:var(--guest-btn)]",
   accentRing: "focus-visible:ring-[color:var(--guest-btn)]",
-  /** Muted accent border on cards (replaces `border-eh-accent/35–40`). */
   cardHoverBorder: "hover:border-[color:color-mix(in_srgb,var(--guest-btn)_38%,transparent)]",
   surface: "bg-[color:var(--guest-card)]",
   elevated: "bg-[color:var(--guest-elevated)]",
   nav: "bg-[color:var(--guest-nav)]",
-  /**
-   * Use on text inside grids/flex rows so long compounds (e.g. German) wrap instead of overflowing.
-   * Parent grid/flex items should also use `min-w-0` where needed.
-   */
   wrap: "min-w-0 max-w-full break-words [overflow-wrap:anywhere]",
-  /**
-   * Hub section titles (Updates, Meetups, tour promo heading, etc.) — same family as the
-   * “You may also like” label, one step up from `text-[11px]` for readability.
-   */
   sectionHeading: "text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--guest-btn)]",
 } as const;

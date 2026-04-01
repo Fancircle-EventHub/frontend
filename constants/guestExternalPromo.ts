@@ -1,0 +1,1 @@
+export const GUEST_EXTERNAL_PROMO_HOME_LIMIT = 3;

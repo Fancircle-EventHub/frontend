@@ -180,9 +180,7 @@ export function GuestChatThread({ accessCode, roomId }: Props) {
     try {
       await deleteMessage({ accessCode, roomId, messageId }).unwrap();
       setHiddenIds((prev) => ({ ...prev, [messageId]: true }));
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   }
 
   function loadOlder() {

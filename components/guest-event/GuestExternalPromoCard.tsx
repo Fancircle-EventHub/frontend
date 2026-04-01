@@ -24,7 +24,7 @@ export function GuestExternalPromoCard({ item }: Props) {
       {...(newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       className={`group relative block w-full overflow-hidden rounded-[28px] border border-white/10 shadow-xl transition hover:brightness-[1.04] ${guestHub.cardHoverBorder}`}
     >
-      <div className="relative aspect-[2/1] w-full min-h-[140px] sm:aspect-[21/9] sm:min-h-[160px]">
+      <div className="relative aspect-[8/3] w-full min-h-[96px] sm:min-h-[104px] sm:aspect-[24/9]">
         {item.image_url ? (
           <img
             src={item.image_url}
@@ -41,23 +41,23 @@ export function GuestExternalPromoCard({ item }: Props) {
           className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/10"
           aria-hidden
         />
-        <div className="absolute inset-x-0 bottom-0 flex flex-col justify-end p-5 pb-5 pt-16 sm:p-6 sm:pt-20">
-          <div className="flex min-w-0 flex-col gap-1.5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+        <div className="absolute inset-x-0 bottom-0 flex flex-col justify-end p-4 pb-3 pt-12 sm:p-5 sm:pb-4 sm:pt-14">
+          <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
             <div className="min-w-0 text-left">
               <p
-                className={`text-lg font-bold leading-snug tracking-tight text-white drop-shadow-sm sm:text-xl ${guestHub.wrap} line-clamp-2`}
+                className={`text-base font-bold leading-snug tracking-tight text-white drop-shadow-sm sm:text-lg ${guestHub.wrap} line-clamp-2`}
               >
                 {item.title}
               </p>
               {item.subtitle?.trim() ? (
-                <p className={`mt-1 line-clamp-2 text-sm text-white/75 drop-shadow ${guestHub.wrap}`}>
+                <p className={`mt-0.5 line-clamp-2 text-xs text-white/75 drop-shadow sm:text-sm ${guestHub.wrap}`}>
                   {item.subtitle.trim()}
                 </p>
               ) : null}
             </div>
             {cta ? (
               <span
-                className={`mt-3 inline-flex w-fit shrink-0 items-center justify-center self-start rounded-xl px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-[#0a0a0a] shadow-lg sm:mt-0 sm:self-end ${guestHub.accentBg}`}
+                className={`mt-2 inline-flex w-fit shrink-0 items-center justify-center self-start rounded-lg px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-[#0a0a0a] shadow-md sm:mt-0 sm:self-end ${guestHub.accentBg}`}
               >
                 {cta}
               </span>

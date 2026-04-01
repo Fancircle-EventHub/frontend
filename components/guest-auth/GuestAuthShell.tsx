@@ -9,7 +9,6 @@ export type GuestAuthShellProps = {
   title: string;
   description?: string;
   children: ReactNode;
-  /** Optional event context line (e.g. venue) */
   eventLine?: string | null;
 };
 
