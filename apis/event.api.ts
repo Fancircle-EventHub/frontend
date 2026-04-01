@@ -4,7 +4,15 @@ import type { ApiEnvelope } from "@/types/api.types";
 import type { OrganizationGuestMediaPayload } from "@/types/guest-media.types";
 import type { OrganizationMeetupItem } from "@/types/guest-meetup.types";
 import type { OrganizationEventNotificationItem } from "@/types/event-notification.types";
-import type { CreateEventPayload, Event, EventExternalPromoItem, HubSummaryEmailResult, UpdateEventPayload } from "@/types/event.types";
+import type {
+  CreateEventPayload,
+  Event,
+  EventExternalPromoItem,
+  EventPublicPreviewPayload,
+  HubSummaryEmailResult,
+  UpdateEventPayload,
+} from "@/types/event.types";
+import type { GuestEventMediaItem } from "@/types/guest-media.types";
 
 export type ListOrganizationEventsQueryParams = {
   status?: "all" | "draft" | "live";
@@ -52,6 +60,29 @@ export const eventApi = baseApi.injectEndpoints({
     }),
     eventEntryByCode: builder.query<ApiEnvelope<Event>, string>({
       query: (code) => ({ url: `/events/${code}/entry` }),
+      providesTags: [TAG_TYPES.EventEntry],
+    }),
+    eventPublicPreview: builder.query<
+      ApiEnvelope<EventPublicPreviewPayload>,
+      { code: string; galleryLimit?: number }
+    >({
+      query: ({ code, galleryLimit }) => ({
+        url: `/events/${code}/preview`,
+        params: galleryLimit != null ? { gallery_limit: galleryLimit } : undefined,
+      }),
+      providesTags: [TAG_TYPES.EventEntry],
+    }),
+    publicEventGallery: builder.query<
+      ApiEnvelope<GuestEventMediaItem[]>,
+      { code: string; kind?: "image" | "video"; limit?: number }
+    >({
+      query: ({ code, kind, limit }) => ({
+        url: `/events/${code}/public-gallery`,
+        params: {
+          ...(kind ? { kind } : {}),
+          ...(limit != null ? { limit } : {}),
+        },
+      }),
       providesTags: [TAG_TYPES.EventEntry],
     }),
     organizationEventGuestMedia: builder.query<ApiEnvelope<OrganizationGuestMediaPayload>, string>({
@@ -273,6 +304,8 @@ export const {
   useUpdateOrganizationEventMutation,
   useSendOrganizationEventHubSummaryEmailMutation,
   useEventEntryByCodeQuery,
+  useEventPublicPreviewQuery,
+  usePublicEventGalleryQuery,
   useOrganizationEventGuestMediaQuery,
   useCreateOrganizationEventExternalPromoItemMutation,
   useUpdateOrganizationEventExternalPromoItemMutation,

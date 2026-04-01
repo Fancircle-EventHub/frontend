@@ -1,9 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import type { Event } from "@/types/event.types";
 import type { GuestEventNotificationItem } from "@/types/event-notification.types";
+import type { GuestEventMediaItem } from "@/types/guest-media.types";
 import type { GuestMeetupItem } from "@/types/guest-meetup.types";
 import type { GuestRidePostItem } from "@/types/guest-ride.types";
 import { GuestExternalPromoSection } from "@/components/guest-event/GuestExternalPromoSection";
+import { MediaLightbox, type MediaLightboxItem } from "@/components/guest-event/MediaLightbox";
 import { GUEST_EXTERNAL_PROMO_HOME_LIMIT } from "@/constants/guestExternalPromo";
 import { formatMeetupSchedule } from "@/lib/datetime-form";
 import { guestHub } from "@/lib/guest-event-branding";
@@ -26,6 +31,9 @@ type Props = {
   meetupsLoading?: boolean;
   ridesLoading?: boolean;
   notificationsLoading?: boolean;
+  interactionMode?: "full" | "preview";
+  joinInteractHref?: string;
+  galleryPreviewItems?: GuestEventMediaItem[];
 };
 
 function formatDateTime(iso: string) {
@@ -34,6 +42,15 @@ function formatDateTime(iso: string) {
   } catch {
     return iso;
   }
+}
+
+function toLightboxItems(items: { id: string; kind: "image" | "video"; url: string; username?: string | null }[]): MediaLightboxItem[] {
+  return items.map((item) => ({
+    id: item.id,
+    kind: item.kind,
+    url: item.url,
+    username: item.username,
+  }));
 }
 
 export function GuestEventHomeStaticSections({
@@ -46,8 +63,18 @@ export function GuestEventHomeStaticSections({
   meetupsLoading,
   ridesLoading,
   notificationsLoading,
+  interactionMode = "full",
+  joinInteractHref,
+  galleryPreviewItems,
 }: Props) {
   const base = `/guest/event-access/${eventCode}`;
+  const preview = interactionMode === "preview" && Boolean(joinInteractHref);
+  const hub = (suffix: string) => (preview && joinInteractHref ? joinInteractHref : `${base}${suffix}`);
+
+  const [spotlightOpen, setSpotlightOpen] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [galleryIndex, setGalleryIndex] = useState(0);
+
   const modules = event?.modules ?? null;
 
   const showMeetups = isModuleEnabled(modules, "meetups");
@@ -62,10 +89,26 @@ export function GuestEventHomeStaticSections({
   const showExternalPromo = showTour && externalPromoItems.length > 0;
   const externalPromoHomeItems = externalPromoItems.slice(0, GUEST_EXTERNAL_PROMO_HOME_LIMIT);
   const externalPromoShowMoreHref =
-    showExternalPromo && externalPromoItems.length > GUEST_EXTERNAL_PROMO_HOME_LIMIT ? `${base}/promo` : undefined;
+    showExternalPromo && externalPromoItems.length > GUEST_EXTERNAL_PROMO_HOME_LIMIT
+      ? preview && joinInteractHref
+        ? joinInteractHref
+        : `${base}/promo`
+      : undefined;
 
   const title = eventLoading ? "Loading…" : (event?.title ?? "Event");
   const shot = event?.shot_of_the_night;
+
+  const spotlightLightboxItems = useMemo((): MediaLightboxItem[] => {
+    if (!shot?.url) return [];
+    return [{ id: shot.id, kind: shot.kind, url: shot.url, username: shot.username }];
+  }, [shot]);
+
+  const galleryLightboxItems = useMemo(
+    () => (galleryPreviewItems?.length ? toLightboxItems(galleryPreviewItems) : []),
+    [galleryPreviewItems],
+  );
+
+  const showGalleryGrid = Boolean(galleryPreviewItems && galleryPreviewItems.length > 0);
 
   return (
     <div className="min-w-0 space-y-8 px-4 pb-4 sm:px-6 lg:mx-auto lg:max-w-3xl">
@@ -76,10 +119,10 @@ export function GuestEventHomeStaticSections({
               Updates
             </h2>
             <Link
-              href={`${base}/notifications`}
+              href={hub("/notifications")}
               className={`shrink-0 text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
             >
-              View all
+              {preview ? "Join to view" : "View all"}
             </Link>
           </div>
           {notificationsLoading ? (
@@ -91,7 +134,7 @@ export function GuestEventHomeStaticSections({
               {notificationsPreview.slice(0, 2).map((n) => (
                 <li key={n.id}>
                   <Link
-                    href={`${base}/notifications`}
+                    href={hub("/notifications")}
                     className={`block min-w-0 rounded-2xl p-4 text-left transition hover:brightness-[1.03] ${guestHub.surface} ${notificationCardBorderClass(n.color)}`}
                   >
                     <p className={`text-[10px] font-bold uppercase tracking-wider ${guestHub.fgMuted} ${guestHub.wrap}`}>
@@ -123,10 +166,10 @@ export function GuestEventHomeStaticSections({
               Meetups
             </h2>
             <Link
-              href={`${base}/meetups`}
+              href={hub("/meetups")}
               className={`shrink-0 text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
             >
-              View all
+              {preview ? "Join to view" : "View all"}
             </Link>
           </div>
           {meetupsLoading ? (
@@ -139,7 +182,7 @@ export function GuestEventHomeStaticSections({
               const row = (m: GuestMeetupItem) => (
                 <li key={m.id}>
                   <Link
-                    href={`${base}/meetups`}
+                    href={hub("/meetups")}
                     className={`flex min-w-0 gap-3 rounded-2xl border border-white/10 p-3 text-left transition hover:brightness-[1.03] sm:p-4 ${guestHub.surface} ${guestHub.cardHoverBorder}`}
                   >
                     <div className="relative size-11 shrink-0 overflow-hidden rounded-full bg-white/10">
@@ -190,22 +233,24 @@ export function GuestEventHomeStaticSections({
               Carpool
             </h2>
             <Link
-              href={`${base}/rides`}
+              href={hub("/rides")}
               className={`shrink-0 text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
             >
-              View all
+              {preview ? "Join to view" : "View all"}
             </Link>
           </div>
           {ridesLoading ? (
             <p className={`mt-3 text-sm ${guestHub.fgMuted}`}>Loading rides…</p>
           ) : ridesPreview.length === 0 ? (
-            <p className={`mt-3 text-sm ${guestHub.fgMuted}`}>No ride posts yet — add one from Carpool.</p>
+            <p className={`mt-3 text-sm ${guestHub.fgMuted}`}>
+              {preview ? "No ride posts yet." : "No ride posts yet — add one from Carpool."}
+            </p>
           ) : (
             <ul className="mt-3 space-y-2">
               {ridesPreview.map((r) => (
                 <li key={r.id}>
                   <Link
-                    href={`${base}/rides`}
+                    href={hub("/rides")}
                     className={`flex min-w-0 gap-3 rounded-2xl border border-white/10 p-4 text-left transition ${guestHub.surface} ${guestHub.cardHoverBorder}`}
                   >
                     <div className="relative size-11 shrink-0 overflow-hidden rounded-full bg-white/10">
@@ -240,27 +285,48 @@ export function GuestEventHomeStaticSections({
               Shot of the night
             </h2>
             <Link
-              href={`${base}/gallery`}
+              href={hub("/gallery")}
               className={`shrink-0 text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
             >
-              View all
+              {preview ? "Join for gallery" : "View all"}
             </Link>
           </div>
           {shot?.url ? (
             <div className={`mt-3 overflow-hidden rounded-2xl border border-white/10 ${guestHub.surface}`}>
-              <div className="aspect-[16/10] w-full bg-black">
-                {shot.kind === "video" ? (
-                  <video src={shot.url} className="size-full object-cover" controls playsInline preload="metadata" />
-                ) : (
-                  <img src={shot.url} alt="" className="size-full object-cover" />
-                )}
-              </div>
+              <button
+                type="button"
+                onClick={() => setSpotlightOpen(true)}
+                className="block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-eh-accent"
+              >
+                <div className="relative aspect-[16/10] w-full bg-black">
+                  {shot.kind === "video" ? (
+                    <>
+                      <video
+                        src={shot.url}
+                        className="pointer-events-none size-full object-cover"
+                        muted
+                        playsInline
+                        preload="metadata"
+                        tabIndex={-1}
+                        aria-hidden
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/25" aria-hidden>
+                        <span className="flex size-16 items-center justify-center rounded-full bg-black/55 text-3xl text-white shadow-lg">
+                          ▶
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <img src={shot.url} alt="" className="size-full object-cover" />
+                  )}
+                </div>
+              </button>
               <div className="flex items-center justify-between gap-2 p-3">
                 <div className="min-w-0">
                   <p className={`text-sm font-medium ${guestHub.fg} ${guestHub.wrap}`}>
                     {shot.username ? `@${shot.username}` : "Fan highlight"}
                   </p>
-                  <p className={`text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>Picked by the organizer</p>
+                  <p className={`text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>Picked by the organizer · tap to view</p>
                 </div>
               </div>
             </div>
@@ -270,13 +336,62 @@ export function GuestEventHomeStaticSections({
                 When your organizer selects a shot of the night from fan uploads, it will appear here.
               </p>
               <Link
-                href={`${base}/gallery`}
+                href={hub("/gallery")}
                 className={`mt-3 inline-block text-xs font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
               >
-                Open gallery
+                {preview ? "Join to open gallery" : "Open gallery"}
               </Link>
             </div>
           )}
+        </section>
+      ) : null}
+
+      {showFanGallery && showGalleryGrid ? (
+        <section aria-labelledby="fan-gallery-preview-heading">
+          <div className="flex min-w-0 items-start justify-between gap-3">
+            <h2 id="fan-gallery-preview-heading" className={`min-w-0 flex-1 ${guestHub.sectionHeading} ${guestHub.wrap}`}>
+              Fan gallery
+            </h2>
+            <Link
+              href={hub("/gallery")}
+              className={`shrink-0 text-[11px] font-semibold uppercase tracking-wide hover:underline ${guestHub.accent}`}
+            >
+              {preview ? "Join for full gallery" : "View all"}
+            </Link>
+          </div>
+          <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {galleryPreviewItems!.slice(0, 8).map((item, i) => (
+              <li key={item.id} className="overflow-hidden rounded-xl border border-white/10 bg-black/30">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGalleryIndex(i);
+                    setGalleryOpen(true);
+                  }}
+                  className="relative block aspect-square w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-eh-accent"
+                >
+                  {item.kind === "video" ? (
+                    <>
+                      <video
+                        src={item.url}
+                        className="pointer-events-none size-full object-cover"
+                        muted
+                        playsInline
+                        preload="metadata"
+                        tabIndex={-1}
+                        aria-hidden
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30" aria-hidden>
+                        <span className="text-2xl text-white/95">▶</span>
+                      </div>
+                    </>
+                  ) : (
+                    <img src={item.url} alt="" className="size-full object-cover" />
+                  )}
+                </button>
+              </li>
+            ))}
+          </ul>
         </section>
       ) : null}
 
@@ -285,6 +400,21 @@ export function GuestEventHomeStaticSections({
           {title} · Fancircle EventHub · {new Date().getFullYear()}
         </p>
       </footer>
+
+      <MediaLightbox
+        key={spotlightOpen ? "spotlight-open" : "spotlight-closed"}
+        open={spotlightOpen}
+        items={spotlightLightboxItems}
+        initialIndex={0}
+        onClose={() => setSpotlightOpen(false)}
+      />
+      <MediaLightbox
+        key={galleryOpen ? `gallery-${galleryIndex}` : "gallery-closed"}
+        open={galleryOpen}
+        items={galleryLightboxItems}
+        initialIndex={galleryIndex}
+        onClose={() => setGalleryOpen(false)}
+      />
     </div>
   );
 }

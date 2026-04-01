@@ -1,3 +1,9 @@
+import type { GuestEventNotificationItem } from "@/types/event-notification.types";
+import type { GuestCommunityStats } from "@/types/guest-community.types";
+import type { GuestEventMediaItem } from "@/types/guest-media.types";
+import type { GuestMeetupItem } from "@/types/guest-meetup.types";
+import type { GuestRidePostItem } from "@/types/guest-ride.types";
+
 export type EventStatus = "draft" | "live";
 
 export type EventExternalPromoItem = {
@@ -51,6 +57,17 @@ export type Event = {
 export type HubSummaryEmailResult = {
   sent: boolean;
   already_sent: boolean;
+};
+
+export type EventPublicPreviewPayload = {
+  organizer_name: string | null;
+  meetups: GuestMeetupItem[];
+  notifications: GuestEventNotificationItem[];
+  ride_posts: GuestRidePostItem[];
+  event_venue: string | null;
+  event_city: string | null;
+  gallery: GuestEventMediaItem[];
+  community: GuestCommunityStats | null;
 };
 
 export type CreateEventPayload = {
