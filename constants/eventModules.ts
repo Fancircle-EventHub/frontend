@@ -6,7 +6,7 @@ export const EVENT_MODULE_LIST = [
   { id: "fan_gallery", title: "Fan gallery", description: "Photo wall curated from fan uploads." },
   { id: "voting", title: "Voting", description: "Polls and quick votes to drive engagement." },
   { id: "merch", title: "Merch", description: "Highlight merchandise and pre-order links." },
-  { id: "tour_promotion", title: "Tour promotion", description: "Promote other dates and tour content." },
+  { id: "tour_promotion", title: "Tour promotion", description: "Manual external links (tickets, partners) on the guest hub." },
   { id: "social_links", title: "Social links", description: "Official profiles and hashtag in one place." },
   { id: "streaming_links", title: "Streaming links", description: "Pre-save and streaming destinations." },
   { id: "maps", title: "Maps & wayfinding", description: "Venue map, parking, and accessibility notes." },

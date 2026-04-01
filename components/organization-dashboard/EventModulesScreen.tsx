@@ -62,7 +62,7 @@ function ModuleCardFooter({ modId, eventId }: { modId: EventModuleId; eventId: s
           href={`/organization/events/${eventId}/related`}
           className="inline-flex text-[10px] font-bold uppercase tracking-wider text-eh-accent transition hover:underline"
         >
-          Manage related shows →
+          Manage external links →
         </Link>
       );
     case "meetups":

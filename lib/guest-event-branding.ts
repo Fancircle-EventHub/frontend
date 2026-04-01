@@ -57,4 +57,9 @@ export const guestHub = {
    * Parent grid/flex items should also use `min-w-0` where needed.
    */
   wrap: "min-w-0 max-w-full break-words [overflow-wrap:anywhere]",
+  /**
+   * Hub section titles (Updates, Meetups, tour promo heading, etc.) — same family as the
+   * “You may also like” label, one step up from `text-[11px]` for readability.
+   */
+  sectionHeading: "text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--guest-btn)]",
 } as const;

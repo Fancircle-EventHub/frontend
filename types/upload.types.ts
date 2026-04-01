@@ -3,6 +3,7 @@ export type UploadType =
   | "event_cover"
   | "event_logo"
   | "event_meetup_image"
+  | "event_external_promo_image"
   | "guest_profile_avatar"
   | "guest_event_gallery"
   | "guest_meetup_image";

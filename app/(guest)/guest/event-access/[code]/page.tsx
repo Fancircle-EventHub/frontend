@@ -132,8 +132,8 @@ export default function GuestEventAccessPage() {
       </div>
 
       <div className="relative z-10 -mt-3 min-w-0">
-        <div className="mx-auto max-w-3xl rounded-t-2xl border border-white/10 border-b-0 bg-[color:var(--guest-elevated)]/90 px-4 py-5 backdrop-blur-md sm:px-6 lg:max-w-4xl">
-          <h2 translate="no" className={`text-lg font-semibold ${guestHub.fg} ${guestHub.wrap}`}>
+        <div className="mx-auto max-w-3xl px-4 py-5 sm:px-6 lg:max-w-4xl">
+          <h2 translate="no" className={`${guestHub.sectionHeading} ${guestHub.wrap}`}>
             Eventroom
           </h2>
           <p className={`mt-1 text-sm ${guestHub.fgMuted} ${guestHub.wrap}`}>Welcome in — explore updates and community below.</p>

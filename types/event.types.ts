@@ -1,16 +1,18 @@
 export type EventStatus = "draft" | "live";
 
-/** Curated related hubs (tour promotion); same shape as guest entry payload. */
-export type RelatedEventSummary = {
+/** Manual external link card for tour promotion (guest entry returns active items only). */
+export type EventExternalPromoItem = {
   id: string;
   title: string;
-  artist: string | null;
-  event_date: string | null;
-  venue: string | null;
-  city: string | null;
-  access_code: string;
-  join_link: string;
-  hero_image_url: string | null;
+  subtitle: string | null;
+  image_url: string | null;
+  /** Storage key for organizer forms (same as meetup images). */
+  image_path?: string | null;
+  external_url: string;
+  sort_order: number;
+  is_active: boolean;
+  button_label?: string | null;
+  open_in_new_tab?: boolean;
 };
 
 export type Event = {
@@ -36,7 +38,8 @@ export type Event = {
   modules: Record<string, boolean> | null;
   access_code: string;
   join_link: string;
-  related_events?: RelatedEventSummary[];
+  external_promo_section_label?: string | null;
+  external_promo_items?: EventExternalPromoItem[];
   shot_of_the_night?: {
     id: string;
     kind: "image" | "video";
@@ -83,4 +86,5 @@ export type UpdateEventPayload = {
   modules?: Record<string, boolean> | null;
   status?: EventStatus;
   shot_of_the_night_media_id?: string | null;
+  external_promo_section_label?: string | null;
 };

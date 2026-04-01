@@ -4,7 +4,7 @@ import type { ApiEnvelope } from "@/types/api.types";
 import type { OrganizationGuestMediaPayload } from "@/types/guest-media.types";
 import type { OrganizationMeetupItem } from "@/types/guest-meetup.types";
 import type { OrganizationEventNotificationItem } from "@/types/event-notification.types";
-import type { CreateEventPayload, Event, HubSummaryEmailResult, RelatedEventSummary, UpdateEventPayload } from "@/types/event.types";
+import type { CreateEventPayload, Event, EventExternalPromoItem, HubSummaryEmailResult, UpdateEventPayload } from "@/types/event.types";
 
 export type ListOrganizationEventsQueryParams = {
   status?: "all" | "draft" | "live";
@@ -61,12 +61,73 @@ export const eventApi = baseApi.injectEndpoints({
         { type: TAG_TYPES.OrganizationEvent, id: eventId },
       ],
     }),
-    syncOrganizationEventRelated: builder.mutation<
-      ApiEnvelope<{ related_events: RelatedEventSummary[] }>,
-      { eventId: string; body: { related_event_ids: string[] } }
+    createOrganizationEventExternalPromoItem: builder.mutation<
+      ApiEnvelope<{ item: EventExternalPromoItem & { image_path?: string | null } }>,
+      {
+        eventId: string;
+        body: {
+          title: string;
+          subtitle?: string | null;
+          image_url: string;
+          external_url: string;
+          is_active?: boolean;
+          button_label?: string | null;
+          open_in_new_tab?: boolean;
+        };
+      }
     >({
       query: ({ eventId, body }) => ({
-        url: `/organization/events/${eventId}/related-events`,
+        url: `/organization/events/${eventId}/external-promo-items`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: (_r, _e, arg) => [
+        { type: TAG_TYPES.OrganizationEvent, id: arg.eventId },
+        TAG_TYPES.EventEntry,
+      ],
+    }),
+    updateOrganizationEventExternalPromoItem: builder.mutation<
+      ApiEnvelope<{ item: EventExternalPromoItem & { image_path?: string | null } }>,
+      {
+        eventId: string;
+        itemId: string;
+        body: {
+          title?: string;
+          subtitle?: string | null;
+          image_url?: string;
+          external_url?: string;
+          is_active?: boolean;
+          button_label?: string | null;
+          open_in_new_tab?: boolean;
+        };
+      }
+    >({
+      query: ({ eventId, itemId, body }) => ({
+        url: `/organization/events/${eventId}/external-promo-items/${itemId}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (_r, _e, arg) => [
+        { type: TAG_TYPES.OrganizationEvent, id: arg.eventId },
+        TAG_TYPES.EventEntry,
+      ],
+    }),
+    deleteOrganizationEventExternalPromoItem: builder.mutation<ApiEnvelope<null>, { eventId: string; itemId: string }>({
+      query: ({ eventId, itemId }) => ({
+        url: `/organization/events/${eventId}/external-promo-items/${itemId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_r, _e, arg) => [
+        { type: TAG_TYPES.OrganizationEvent, id: arg.eventId },
+        TAG_TYPES.EventEntry,
+      ],
+    }),
+    reorderOrganizationEventExternalPromoItems: builder.mutation<
+      ApiEnvelope<null>,
+      { eventId: string; body: { item_ids: string[] } }
+    >({
+      query: ({ eventId, body }) => ({
+        url: `/organization/events/${eventId}/external-promo-items/reorder`,
         method: "PUT",
         body,
       }),
@@ -213,7 +274,10 @@ export const {
   useSendOrganizationEventHubSummaryEmailMutation,
   useEventEntryByCodeQuery,
   useOrganizationEventGuestMediaQuery,
-  useSyncOrganizationEventRelatedMutation,
+  useCreateOrganizationEventExternalPromoItemMutation,
+  useUpdateOrganizationEventExternalPromoItemMutation,
+  useDeleteOrganizationEventExternalPromoItemMutation,
+  useReorderOrganizationEventExternalPromoItemsMutation,
   useOrganizationEventMeetupsQuery,
   useCreateOrganizationEventMeetupMutation,
   useUpdateOrganizationEventMeetupMutation,
