@@ -295,7 +295,7 @@ export function GuestChatThread({ accessCode, roomId }: Props) {
           <textarea
             value={composer}
             onChange={(e) => setComposer(e.target.value)}
-            placeholder="Nachricht schreiben…"
+            placeholder="Write a message…"
             rows={1}
             maxLength={2000}
             className="max-h-32 min-h-[44px] flex-1 resize-none rounded-xl border-0 bg-transparent px-2 py-2.5 text-base text-white placeholder:text-white/40 focus:outline-none focus:ring-0"
