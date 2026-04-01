@@ -1,6 +1,7 @@
 "use client";
 
 import { useGuestEventCommunityQuery } from "@/apis/guest.api";
+import { GuestEventChannelSection } from "@/components/guest-event/GuestEventChannelSection";
 import { PageCenterSpinner } from "@/components/ui/PageCenterSpinner";
 import { guestHub } from "@/lib/guest-event-branding";
 
@@ -49,6 +50,8 @@ export function GuestEventCommunityContent({ accessCode }: Props) {
           Guests who completed their event profile — ready to connect, upload, and explore.
         </p>
       </section>
+
+      <GuestEventChannelSection accessCode={accessCode} />
 
       <section>
         <div className="mb-4 flex min-w-0 items-end justify-between gap-2">

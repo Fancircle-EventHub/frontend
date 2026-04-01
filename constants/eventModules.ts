@@ -11,6 +11,11 @@ export const EVENT_MODULE_LIST = [
   { id: "streaming_links", title: "Streaming links", description: "Pre-save and streaming destinations." },
   { id: "maps", title: "Maps & wayfinding", description: "Venue map, parking, and accessibility notes." },
   { id: "notifications", title: "Notifications", description: "Push-style updates for ticket holders." },
+  {
+    id: "channel",
+    title: "Channel",
+    description: "Event-wide guest conversation — one channel for everyone at the show.",
+  },
 ] as const;
 
 export type EventModuleId = (typeof EVENT_MODULE_LIST)[number]["id"];
@@ -30,6 +35,7 @@ export const MODULE_IMPLEMENTATION: Record<EventModuleId, "live" | "coming_soon"
   streaming_links: "coming_soon",
   maps: "coming_soon",
   notifications: "live",
+  channel: "live",
 };
 
 export const LIVE_MODULE_IDS = (

@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useState } from "react";
+import { useGuestChatRoomsQuery } from "@/apis/guestChat.api";
 import { useEventEntryByCodeQuery } from "@/apis/event.api";
 import {
   useGuestEventMeetupsQuery,
@@ -14,6 +16,8 @@ import type { GuestMeetupItem } from "@/types/guest-meetup.types";
 import { dateAndTimePartsToIso, formatMeetupSchedule } from "@/lib/datetime-form";
 import { extractApiErrorMessage } from "@/lib/api-error";
 import { guestHub } from "@/lib/guest-event-branding";
+import { guestChatRoomIdForMeetup } from "@/lib/guest-chat-rooms";
+import { isModuleEnabled } from "@/lib/event-modules";
 import { partitionMeetupsByHost } from "@/lib/guest-meetups";
 import { PageCenterSpinner } from "@/components/ui/PageCenterSpinner";
 
@@ -85,9 +89,19 @@ type MeetupCardProps = {
   onToggleDescription: (id: string) => void;
   join: ReturnType<typeof useGuestMeetupJoinMutation>[0];
   leave: ReturnType<typeof useGuestMeetupLeaveMutation>[0];
+  meetupChatRoomId: string | null;
 };
 
-function MeetupCard({ m, accessCode, busy, expandedDescIds, onToggleDescription, join, leave }: MeetupCardProps) {
+function MeetupCard({
+  m,
+  accessCode,
+  busy,
+  expandedDescIds,
+  onToggleDescription,
+  join,
+  leave,
+  meetupChatRoomId,
+}: MeetupCardProps) {
   return (
     <li className="flex gap-3 rounded-2xl border border-white/10 bg-[color:var(--guest-bg)]/40 p-3 sm:gap-4 sm:p-4">
       <div className="relative size-11 shrink-0 self-start overflow-hidden rounded-full bg-white/10 sm:size-12">
@@ -112,6 +126,17 @@ function MeetupCard({ m, accessCode, busy, expandedDescIds, onToggleDescription,
             expanded={expandedDescIds.has(m.id)}
             onToggle={onToggleDescription}
           />
+        ) : null}
+        {m.joined && meetupChatRoomId ? (
+          <Link
+            href={`/guest/event-access/${accessCode}/chat/${meetupChatRoomId}`}
+            className={`mt-3 inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 p-2.5 text-eh-accent transition hover:bg-white/10 ${guestHub.wrap}`}
+            aria-label="Open meetup chat"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+            </svg>
+          </Link>
         ) : null}
       </div>
       <div className="flex shrink-0 flex-col items-end justify-center self-center">
@@ -153,6 +178,9 @@ function MeetupCard({ m, accessCode, busy, expandedDescIds, onToggleDescription,
 
 export function GuestEventMeetupsContent({ accessCode }: Props) {
   const { data: entryEnvelope } = useEventEntryByCodeQuery(accessCode, { skip: !accessCode });
+  const meetupsModule = isModuleEnabled(entryEnvelope?.data?.modules, "meetups");
+  const { data: chatRoomsEnvelope } = useGuestChatRoomsQuery(accessCode, { skip: !accessCode || !meetupsModule });
+  const chatRooms = chatRoomsEnvelope?.data?.rooms ?? [];
   const eventId = entryEnvelope?.data?.id ?? "";
   const { data, isLoading, isError, refetch } = useGuestEventMeetupsQuery(accessCode, { skip: !accessCode });
   const [createMeetup, { isLoading: creating }] = useGuestMeetupCreateMutation();
@@ -251,6 +279,7 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
               onToggleDescription={toggleDescription}
               join={join}
               leave={leave}
+              meetupChatRoomId={guestChatRoomIdForMeetup(chatRooms, m.id)}
             />
           ))}
         </ul>
@@ -373,6 +402,7 @@ export function GuestEventMeetupsContent({ accessCode }: Props) {
                 onToggleDescription={toggleDescription}
                 join={join}
                 leave={leave}
+                meetupChatRoomId={guestChatRoomIdForMeetup(chatRooms, m.id)}
               />
             ))}
           </ul>

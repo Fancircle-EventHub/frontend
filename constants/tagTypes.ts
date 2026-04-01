@@ -12,6 +12,7 @@ export const TAG_TYPES = {
   OrganizationEventMeetups: "OrganizationEventMeetups",
   GuestEventNotifications: "GuestEventNotifications",
   OrganizationEventNotifications: "OrganizationEventNotifications",
+  GuestChat: "GuestChat",
 } as const;
 
 export type TagType = (typeof TAG_TYPES)[keyof typeof TAG_TYPES];
