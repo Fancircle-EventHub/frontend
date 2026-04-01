@@ -1,11 +1,6 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getAuthFromStorage } from "@/lib/auth-storage";
 
-/**
- * RTK Query endpoint names that must not attach `Authorization`.
- * Otherwise a stale token (e.g. organization after logout failed partially, or before
- * switching account type) breaks login/register or public reads.
- */
 const ENDPOINTS_WITHOUT_AUTH_HEADER = new Set([
   "loginGuest",
   "registerGuest",

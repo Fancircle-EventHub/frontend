@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useLogoutOrganizationMutation, useOrganizationSessionQuery } from "@/apis/organization.api";
 import { useAuthGuard, useRedirectWhenOrganizationSessionFails } from "@/lib/auth-guard";
-import { OrganizationEventRelatedScreen } from "@/components/organization-dashboard/OrganizationEventRelatedScreen";
+import { OrganizationEventExternalPromoScreen } from "@/components/organization-dashboard/OrganizationEventExternalPromoScreen";
 import { OrganizationDashboardShell } from "@/components/organization-dashboard/OrganizationDashboardShell";
 import { clearSession } from "@/slices/session.slice";
 import { baseApi } from "@/services/api/baseApi";
@@ -48,7 +48,7 @@ export default function OrganizationEventRelatedPage() {
       onLogout={() => void handleLogout()}
       logoutLoading={logoutLoading}
     >
-      <OrganizationEventRelatedScreen eventId={eventId} />
+      <OrganizationEventExternalPromoScreen eventId={eventId} />
     </OrganizationDashboardShell>
   );
 }

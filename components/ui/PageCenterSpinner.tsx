@@ -1,12 +1,10 @@
 import { CircularProgress } from "@/components/ui/CircularProgress";
 
 type Props = {
-  /** Use for fixed overlay (e.g. full viewport while blocking interaction). */
   fixed?: boolean;
   className?: string;
 };
 
-/** Centered circular progress — primary app loading pattern. */
 export function PageCenterSpinner({ fixed, className = "" }: Props) {
   const wrap = fixed
     ? "fixed inset-0 z-[60] flex items-center justify-center bg-black"

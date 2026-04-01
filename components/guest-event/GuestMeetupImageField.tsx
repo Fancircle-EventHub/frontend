@@ -35,9 +35,7 @@ export function GuestMeetupImageField({ id: idProp, label, hint, eventId, value,
     try {
       const { key } = await upload.uploadFile(file);
       onChange(key);
-    } catch {
-      /* upload.error */
-    }
+    } catch {}
   }
 
   function clear() {

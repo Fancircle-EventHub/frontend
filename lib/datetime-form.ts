@@ -1,7 +1,3 @@
-/**
- * Split ISO datetime into date + time parts for native <input type="date"> and <input type="time">,
- * matching patterns used in OrganizationCreateEventScreen (local calendar/time).
- */
 export function isoToDateAndTimeParts(iso: string): { date: string; time: string } {
   if (!iso.trim()) return { date: "", time: "" };
   try {
@@ -17,7 +13,6 @@ export function isoToDateAndTimeParts(iso: string): { date: string; time: string
   }
 }
 
-/** Combine date (YYYY-MM-DD) + time (HH:mm) into ISO string for APIs. */
 export function dateAndTimePartsToIso(date: string, time: string): string {
   const t = time.trim() || "12:00";
   if (!date.trim()) return new Date().toISOString();
@@ -25,10 +20,6 @@ export function dateAndTimePartsToIso(date: string, time: string): string {
   return parsed.toISOString();
 }
 
-/**
- * Full calendar date + time for meetup cards so the day is unambiguous (not just "Fri").
- * Example: "Fri, Mar 28, 2026 · 11:09 PM" (locale-aware).
- */
 export function formatMeetupSchedule(iso: string): string {
   if (!iso.trim()) return "";
   try {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useEffect, useId } from "react";
 import { usePresignedFileUrl } from "@/hooks/usePresignedFileUrl";
 import { useR2Upload } from "@/hooks/useR2Upload";
 import type { UploadType } from "@/types/upload.types";
@@ -32,7 +32,14 @@ export function ImageUploadField({
   const autoId = useId();
   const inputId = idProp ?? `img-upload-${autoId}`;
   const upload = useR2Upload({ type: uploadType, eventId });
+  const { reset: resetUpload } = upload;
   const { url: resolvedUrl } = usePresignedFileUrl(value || undefined);
+
+  useEffect(() => {
+    if (!value) {
+      resetUpload();
+    }
+  }, [value, resetUpload]);
 
   const previewSrc =
     upload.previewObjectUrl ||

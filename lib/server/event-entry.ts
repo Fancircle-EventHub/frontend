@@ -22,5 +22,4 @@ async function fetchEventEntryByCode(code: string): Promise<Event | null> {
   }
 }
 
-/** Deduplicates event fetches within a single request when composing nested metadata. */
 export const getCachedEventEntryByCode = cache(fetchEventEntryByCode);

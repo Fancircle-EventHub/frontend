@@ -10,10 +10,6 @@ import { guestHub } from "@/lib/guest-event-branding";
 import { extractApiErrorMessage } from "@/lib/api-error";
 import { useGuestR2Upload } from "@/hooks/useGuestR2Upload";
 
-/**
- * Guest “My profile” for the current event: account info + event display identity.
- * Data from session (account) and onboarding (event-scoped username / avatar).
- */
 export default function GuestEventProfilePage() {
   const params = useParams<{ code: string }>();
   const code = params.code ?? "";

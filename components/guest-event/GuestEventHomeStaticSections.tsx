@@ -3,7 +3,8 @@ import type { Event } from "@/types/event.types";
 import type { GuestEventNotificationItem } from "@/types/event-notification.types";
 import type { GuestMeetupItem } from "@/types/guest-meetup.types";
 import type { GuestRidePostItem } from "@/types/guest-ride.types";
-import { GuestTourPromotionSection } from "@/components/guest-event/GuestTourPromotionSection";
+import { GuestExternalPromoSection } from "@/components/guest-event/GuestExternalPromoSection";
+import { GUEST_EXTERNAL_PROMO_HOME_LIMIT } from "@/constants/guestExternalPromo";
 import { formatMeetupSchedule } from "@/lib/datetime-form";
 import { guestHub } from "@/lib/guest-event-branding";
 import { isModuleEnabled } from "@/lib/event-modules";
@@ -54,61 +55,24 @@ export function GuestEventHomeStaticSections({
   const showFanGallery = isModuleEnabled(modules, "fan_gallery");
   const showNotifications = isModuleEnabled(modules, "notifications");
   const showTour = isModuleEnabled(modules, "tour_promotion");
-  const relatedEvents = (event?.related_events ?? []).filter(Boolean);
-  const showRelatedTour = showTour && relatedEvents.length > 0;
+  const externalPromoItems = (event?.external_promo_items ?? [])
+    .filter((i) => i.is_active)
+    .slice()
+    .sort((a, b) => a.sort_order - b.sort_order || a.id.localeCompare(b.id));
+  const showExternalPromo = showTour && externalPromoItems.length > 0;
+  const externalPromoHomeItems = externalPromoItems.slice(0, GUEST_EXTERNAL_PROMO_HOME_LIMIT);
+  const externalPromoShowMoreHref =
+    showExternalPromo && externalPromoItems.length > GUEST_EXTERNAL_PROMO_HOME_LIMIT ? `${base}/promo` : undefined;
 
   const title = eventLoading ? "Loading…" : (event?.title ?? "Event");
   const shot = event?.shot_of_the_night;
 
-  const quickLinks: { id: string; title: string; subtitle: string; href: string }[] = [];
-  if (isModuleEnabled(modules, "event_info")) {
-    quickLinks.push({ id: "info", title: "Event info", subtitle: "Schedule, venue & details", href: `${base}/info` });
-  }
-  if (isModuleEnabled(modules, "community")) {
-    quickLinks.push({ id: "c", title: "Community", subtitle: "Who's here", href: `${base}/community` });
-  }
-  if (showFanGallery) {
-    quickLinks.push(
-      { id: "u", title: "Upload", subtitle: "Share your moments", href: `${base}/upload` },
-      { id: "g", title: "Gallery", subtitle: "Fan photos & video", href: `${base}/gallery` },
-    );
-  }
-  if (showMeetups) {
-    quickLinks.push({ id: "m", title: "Meetups", subtitle: "Plan fan meetups", href: `${base}/meetups` });
-  }
-  if (showRides) {
-    quickLinks.push({ id: "r", title: "Carpool", subtitle: "Offers & requests", href: `${base}/rides` });
-  }
-  if (showNotifications) {
-    quickLinks.push({ id: "n", title: "Updates", subtitle: "Organizer announcements", href: `${base}/notifications` });
-  }
-
   return (
     <div className="min-w-0 space-y-8 px-4 pb-4 sm:px-6 lg:mx-auto lg:max-w-3xl">
-      {quickLinks.length > 0 ? (
-        <section aria-labelledby="quick-actions-heading">
-          <h2 id="quick-actions-heading" className="sr-only">
-            Quick links
-          </h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-            {quickLinks.map((action) => (
-              <Link
-                key={action.id}
-                href={action.href}
-                className={`block min-w-0 rounded-2xl border border-white/10 p-4 text-left transition ${guestHub.surface} ${guestHub.cardHoverBorder}`}
-              >
-                <p className={`text-sm font-semibold ${guestHub.fg} ${guestHub.wrap}`}>{action.title}</p>
-                <p className={`mt-1 text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>{action.subtitle}</p>
-              </Link>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
       {showNotifications ? (
         <section aria-labelledby="notifications-preview">
           <div className="flex min-w-0 items-start justify-between gap-3">
-            <h2 id="notifications-preview" className={`min-w-0 flex-1 text-lg font-semibold ${guestHub.fg} ${guestHub.wrap}`}>
+            <h2 id="notifications-preview" className={`min-w-0 flex-1 ${guestHub.sectionHeading} ${guestHub.wrap}`}>
               Updates
             </h2>
             <Link
@@ -144,12 +108,18 @@ export function GuestEventHomeStaticSections({
         </section>
       ) : null}
 
-      {showRelatedTour ? <GuestTourPromotionSection related={relatedEvents} /> : null}
+      {showExternalPromo ? (
+        <GuestExternalPromoSection
+          items={externalPromoHomeItems}
+          heading={event?.external_promo_section_label}
+          showMoreHref={externalPromoShowMoreHref}
+        />
+      ) : null}
 
       {showMeetups ? (
         <section aria-labelledby="meetups-preview">
           <div className="flex min-w-0 items-start justify-between gap-3">
-            <h2 id="meetups-preview" className={`min-w-0 flex-1 text-lg font-semibold ${guestHub.fg} ${guestHub.wrap}`}>
+            <h2 id="meetups-preview" className={`min-w-0 flex-1 ${guestHub.sectionHeading} ${guestHub.wrap}`}>
               Meetups
             </h2>
             <Link
@@ -216,7 +186,7 @@ export function GuestEventHomeStaticSections({
       {showRides ? (
         <section aria-labelledby="rides-preview">
           <div className="flex min-w-0 items-start justify-between gap-3">
-            <h2 id="rides-preview" className={`min-w-0 flex-1 text-lg font-semibold ${guestHub.fg} ${guestHub.wrap}`}>
+            <h2 id="rides-preview" className={`min-w-0 flex-1 ${guestHub.sectionHeading} ${guestHub.wrap}`}>
               Carpool
             </h2>
             <Link
@@ -266,7 +236,7 @@ export function GuestEventHomeStaticSections({
       {showFanGallery ? (
         <section aria-labelledby="spotlight-heading">
           <div className="flex min-w-0 items-start justify-between gap-3">
-            <h2 id="spotlight-heading" className={`min-w-0 flex-1 text-lg font-semibold ${guestHub.fg} ${guestHub.wrap}`}>
+            <h2 id="spotlight-heading" className={`min-w-0 flex-1 ${guestHub.sectionHeading} ${guestHub.wrap}`}>
               Shot of the night
             </h2>
             <Link

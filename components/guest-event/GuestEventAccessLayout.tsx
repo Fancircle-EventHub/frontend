@@ -10,9 +10,6 @@ import { GUEST_INVALID_SESSION_PATH, guestEventAuthPaths } from "@/lib/guest-eve
 import { GuestEventBottomNav, GUEST_EVENT_NAV_BOTTOM_PADDING } from "./GuestEventBottomNav";
 import { GuestEventInAppHeader } from "./GuestEventInAppHeader";
 
-/**
- * Wraps in-event guest routes: top bar + main scroll area + fixed bottom nav.
- */
 export function GuestEventAccessLayout({ children }: { children: ReactNode }) {
   const params = useParams<{ code: string }>();
   const code = typeof params?.code === "string" ? params.code : "";

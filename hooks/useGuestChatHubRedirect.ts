@@ -5,9 +5,6 @@ import { useRouter } from "next/navigation";
 import { useEventEntryByCodeQuery } from "@/apis/event.api";
 import { isChatHubAccessible } from "@/lib/event-modules";
 
-/**
- * Guest /chat hub is available when Channel (event-wide), Meetups, or Carpooling is enabled.
- */
 export function useGuestChatHubRedirect(accessCode: string | undefined): "loading" | "redirecting" | "ok" {
   const router = useRouter();
   const { data, isLoading } = useEventEntryByCodeQuery(accessCode ?? "", { skip: !accessCode });

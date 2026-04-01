@@ -27,9 +27,7 @@ export function GuestEventUploadContent({ accessCode, eventId }: Props) {
       await uploadFile(file);
       await refetch();
       reset();
-    } catch {
-      /* surfaced via error */
-    }
+    } catch {}
   }
 
   const busy = status === "presigning" || status === "uploading" || status === "registering";

@@ -7,19 +7,13 @@ const SHELL =
   "flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-[color:var(--guest-elevated)] to-[color:var(--guest-bg)] shadow-inner";
 
 type Props = {
-  /** Shown in uppercase in the header (e.g. city or “All chats”). */
   title: string;
   children: ReactNode;
-  /** Optional right control (e.g. settings link). */
   headerRight?: ReactNode;
-  /** Scrollable body max height (Figma-style card). */
   maxHeightClassName?: string;
   minHeightClassName?: string;
 };
 
-/**
- * Shared chrome for guest chat: status dot, uppercase title, bordered card, bounded height.
- */
 export function GuestChatCardShell({
   title,
   children,

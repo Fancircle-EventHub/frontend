@@ -15,7 +15,6 @@ export type GuestChatMessage = {
   id: string;
   guest_id: string;
   username: string | null;
-  /** Resolved guest avatar for this event (from EventGuest.avatar_key). */
   avatar_url?: string | null;
   body: string;
   created_at: string | null;

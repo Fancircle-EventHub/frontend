@@ -14,7 +14,6 @@ export async function generateMetadata({
   });
 }
 
-/** Parent `[code]/layout` already wraps with GuestEventAccessLayout — do not nest again. */
 export default function GuestChatSegmentLayout({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }

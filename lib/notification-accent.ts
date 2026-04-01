@@ -34,7 +34,6 @@ function resolveAccentId(color: string | null | undefined): NotificationAccentId
   return "amber";
 }
 
-/** Full card border class for guest / org list items. */
 export function notificationCardBorderClass(color: string | null | undefined): string {
   const id = resolveAccentId(color);
   return `border-2 ${BORDER[id]}`;

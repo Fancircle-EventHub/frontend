@@ -18,10 +18,6 @@ type Params = {
   onDeleteMessage: (messageId: string) => void;
 };
 
-/**
- * Subscribes to Laravel Reverb private channel `guest-chat.{roomId}` while the thread is mounted.
- * No-ops when `NEXT_PUBLIC_REVERB_APP_KEY` is unset (Phase A REST-only).
- */
 export function useGuestChatRealtime({ roomId, enabled, onMessage, onDeleteMessage }: Params) {
   const onMessageRef = useRef(onMessage);
   const onDeleteRef = useRef(onDeleteMessage);

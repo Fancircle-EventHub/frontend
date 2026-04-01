@@ -1,16 +1,12 @@
 import type { ReactNode } from "react";
 import { guestHub } from "@/lib/guest-event-branding";
 
-/**
- * STATIC placeholder body for secondary in-event tabs until real features ship.
- */
 export function GuestEventTabPlaceholder({
   title,
   description,
   children,
 }: {
   title: string;
-  /** Explain what will replace this screen later */
   description: string;
   children?: ReactNode;
 }) {

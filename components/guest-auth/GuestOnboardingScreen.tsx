@@ -72,9 +72,7 @@ export function GuestOnboardingScreen({ accessCode }: Props) {
     setErrorMessage(null);
     try {
       await uploadFile(file);
-    } catch {
-      /* surfaced via uploadError */
-    }
+    } catch {}
   }
 
   async function onSubmit(e: React.FormEvent) {

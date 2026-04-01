@@ -8,7 +8,6 @@ export const TAG_TYPES = {
   GuestEventCommunity: "GuestEventCommunity",
   GuestEventMeetups: "GuestEventMeetups",
   GuestEventRides: "GuestEventRides",
-  OrganizationEventRelated: "OrganizationEventRelated",
   OrganizationEventMeetups: "OrganizationEventMeetups",
   GuestEventNotifications: "GuestEventNotifications",
   OrganizationEventNotifications: "OrganizationEventNotifications",
