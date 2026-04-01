@@ -86,12 +86,7 @@ export default function PublicEventGalleryPage() {
         ) : !galleryEnabled ? (
           <p className={guestHub.fgMuted}>The fan gallery isn’t enabled for this event.</p>
         ) : (
-          <>
-            <p className={`mb-6 text-sm ${guestHub.fgMuted}`}>
-              Public preview — tap a photo to zoom, tap a video to play fullscreen.
-            </p>
-            <GuestEventGalleryContent accessCode={code!} mode="public" />
-          </>
+          <GuestEventGalleryContent accessCode={code!} mode="public" />
         )}
       </main>
 

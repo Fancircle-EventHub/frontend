@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 export type MediaLightboxItem = {
@@ -19,8 +19,6 @@ type Props = {
 
 export function MediaLightbox({ open, items, initialIndex, onClose }: Props) {
   const [index, setIndex] = useState(initialIndex);
-  const [zoomed, setZoomed] = useState(false);
-  const lastImageTapRef = useRef(0);
 
   useEffect(() => {
     if (!open) return;
@@ -33,12 +31,10 @@ export function MediaLightbox({ open, items, initialIndex, onClose }: Props) {
 
   const goPrev = useCallback(() => {
     setIndex((i) => (i > 0 ? i - 1 : i));
-    setZoomed(false);
   }, []);
 
   const goNext = useCallback(() => {
     setIndex((i) => (i < items.length - 1 ? i + 1 : i));
-    setZoomed(false);
   }, [items.length]);
 
   useEffect(() => {
@@ -88,27 +84,13 @@ export function MediaLightbox({ open, items, initialIndex, onClose }: Props) {
             preload="metadata"
           />
         ) : (
-          <div className="flex max-h-[min(85dvh,900px)] w-full max-w-5xl flex-col items-center justify-center overflow-auto">
+          <div className="flex max-h-[min(85dvh,900px)] w-full max-w-5xl items-center justify-center overflow-auto">
             <img
               src={item.url}
               alt=""
-              className={`max-h-[min(85dvh,900px)] max-w-full object-contain transition-transform duration-200 ease-out ${
-                zoomed ? "scale-[2.25] cursor-zoom-out" : "cursor-zoom-in"
-              }`}
-              onDoubleClick={() => setZoomed((z) => !z)}
-              onTouchEnd={(e) => {
-                const now = Date.now();
-                if (now - lastImageTapRef.current < 320) {
-                  e.preventDefault();
-                  setZoomed((z) => !z);
-                }
-                lastImageTapRef.current = now;
-              }}
+              className="max-h-[min(85dvh,900px)] max-w-full object-contain"
               draggable={false}
             />
-            <p className={`mt-2 text-center text-xs text-white/50 ${zoomed ? "sr-only" : ""}`}>
-              Double-tap or double-click to zoom
-            </p>
           </div>
         )}
 

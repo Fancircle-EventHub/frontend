@@ -298,26 +298,33 @@ export function GuestEventHomeStaticSections({
                 onClick={() => setSpotlightOpen(true)}
                 className="block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-eh-accent"
               >
-                <div className="relative aspect-[16/10] w-full bg-black">
+                <div className="relative flex w-full items-center justify-center bg-black">
                   {shot.kind === "video" ? (
                     <>
                       <video
                         src={shot.url}
-                        className="pointer-events-none size-full object-cover"
+                        className="pointer-events-none max-h-[min(75vh,32rem)] w-full object-contain"
                         muted
                         playsInline
                         preload="metadata"
                         tabIndex={-1}
                         aria-hidden
                       />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/25" aria-hidden>
+                      <div
+                        className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20"
+                        aria-hidden
+                      >
                         <span className="flex size-16 items-center justify-center rounded-full bg-black/55 text-3xl text-white shadow-lg">
                           ▶
                         </span>
                       </div>
                     </>
                   ) : (
-                    <img src={shot.url} alt="" className="size-full object-cover" />
+                    <img
+                      src={shot.url}
+                      alt=""
+                      className="max-h-[min(75vh,32rem)] w-full object-contain"
+                    />
                   )}
                 </div>
               </button>
@@ -326,7 +333,7 @@ export function GuestEventHomeStaticSections({
                   <p className={`text-sm font-medium ${guestHub.fg} ${guestHub.wrap}`}>
                     {shot.username ? `@${shot.username}` : "Fan highlight"}
                   </p>
-                  <p className={`text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>Picked by the organizer · tap to view</p>
+                  <p className={`text-xs ${guestHub.fgMuted} ${guestHub.wrap}`}>Picked by the organizer</p>
                 </div>
               </div>
             </div>

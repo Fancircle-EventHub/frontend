@@ -86,7 +86,7 @@ export default function EventEntryPage() {
 
   return (
     <div
-      className="min-h-dvh bg-[color:var(--guest-bg)] pb-28 text-[color:var(--guest-fg)] antialiased sm:pb-32"
+      className="min-h-dvh bg-[color:var(--guest-bg)] pb-[max(14rem,calc(13rem+env(safe-area-inset-bottom)))] text-[color:var(--guest-fg)] antialiased"
       style={brandStyle}
     >
       <div className="relative min-h-[38vh] w-full min-w-0 overflow-hidden sm:min-h-[40vh] lg:min-h-[44vh]">
@@ -263,7 +263,7 @@ export default function EventEntryPage() {
       </div>
 
       {!entryLoading && event && isLive ? (
-        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#14161c]/95 px-4 py-3 backdrop-blur-md supports-[padding:max(0px)]:pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#14161c]/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md">
           <div className="pointer-events-auto mx-auto flex max-w-lg flex-col gap-2 sm:flex-row sm:gap-3">
             <Link
               href={joinHref}
@@ -284,13 +284,12 @@ export default function EventEntryPage() {
               Browse public gallery
             </Link>
           </p>
+          <p
+            className={`pointer-events-auto mx-auto mt-3 max-w-lg border-t border-white/10 pt-3 text-center text-[10px] uppercase leading-snug tracking-wide ${guestHub.fgMuted}`}
+          >
+            By continuing, you agree to our terms of service and privacy policy.
+          </p>
         </div>
-      ) : null}
-
-      {!entryLoading && event && isLive ? (
-        <p className={`mx-auto mt-6 max-w-lg px-4 pb-8 text-center text-[10px] uppercase tracking-wide ${guestHub.fgMuted}`}>
-          By continuing, you agree to our terms of service and privacy policy.
-        </p>
       ) : null}
     </div>
   );
