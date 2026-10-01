@@ -1,0 +1,40 @@
+name: Eventees checks
+on:
+  pull_request:
+  push:
+    branches: [feat/eventees-foundation]
+permissions:
+  contents: read
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run test:eventees
+      - run: npx eslint components/eventees lib/eventees tests app/page.tsx app/community app/events app/my-events app/profile
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run lint
+      - run: npx expo export --platform ios --platform android

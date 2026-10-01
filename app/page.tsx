@@ -1,13 +1,5 @@
-import type { Metadata } from "next";
-import { OrganizationLoginScreen } from "@/components/organization-login/OrganizationLoginScreen";
-import { SITE_DESCRIPTION } from "@/lib/site-config";
-
-export const metadata: Metadata = {
-  title: "Organizer home",
-  description: SITE_DESCRIPTION,
-  alternates: { canonical: "/" },
-};
-
-export default function Home() {
-  return <OrganizationLoginScreen />;
-}
+import type { Metadata } from 'next';
+import { EventeesShell } from '@/components/eventees/Shell';
+import { Discover } from '@/components/eventees/Discover';
+export const metadata: Metadata = { title: 'Entdecken', description: 'Dein Event. Deine Menschen. Entdecke eventees in der interaktiven Vorschau.' };
+export default function Page() { return <EventeesShell><Discover /></EventeesShell>; }

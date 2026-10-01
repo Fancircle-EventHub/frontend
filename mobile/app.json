@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "eventees",
+    "slug": "eventees",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "io.fancircle.eventees"
+    },
+    "android": {
+      "package": "io.fancircle.eventees",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#141416"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "scheme": "eventees",
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "W\u00e4hle ein Foto f\u00fcr deine lokale eventees-Vorschau.",
+          "cameraPermission": "Fotografiere dein Ticket f\u00fcr eventees.",
+          "microphonePermission": false
+        }
+      ],
+      "expo-document-picker",
+      "expo-router"
+    ]
+  }
+}

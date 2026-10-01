@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Native local build and Expo state
+mobile/.expo/
+mobile/dist/
+mobile/android/
+mobile/ios/
+
+/test-results/
+/playwright-report/

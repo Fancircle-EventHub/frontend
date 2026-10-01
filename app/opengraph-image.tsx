@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { PRODUCT_NAME } from "@/lib/site-config";
 
-export const alt = `${PRODUCT_NAME} — private event engagement`;
+export const alt = `${PRODUCT_NAME} — Gemeinsam mehr erleben`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -25,12 +25,12 @@ export default function OpenGraphImage() {
           style={{
             fontSize: 26,
             fontWeight: 700,
-            color: "#fddc53",
+            color: "#ff7848",
             letterSpacing: "0.28em",
             textTransform: "uppercase",
           }}
         >
-          Fancircle
+          powered by Fancircle
         </div>
         <div
           style={{
@@ -42,7 +42,7 @@ export default function OpenGraphImage() {
             lineHeight: 1.05,
           }}
         >
-          EventHub
+          eventees
         </div>
         <div
           style={{
@@ -53,7 +53,7 @@ export default function OpenGraphImage() {
             lineHeight: 1.35,
           }}
         >
-          Private event engagement for organizers and guests — connect during live shows.
+          Du gehst hin. Ihr erlebt es.
         </div>
       </div>
     ),

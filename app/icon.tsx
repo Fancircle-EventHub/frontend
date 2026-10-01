@@ -17,7 +17,7 @@ export default function Icon() {
           borderRadius: 8,
         }}
       >
-        <span style={{ fontSize: 15, fontWeight: 800, color: "#fddc53", letterSpacing: "-0.05em" }}>EH</span>
+        <span style={{ fontSize: 15, fontWeight: 800, color: "#ff7848", letterSpacing: "-0.05em" }}>e</span>
       </div>
     ),
     { ...size },
