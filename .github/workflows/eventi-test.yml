@@ -1,0 +1,25 @@
+name: Eventi test application
+
+on:
+  push:
+    paths: ['eventi-mvp/**', '.github/workflows/eventi-test.yml']
+  pull_request:
+    paths: ['eventi-mvp/**', '.github/workflows/eventi-test.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build deployment module
+        run: node eventi-mvp/build.mjs
+      - name: Verify application workflows and authorization
+        run: node --test eventi-mvp/worker.test.mjs

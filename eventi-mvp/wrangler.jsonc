@@ -1,0 +1,14 @@
+{
+  "name": "eventi-test",
+  "main": "dist/worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "eventi-test",
+    "database_id": "7a86c52f-288d-4e5b-97e4-45985ebb8b55",
+    "migrations_dir": "."
+  }],
+  "triggers": { "crons": ["17 3 * * *"] },
+  "observability": { "enabled": true }
+}
