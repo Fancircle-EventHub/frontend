@@ -47,10 +47,14 @@ npx wrangler deploy
 
 The initial deployment was performed through the authorized Cloudflare API connector. `build.mjs` embeds the HTML, CSS and client JavaScript into `dist/worker.mjs`; no separate asset uploads are needed. Reapplying `schema.sql` preserves existing test data.
 
-The GitHub workflow runs the build and tests. Automatic redeployment is not configured: deployment credentials must be supplied through the operator's authorized Cloudflare connection or Wrangler login. No tokens are committed.
+The GitHub workflow runs the build and tests. Automatic redeployment is not configured: the Cloudflare Builds repository connection returned error 8000008 (Git account disconnected). Deployment continues through the authorized Cloudflare API connector or Wrangler login. No tokens are committed.
 
 ## Test scope / remaining product work
 
 Use only disposable test data. This deployment is not ready to onboard real customers. The demo explicitly labels its synthetic content. Profiles and posts are visible to members of shared events; anybody holding an invitation can join. Anonymous test profiles are browser-bound, so create an account before logging out if they need to be preserved.
 
 Not implemented here: ticket verification/integrations, organizer verification, production email and password recovery, moderation/reporting, account deletion/export, legal operator details, 90-day lifecycle/retention policy, production R2 media storage, reliable offline outbox, real-time chat, push notifications, native iOS/Android apps. Account password login is exercised in integration tests; full native-device and production load testing remain outstanding.
+
+## Live validation
+
+The live browser test verified creation of a test profile, joining the demo, creating a private event, saving a community post, and persistence of session/event membership after reload. The live photo-upload test was interrupted before completion; image authorization and input validation are covered by integration tests. GitHub Actions run 36852233204 passed all six integration tests.
