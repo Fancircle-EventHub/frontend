@@ -40,7 +40,7 @@ Anthrazit, Korall-Rot/Orange, große Fotografie, klare Navigation, mobile Daumen
 - 7 Domain-Tests: Datenschutzprojektion, Filter, private Defaults und Ticketmetadaten.
 - 10 Browsertests auf Desktop und mobilem Chromium: Suche, Merkliste mit Reload, Privatsphäre, Ticketfehler, lokale Meetups/Chat und Layout ohne Überlaufen.
 - Native TypeScript und Hermes-Exports für iOS/Android erfolgreich. Native Komponenten zusätzlich im Web-Renderer auf Navigation und Merkliste geprüft, ohne JavaScript-Fehler. Noch kein Test auf echtem Gerät und keine signierten Store-Binaries.
-- 57 Backend-Tests mit 155 Assertions bestehen; siehe korrespondierende Backend-Branch.
+- 58 Backend-Tests mit 157 Assertions bestehen; siehe korrespondierende Backend-Branch.
 
 ```sh
 npm run test:eventees
