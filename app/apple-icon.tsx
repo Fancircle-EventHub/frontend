@@ -17,7 +17,7 @@ export default function AppleIcon() {
           borderRadius: 36,
         }}
       >
-        <span style={{ fontSize: 56, fontWeight: 800, color: "#fddc53", letterSpacing: "-0.04em" }}>EH</span>
+        <span style={{ fontSize: 56, fontWeight: 800, color: "#ff7848", letterSpacing: "-0.04em" }}>e</span>
       </div>
     ),
     { ...size },

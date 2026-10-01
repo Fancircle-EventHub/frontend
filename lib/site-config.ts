@@ -1,12 +1,12 @@
-export const BRAND_NAME = "Fancircle";
-export const PRODUCT_NAME = "Fancircle EventHub";
-export const SITE_TITLE = "Fancircle EventHub";
-export const TITLE_TEMPLATE = "%s | Fancircle EventHub";
+export const BRAND_NAME = "eventees";
+export const PRODUCT_NAME = "eventees";
+export const SITE_TITLE = "eventees";
+export const TITLE_TEMPLATE = "%s | eventees";
 
 export const SITE_DESCRIPTION =
-  "Fancircle EventHub is a private event engagement platform where organizers create event spaces and guests join through secure access flows to connect, participate, and engage during live events.";
+  "Dein Event. Deine Community. eventees verbindet Menschen vor, während und nach Live-Events.";
 
-export const SITE_LOCALE = "en_US";
+export const SITE_LOCALE = "de_DE";
 export const APPLICATION_CATEGORY = "Events / Social / Networking";
 
 export function getSiteUrl(): string {

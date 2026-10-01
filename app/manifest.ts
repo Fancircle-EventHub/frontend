@@ -6,16 +6,16 @@ export default function manifest(): MetadataRoute.Manifest {
 
   return {
     name: PRODUCT_NAME,
-    short_name: "EventHub",
+    short_name: "eventees",
     description: SITE_DESCRIPTION,
     start_url: `${base}/`,
     scope: `${base}/`,
     display: "standalone",
     orientation: "portrait-primary",
     background_color: "#23272f",
-    theme_color: "#fddc53",
+    theme_color: "#ff7848",
     categories: ["events", "social", "networking"],
-    lang: "en-US",
+    lang: "de-DE",
     dir: "ltr",
     icons: [
       {
